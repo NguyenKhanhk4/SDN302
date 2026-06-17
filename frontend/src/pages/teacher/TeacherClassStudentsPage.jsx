@@ -32,7 +32,7 @@ const TeacherClassStudentsPage = () => {
       
       setStudents(studentList);
     } catch (err) {
-      setError(err.message || err.error || 'Failed to load students. Please try again.');
+      setError(err.message || err.error || 'Không thể tải danh sách học viên. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -43,9 +43,9 @@ const TeacherClassStudentsPage = () => {
     // Also include fallbacks in case backend flattens the response
     const user = item?.studentId?.userId || item?.studentId || item?.userId || item?.student || item;
     return {
-      name: user?.fullName || user?.name || 'Unknown',
-      email: user?.email || 'N/A',
-      phone: user?.phone || 'N/A',
+      name: user?.fullName || user?.name || 'Không xác định',
+      email: user?.email || 'Không có',
+      phone: user?.phone || 'Không có',
       status: item?.status || 'ACTIVE'
     };
   };
@@ -53,7 +53,7 @@ const TeacherClassStudentsPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loading text="Loading students..." />
+        <Loading text="Đang tải danh sách học viên..." />
       </div>
     );
   }
@@ -61,20 +61,20 @@ const TeacherClassStudentsPage = () => {
   if (error) {
     return (
       <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-        <p className="font-medium">Error</p>
+        <p className="font-medium">Lỗi</p>
         <p className="text-sm">{error}</p>
         <div className="mt-4 flex space-x-4">
           <button 
             onClick={fetchStudents}
             className="text-sm font-medium text-red-700 hover:text-red-800 underline focus:outline-none"
           >
-            Try Again
+            Thử lại
           </button>
           <button 
             onClick={() => navigate('/teacher/classes')}
             className="text-sm font-medium text-gray-700 hover:text-gray-900 underline focus:outline-none"
           >
-            Back to Classes
+            Quay lại danh sách lớp
           </button>
         </div>
       </div>
@@ -85,15 +85,15 @@ const TeacherClassStudentsPage = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Students</h1>
-          <p className="mt-1 text-sm text-gray-500">Students in this class.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Học viên</h1>
+          <p className="mt-1 text-sm text-gray-500">Học viên trong lớp học này.</p>
         </div>
         <div className="space-x-3">
           <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}`)}>
-            &larr; Class Detail
+            &larr; Chi tiết lớp học
           </Button>
           <Button variant="secondary" onClick={() => navigate('/teacher/classes')}>
-            All Classes
+            Tất cả lớp học
           </Button>
         </div>
       </div>
@@ -101,18 +101,18 @@ const TeacherClassStudentsPage = () => {
       <Card className="w-full">
         {students.length === 0 ? (
           <EmptyState 
-            title="No Students Found" 
-            description="There are currently no students enrolled in this class."
+            title="Không tìm thấy học viên" 
+            description="Hiện tại chưa có học viên nào tham gia lớp học này."
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên học viên</th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số điện thoại</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

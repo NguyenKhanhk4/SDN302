@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Loading = ({ text = "Loading..." }) => {
+const Loading = ({ text = "Đang tải..." }) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 space-y-4">
       <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

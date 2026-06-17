@@ -7,6 +7,10 @@ const {
   getMyClassDetail,
   getStudentsInMyClass,
   getMySchedules,
+  getSessionsByClass,
+  createSession,
+  getAttendanceBySession,
+  takeAttendance,
 } = require('../controllers/teacher.controller');
 
 const { protect } = require('../middlewares/auth.middleware');
@@ -30,4 +34,17 @@ router.get('/classes/:classId/students', getStudentsInMyClass);
 // GET /api/teacher/schedules
 router.get('/schedules', getMySchedules);
 
+// GET /api/teacher/classes/:classId/sessions
+router.get('/classes/:classId/sessions', getSessionsByClass);
+
+// POST /api/teacher/classes/:classId/sessions
+router.post('/classes/:classId/sessions', createSession);
+
+// GET /api/teacher/classes/:classId/sessions/:sessionId/attendance
+router.get('/classes/:classId/sessions/:sessionId/attendance', getAttendanceBySession);
+
+// POST /api/teacher/classes/:classId/sessions/:sessionId/attendance
+router.post('/classes/:classId/sessions/:sessionId/attendance', takeAttendance);
+
 module.exports = router;
+

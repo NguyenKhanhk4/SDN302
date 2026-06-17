@@ -11,15 +11,15 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { name: 'Dashboard', path: '/teacher/dashboard' },
-    { name: 'My Classes', path: '/teacher/classes' },
-    { name: 'Schedule', path: '/teacher/schedules' },
+    { name: 'Bảng điều khiển', path: '/teacher/dashboard' },
+    { name: 'Lớp học của tôi', path: '/teacher/classes' },
+    { name: 'Lịch dạy', path: '/teacher/schedules' },
   ];
 
   return (
     <div className="w-64 bg-sidebar text-white flex flex-col h-full border-r border-gray-800">
       <div className="h-16 flex items-center px-6 border-b border-gray-800">
-        <h1 className="text-xl font-bold tracking-wider text-white">Tutor Center</h1>
+        <h1 className="text-xl font-bold tracking-wider text-white">Trung tâm Gia sư</h1>
       </div>
       
       <div className="flex-1 py-6 px-3 space-y-1">
@@ -45,7 +45,7 @@ const Sidebar = () => {
           onClick={handleLogout}
           className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-400 bg-red-400/10 rounded-lg hover:bg-red-400/20 hover:text-red-300 transition-colors"
         >
-          Logout
+          Đăng xuất
         </button>
       </div>
     </div>

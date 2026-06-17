@@ -40,7 +40,7 @@ const TeacherSessionsPage = () => {
       
       setSessions(sessionList);
     } catch (err) {
-      setError(err.message || err.error || 'Failed to load sessions. Please try again.');
+      setError(err.message || err.error || 'Không thể tải danh sách buổi học. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -56,11 +56,11 @@ const TeacherSessionsPage = () => {
   const handleCreateSession = async (e) => {
     e.preventDefault();
     if (!formData.sessionDate) {
-      setFormError('Session Date is required.');
+      setFormError('Ngày học là bắt buộc.');
       return;
     }
     if (!formData.topic.trim()) {
-      setFormError('Topic is required.');
+      setFormError('Chủ đề là bắt buộc.');
       return;
     }
 
@@ -74,12 +74,12 @@ const TeacherSessionsPage = () => {
         topic: formData.topic
       });
       
-      setSuccessMessage('Session created successfully!');
+      setSuccessMessage('Tạo buổi học thành công!');
       setFormData({ sessionDate: '', topic: '' });
       fetchSessions(); // Reload list directly after success
       
     } catch (err) {
-      setFormError(err.message || err.error || 'Failed to create session. Please check your inputs.');
+      setFormError(err.message || err.error || 'Không thể tạo buổi học. Vui lòng kiểm tra lại thông tin nhập.');
     } finally {
       setCreating(false);
     }
@@ -88,7 +88,7 @@ const TeacherSessionsPage = () => {
   if (loading && sessions.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loading text="Loading sessions..." />
+        <Loading text="Đang tải danh sách buổi học..." />
       </div>
     );
   }
@@ -97,29 +97,29 @@ const TeacherSessionsPage = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Class Sessions</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage teaching sessions for this class.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Các buổi học của lớp</h1>
+          <p className="mt-1 text-sm text-gray-500">Quản lý các buổi học cho lớp học này.</p>
         </div>
         <div className="space-x-3">
           <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}`)}>
-            &larr; Class Detail
+            &larr; Chi tiết lớp học
           </Button>
           <Button variant="secondary" onClick={() => navigate('/teacher/classes')}>
-            All Classes
+            Tất cả lớp học
           </Button>
         </div>
       </div>
 
       {error && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-          <p className="font-medium">Error loading sessions</p>
+          <p className="font-medium">Lỗi khi tải danh sách buổi học</p>
           <p className="text-sm">{error}</p>
-          <button onClick={fetchSessions} className="mt-2 text-sm underline focus:outline-none">Try Again</button>
+          <button onClick={fetchSessions} className="mt-2 text-sm underline focus:outline-none">Thử lại</button>
         </div>
       )}
 
       {/* Create Session Form */}
-      <Card title="Create New Session" className="mb-8 border-l-4 border-l-primary shadow-sm">
+      <Card title="Tạo buổi học mới" className="mb-8 border-l-4 border-l-primary shadow-sm">
         <form onSubmit={handleCreateSession} className="space-y-4">
           {successMessage && (
             <div className="p-3 bg-green-50 text-green-700 text-sm font-medium rounded border border-green-200">
@@ -134,47 +134,47 @@ const TeacherSessionsPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
-              label="Session Date"
+              label="Ngày học"
               name="sessionDate"
               type="date"
               value={formData.sessionDate}
               onChange={handleFormChange}
             />
             <Input
-              label="Topic / Subject Matter"
+              label="Chủ đề / Nội dung bài học"
               name="topic"
               type="text"
-              placeholder="E.g., Review algebra"
+              placeholder="VD: Ôn tập đại số"
               value={formData.topic}
               onChange={handleFormChange}
             />
           </div>
           <div className="pt-2">
             <Button type="submit" variant="primary" loading={creating}>
-              Create Session
+              Tạo buổi học
             </Button>
           </div>
         </form>
       </Card>
 
       {/* Sessions List Table */}
-      <Card title="Session List" className="w-full">
+      <Card title="Danh sách buổi học" className="w-full">
         {loading && sessions.length > 0 ? (
-           <div className="py-8"><Loading text="Refreshing list..." /></div>
+           <div className="py-8"><Loading text="Đang cập nhật danh sách..." /></div>
         ) : sessions.length === 0 ? (
           <EmptyState 
-            title="No Sessions Found" 
-            description="You haven't created any sessions for this class yet."
+            title="Không tìm thấy buổi học" 
+            description="Bạn chưa tạo buổi học nào cho lớp học này."
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session Date</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topic</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày học</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ đề</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -188,7 +188,7 @@ const TeacherSessionsPage = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-500">{item.topic || 'N/A'}</div>
+                        <div className="text-sm text-gray-500">{item.topic || 'Không có'}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge status={item.status || 'SCHEDULED'} />
@@ -199,7 +199,7 @@ const TeacherSessionsPage = () => {
                           onClick={() => navigate(`/teacher/classes/${classId}/sessions/${id}/attendance`)}
                           className="!py-1.5 !px-3 !text-xs text-primary hover:text-primary-hover hover:bg-blue-50 border border-primary/20"
                         >
-                          Attendance
+                          Điểm danh
                         </Button>
                       </td>
                     </tr>

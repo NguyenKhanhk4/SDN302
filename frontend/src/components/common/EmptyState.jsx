@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EmptyState = ({ title = 'No Data', description = 'There is nothing to display here.' }) => {
+const EmptyState = ({ title = 'Không có dữ liệu', description = 'Không có gì để hiển thị ở đây.' }) => {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">
       <svg className="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

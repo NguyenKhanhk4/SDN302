@@ -25,8 +25,8 @@ const LoginPage = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    if (!formData.password) newErrors.password = 'Password is required';
+    if (!formData.email.trim()) newErrors.email = 'Email là bắt buộc';
+    if (!formData.password) newErrors.password = 'Mật khẩu là bắt buộc';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -50,7 +50,7 @@ const LoginPage = () => {
       const token = response.token;
 
       if (!user || String(user.role).toUpperCase() !== 'TEACHER') {
-        setGlobalError('Only teacher account can access this portal');
+        setGlobalError('Chỉ tài khoản giảng viên mới có thể truy cập cổng thông tin này');
         setLoading(false);
         return;
       }
@@ -62,7 +62,7 @@ const LoginPage = () => {
       navigate('/teacher/dashboard', { replace: true });
 
     } catch (err) {
-      setGlobalError(err.message || err.error || 'Invalid email or password');
+      setGlobalError(err.message || err.error || 'Email hoặc mật khẩu không hợp lệ');
     } finally {
       setLoading(false);
     }
@@ -72,8 +72,8 @@ const LoginPage = () => {
     <Card className="w-full">
       <div className="p-2">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Tutor Center</h2>
-          <p className="mt-2 text-sm text-gray-600">Sign in to your teacher account</p>
+          <h2 className="text-2xl font-bold text-gray-900">Trung tâm Gia sư</h2>
+          <p className="mt-2 text-sm text-gray-600">Đăng nhập vào tài khoản giảng viên của bạn</p>
         </div>
 
         {globalError && (
@@ -84,20 +84,20 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Email Address"
+            label="Địa chỉ Email"
             name="email"
             type="email"
-            placeholder="teacher@gmail.com"
+            placeholder="giangvien@gmail.com"
             value={formData.email}
             onChange={handleChange}
             error={errors.email}
           />
           
           <Input
-            label="Password"
+            label="Mật khẩu"
             name="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu của bạn"
             value={formData.password}
             onChange={handleChange}
             error={errors.password}
@@ -110,7 +110,7 @@ const LoginPage = () => {
               className="w-full"
               loading={loading}
             >
-              Login
+              Đăng nhập
             </Button>
           </div>
         </form>

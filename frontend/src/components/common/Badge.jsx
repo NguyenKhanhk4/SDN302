@@ -2,12 +2,31 @@ import React from 'react';
 
 const Badge = ({ status, className = '' }) => {
   let colorClass = '';
-  let displayLabel = status || 'UNKNOWN';
+  
+  const labelMap = {
+    'ACTIVE': 'Hoạt động',
+    'PRESENT': 'Có mặt',
+    'COMPLETED': 'Hoàn thành',
+    'UPCOMING': 'Sắp diễn ra',
+    'SCHEDULED': 'Đã lên lịch',
+    'EXCUSED': 'Có phép',
+    'LATE': 'Muộn',
+    'ABSENT': 'Vắng mặt',
+    'CANCELLED': 'Đã hủy',
+    'FINISHED': 'Đã kết thúc',
+    'ONGOING': 'Đang diễn ra',
+    'ENROLLED': 'Đang học',
+    'DROPPED': 'Đã thôi học',
+  };
+
+  const displayLabel = labelMap[status?.toUpperCase()] || status || 'Không xác định';
 
   switch (status?.toUpperCase()) {
     case 'ACTIVE':
     case 'PRESENT':
     case 'COMPLETED':
+    case 'ONGOING':
+    case 'ENROLLED':
       colorClass = 'bg-green-100 text-green-800';
       break;
     case 'UPCOMING':
@@ -20,6 +39,7 @@ const Badge = ({ status, className = '' }) => {
       break;
     case 'ABSENT':
     case 'CANCELLED':
+    case 'DROPPED':
       colorClass = 'bg-red-100 text-red-800';
       break;
     case 'FINISHED':

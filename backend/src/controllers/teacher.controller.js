@@ -1,6 +1,8 @@
 const Class = require('../models/Class');
 const Schedule = require('../models/Schedule');
 const ClassStudent = require('../models/ClassStudent');
+const Session = require('../models/Session');
+const Attendance = require('../models/Attendance');
 
 // Phai require cac model duoc dung trong populate()
 // de Mongoose dang ky schema truoc khi query
@@ -171,10 +173,226 @@ const getMySchedules = async (req, res) => {
   }
 };
 
+// ============================================================
+// @desc    Teacher xem danh sach buoi hoc (sessions) cua mot lop
+// @route   GET /api/teacher/classes/:classId/sessions
+// @access  Private (Teacher)
+// ============================================================
+const getSessionsByClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    const sessions = await Session.find({ classId })
+      .sort({ sessionDate: -1 });
+
+    return res.status(200).json({
+      success: true,
+      total: sessions.length,
+      data: sessions,
+    });
+  } catch (error) {
+    if (error.message === 'You are not assigned to this class') {
+      return res.status(403).json({ success: false, message: error.message });
+    }
+    if (error.message === 'Class not found') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Teacher tao buoi hoc moi cho mot lop
+// @route   POST /api/teacher/classes/:classId/sessions
+// @access  Private (Teacher)
+// ============================================================
+const createSession = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const { sessionDate, topic, scheduleId } = req.body;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    if (!sessionDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'sessionDate la bat buoc',
+      });
+    }
+
+    // Kiem tra session da ton tai cho ngay nay chua
+    const startOfDay = new Date(sessionDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(sessionDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingSession = await Session.findOne({
+      classId,
+      sessionDate: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    if (existingSession) {
+      // Tra ve session da ton tai thay vi tao moi
+      return res.status(200).json({
+        success: true,
+        message: 'Session da ton tai cho ngay nay',
+        data: existingSession,
+      });
+    }
+
+    const session = await Session.create({
+      classId,
+      scheduleId: scheduleId || undefined,
+      sessionDate: new Date(sessionDate),
+      topic: topic || '',
+      status: 'SCHEDULED',
+    });
+
+    return res.status(201).json({
+      success: true,
+      data: session,
+    });
+  } catch (error) {
+    if (error.message === 'You are not assigned to this class') {
+      return res.status(403).json({ success: false, message: error.message });
+    }
+    if (error.message === 'Class not found') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    // Handle duplicate key error from the unique index
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'Session da ton tai cho ngay nay',
+      });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Teacher xem diem danh cua mot buoi hoc
+// @route   GET /api/teacher/classes/:classId/sessions/:sessionId/attendance
+// @access  Private (Teacher)
+// ============================================================
+const getAttendanceBySession = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    // Kiem tra session thuoc class nay
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: 'Session not found in this class',
+      });
+    }
+
+    const attendances = await Attendance.find({ sessionId })
+      .populate({
+        path: 'studentId',
+        populate: {
+          path: 'userId',
+          select: 'name email phone',
+        },
+      });
+
+    return res.status(200).json({
+      success: true,
+      total: attendances.length,
+      data: attendances,
+    });
+  } catch (error) {
+    if (error.message === 'You are not assigned to this class') {
+      return res.status(403).json({ success: false, message: error.message });
+    }
+    if (error.message === 'Class not found') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Teacher diem danh cho mot buoi hoc
+// @route   POST /api/teacher/classes/:classId/sessions/:sessionId/attendance
+// @access  Private (Teacher)
+// ============================================================
+const takeAttendance = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const { attendances } = req.body;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    // Kiem tra session thuoc class nay
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({
+        success: false,
+        message: 'Session not found in this class',
+      });
+    }
+
+    if (!attendances || !Array.isArray(attendances)) {
+      return res.status(400).json({
+        success: false,
+        message: 'attendances phai la mot mang',
+      });
+    }
+
+    // Upsert tung ban ghi attendance
+    const results = [];
+    for (const att of attendances) {
+      const result = await Attendance.findOneAndUpdate(
+        { sessionId, studentId: att.studentId },
+        {
+          sessionId,
+          studentId: att.studentId,
+          status: att.status || 'PRESENT',
+          note: att.note || '',
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      results.push(result);
+    }
+
+    // Cap nhat trang thai session thanh COMPLETED sau khi diem danh
+    session.status = 'COMPLETED';
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      total: results.length,
+      data: results,
+    });
+  } catch (error) {
+    if (error.message === 'You are not assigned to this class') {
+      return res.status(403).json({ success: false, message: error.message });
+    }
+    if (error.message === 'Class not found') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getTeacherDashboard,
   getMyClasses,
   getMyClassDetail,
   getStudentsInMyClass,
   getMySchedules,
+  getSessionsByClass,
+  createSession,
+  getAttendanceBySession,
+  takeAttendance,
 };

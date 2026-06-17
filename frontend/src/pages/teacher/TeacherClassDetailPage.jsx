@@ -28,7 +28,7 @@ const TeacherClassDetailPage = () => {
       const detail = data?.class || data?.data || data;
       setClassDetail(detail);
     } catch (err) {
-      setError(err.message || err.error || 'Failed to load class details. Please try again.');
+      setError(err.message || err.error || 'Không thể tải chi tiết lớp học. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -38,13 +38,13 @@ const TeacherClassDetailPage = () => {
     if (cls?.subjectId?.name) return cls.subjectId.name;
     if (cls?.subject?.name) return cls.subject.name;
     if (typeof cls?.subject === 'string') return cls.subject;
-    return 'N/A';
+    return 'Không có';
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loading text="Loading class details..." />
+        <Loading text="Đang tải chi tiết lớp học..." />
       </div>
     );
   }
@@ -52,20 +52,20 @@ const TeacherClassDetailPage = () => {
   if (error) {
     return (
       <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-        <p className="font-medium">Error</p>
+        <p className="font-medium">Lỗi</p>
         <p className="text-sm">{error}</p>
         <div className="mt-4 flex space-x-4">
           <button 
             onClick={fetchClassDetail}
             className="text-sm font-medium text-red-700 hover:text-red-800 underline focus:outline-none"
           >
-            Try Again
+            Thử lại
           </button>
           <button 
             onClick={() => navigate('/teacher/classes')}
             className="text-sm font-medium text-gray-700 hover:text-gray-900 underline focus:outline-none"
           >
-            Back to Classes
+            Quay lại danh sách lớp
           </button>
         </div>
       </div>
@@ -78,11 +78,11 @@ const TeacherClassDetailPage = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Class Detail</h1>
-          <p className="mt-1 text-sm text-gray-500">Detailed information about the class.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Chi tiết lớp học</h1>
+          <p className="mt-1 text-sm text-gray-500">Thông tin chi tiết về lớp học.</p>
         </div>
         <Button variant="outline" onClick={() => navigate('/teacher/classes')}>
-          &larr; Back to Classes
+          &larr; Quay lại danh sách lớp
         </Button>
       </div>
 
@@ -90,36 +90,36 @@ const TeacherClassDetailPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-5">
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Class Name</p>
-              <p className="text-lg font-semibold text-gray-900">{classDetail.name || classDetail.className || 'Unknown'}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Tên lớp học</p>
+              <p className="text-lg font-semibold text-gray-900">{classDetail.name || classDetail.className || 'Không xác định'}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Subject</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Môn học</p>
               <p className="text-base text-gray-900 font-medium">{getSubjectName(classDetail)}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Room</p>
-              <p className="text-base text-gray-900">{classDetail.room || 'N/A'}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Phòng học</p>
+              <p className="text-base text-gray-900">{classDetail.room || 'Không có'}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Max Students</p>
-              <p className="text-base text-gray-900">{classDetail.maxStudents || classDetail.capacity || 'N/A'}</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Số học viên tối đa</p>
+              <p className="text-base text-gray-900">{classDetail.maxStudents || classDetail.capacity || 'Không có'}</p>
             </div>
           </div>
           
           <div className="space-y-5">
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Status</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Trạng thái</p>
               <div>
                 <Badge status={classDetail.status || 'ACTIVE'} />
               </div>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Start Date</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Ngày bắt đầu</p>
               <p className="text-base text-gray-900">{formatDate(classDetail.startDate)}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">End Date</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Ngày kết thúc</p>
               <p className="text-base text-gray-900">{formatDate(classDetail.endDate)}</p>
             </div>
           </div>
@@ -130,13 +130,13 @@ const TeacherClassDetailPage = () => {
             variant="primary" 
             onClick={() => navigate(`/teacher/classes/${classId}/students`)}
           >
-            View Students
+            Xem học viên
           </Button>
           <Button 
             variant="secondary" 
             onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}
           >
-            View Sessions
+            Xem buổi học
           </Button>
         </div>
       </Card>

@@ -79,7 +79,7 @@ const TeacherAttendancePage = () => {
 
       setAttendanceForm(initialForm);
     } catch (err) {
-      setError(err.message || err.error || 'Failed to load data. Please try again.');
+      setError(err.message || err.error || 'Không thể tải dữ liệu. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -90,8 +90,8 @@ const TeacherAttendancePage = () => {
     const sId = item?.studentId?._id || item?.studentId || item?._id || item?.id;
     return {
       id: sId,
-      name: user?.fullName || user?.name || 'Unknown',
-      email: user?.email || 'N/A'
+      name: user?.fullName || user?.name || 'Không xác định',
+      email: user?.email || 'Không có'
     };
   };
 
@@ -126,12 +126,12 @@ const TeacherAttendancePage = () => {
 
       await teacherApi.takeAttendance(classId, sessionId, { attendances });
       
-      setSuccessMessage('Attendance saved successfully!');
+      setSuccessMessage('Lưu thông tin điểm danh thành công!');
       
       // Reload data to ensure synchronization
       await fetchData();
     } catch (err) {
-      setError(err.message || err.error || 'Failed to save attendance. Please check your data.');
+      setError(err.message || err.error || 'Không thể lưu điểm danh. Vui lòng kiểm tra lại dữ liệu.');
     } finally {
       setSaving(false);
     }
@@ -140,7 +140,7 @@ const TeacherAttendancePage = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loading text="Loading attendance data..." />
+        <Loading text="Đang tải dữ liệu điểm danh..." />
       </div>
     );
   }
@@ -149,19 +149,19 @@ const TeacherAttendancePage = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
-          <p className="mt-1 text-sm text-gray-500">Take or review attendance for this session.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Điểm danh</h1>
+          <p className="mt-1 text-sm text-gray-500">Thực hiện hoặc xem lại điểm danh cho buổi học này.</p>
         </div>
         <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}>
-          &larr; Back to Sessions
+          &larr; Quay lại danh sách buổi học
         </Button>
       </div>
 
       {error && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-          <p className="font-medium">Error</p>
+          <p className="font-medium">Lỗi</p>
           <p className="text-sm">{error}</p>
-          <button onClick={fetchData} className="mt-2 text-sm underline focus:outline-none">Try Again</button>
+          <button onClick={fetchData} className="mt-2 text-sm underline focus:outline-none">Thử lại</button>
         </div>
       )}
 
@@ -174,8 +174,8 @@ const TeacherAttendancePage = () => {
       <Card className="w-full">
         {students.length === 0 ? (
           <EmptyState 
-            title="No Students" 
-            description="There are no students in this class to take attendance for."
+            title="Không có học viên" 
+            description="Không có học viên nào trong lớp này để thực hiện điểm danh."
           />
         ) : (
           <div>
@@ -183,10 +183,10 @@ const TeacherAttendancePage = () => {
               <table className="min-w-full divide-y divide-gray-200 mb-6">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên học viên</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ghi chú</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -215,16 +215,16 @@ const TeacherAttendancePage = () => {
                               'bg-blue-50 border-blue-200 text-blue-700'
                             }`}
                           >
-                            <option value="PRESENT">PRESENT</option>
-                            <option value="ABSENT">ABSENT</option>
-                            <option value="LATE">LATE</option>
-                            <option value="EXCUSED">EXCUSED</option>
+                            <option value="PRESENT">Có mặt</option>
+                            <option value="ABSENT">Vắng mặt</option>
+                            <option value="LATE">Muộn</option>
+                            <option value="EXCUSED">Có phép</option>
                           </select>
                         </td>
                         <td className="px-6 py-4">
                           <input
                             type="text"
-                            placeholder="Optional note..."
+                            placeholder="Ghi chú thêm (nếu có)..."
                             value={formRow.note}
                             onChange={(e) => handleNoteChange(info.id, e.target.value)}
                             className="w-full text-sm border border-gray-300 rounded-md py-1.5 px-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -244,7 +244,7 @@ const TeacherAttendancePage = () => {
                 loading={saving}
                 disabled={students.length === 0}
               >
-                Save Attendance
+                Lưu điểm danh
               </Button>
             </div>
           </div>
