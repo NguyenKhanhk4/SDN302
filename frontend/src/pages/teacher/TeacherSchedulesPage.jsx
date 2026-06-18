@@ -10,6 +10,32 @@ import Button from '../../components/common/Button';
 import SLOT_CONFIG from '../../utils/slotConfig';
 import { getCurrentYear, getWeekOptions, getWeekDates, getCurrentWeekNumber } from '../../utils/weekUtils';
 
+const normalizeTime = (time) => {
+  if (!time) return '';
+  const parts = time.split(':');
+  if (parts.length >= 2) {
+    let h = parts[0];
+    let m = parts[1];
+    if (h.length === 1) h = '0' + h;
+    return `${h}:${m}`;
+  }
+  return time;
+};
+
+const findSlotForSchedule = (schedule) => {
+  if (!schedule.startTime || !schedule.endTime) return null;
+  const nStart = normalizeTime(schedule.startTime);
+  const nEnd = normalizeTime(schedule.endTime);
+
+  const exactMatch = SLOT_CONFIG.find(s => s.startTime === nStart && s.endTime === nEnd);
+  if (exactMatch) return exactMatch;
+
+  const partialMatch = SLOT_CONFIG.find(s => s.startTime === nStart);
+  if (partialMatch) return partialMatch;
+
+  return null;
+};
+
 const TeacherSchedulesPage = () => {
   const navigate = useNavigate();
 
@@ -22,7 +48,7 @@ const TeacherSchedulesPage = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [loadingCardId, setLoadingCardId] = useState(null);
 
   const weekOptions = getWeekOptions(selectedYear);
   const weekDates = getWeekDates(selectedYear, selectedWeek);
@@ -43,6 +69,13 @@ const TeacherSchedulesPage = () => {
       else if (data && Array.isArray(data.data)) scheduleList = data.data;
       
       const activeSchedules = scheduleList.filter(s => s.status === 'ACTIVE' || s.status === 'active' || !s.status);
+      
+      activeSchedules.forEach(s => {
+        if (!findSlotForSchedule(s)) {
+          console.warn("Schedule does not match configured slots", s);
+        }
+      });
+      
       setSchedules(activeSchedules);
     } catch (err) {
       setError(err.message || err.error || 'Không thể tải lịch dạy của bạn. Vui lòng thử lại.');
@@ -52,15 +85,17 @@ const TeacherSchedulesPage = () => {
   };
 
   const handleClassClick = async (schedule, dayDateStr) => {
-    if (actionLoading) return;
+    const cardId = `${schedule._id}-${dayDateStr}`;
+    if (loadingCardId) return;
 
     try {
-      setActionLoading(true);
-      const classId = schedule?.classId?._id || schedule?.classId || schedule?.class?.id;
-      const scheduleId = schedule?._id || schedule?.id;
+      setLoadingCardId(cardId);
+      
+      const classId = typeof schedule.classId === 'object' ? schedule.classId._id : schedule.classId;
+      const scheduleId = schedule._id;
       
       const data = await teacherApi.getSessionsByClass(classId).catch(err => {
-         console.warn("Lỗi khi tải session, có thể api chưa implement hoặc trả lỗi:", err);
+         console.warn("Lỗi khi tải session:", err);
          return { sessions: [] };
       });
       
@@ -71,11 +106,17 @@ const TeacherSchedulesPage = () => {
 
       const existingSession = sessionList.find(s => {
         const sDate = s.sessionDate ? s.sessionDate.split('T')[0] : '';
-        return sDate === dayDateStr;
+        const matchDate = sDate === dayDateStr;
+        
+        if (s.scheduleId) {
+          const sIdStr = typeof s.scheduleId === 'object' ? s.scheduleId._id : s.scheduleId;
+          return matchDate && sIdStr === scheduleId;
+        }
+        return matchDate;
       });
 
       if (existingSession) {
-        navigate(`/teacher/classes/${classId}/sessions/${existingSession._id || existingSession.id}/attendance`);
+        navigate(`/teacher/classes/${classId}/sessions/${existingSession._id}/attendance?from=schedule`);
       } else {
         const [year, month, day] = dayDateStr.split('-');
         const createRes = await teacherApi.createSession(classId, {
@@ -86,16 +127,16 @@ const TeacherSchedulesPage = () => {
 
         const newSessionId = createRes?.data?._id || createRes?._id || createRes?.data?.session?._id;
         if (newSessionId) {
-           navigate(`/teacher/classes/${classId}/sessions/${newSessionId}/attendance`);
+           navigate(`/teacher/classes/${classId}/sessions/${newSessionId}/attendance?from=schedule`);
         } else {
-           alert("Tạo session thành công nhưng không lấy được ID. Vui lòng kiểm tra lại danh sách buổi học.");
+           throw new Error("Không lấy được sessionId sau khi tạo.");
         }
       }
     } catch (err) {
       console.error(err);
-      alert(err.message || err.error || "Không thể khởi tạo hoặc lấy thông tin buổi học.");
+      alert("Không thể mở điểm danh. Vui lòng thử lại.");
     } finally {
-      setActionLoading(false);
+      setLoadingCardId(null);
     }
   };
 
@@ -119,20 +160,25 @@ const TeacherSchedulesPage = () => {
     const cellSchedules = schedules.filter(s => {
       const sDay = normalizeDayOfWeek(s.dayOfWeek);
       if (sDay !== day.dayOfWeek) return false;
-      return s.startTime === slot.startTime || s.startTime?.startsWith(slot.startTime.substring(0, 2));
+      const matchedSlot = findSlotForSchedule(s);
+      return matchedSlot && matchedSlot.slot === slot.slot;
     });
 
     if (cellSchedules.length === 0) {
-      return <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-gray-200 p-2 min-h-[100px]"></td>;
+      return <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-gray-200 p-2 min-h-[140px]"></td>;
     }
 
     return (
-      <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-gray-200 p-2 align-top bg-white min-h-[100px]">
-        {cellSchedules.map((s, idx) => (
+      <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-gray-200 p-2 align-top bg-white min-h-[140px]">
+        {cellSchedules.map((s, idx) => {
+          const cardId = `${s._id}-${day.isoDate}`;
+          const isThisCardLoading = loadingCardId === cardId;
+          
+          return (
           <div 
             key={idx}
             onClick={() => handleClassClick(s, day.isoDate)}
-            className={`p-2 mb-2 rounded border bg-blue-50 border-blue-200 shadow-sm cursor-pointer hover:bg-blue-100 hover:shadow transition-all ${actionLoading ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`p-2 mb-2 rounded border bg-blue-50 border-blue-200 shadow-sm cursor-pointer hover:bg-blue-100 hover:shadow transition-all ${loadingCardId ? 'opacity-50 pointer-events-none' : ''}`}
           >
             <div className="font-semibold text-sm text-blue-900 mb-1">{getClassName(s)}</div>
             <div className="text-xs text-gray-600 mb-1 flex items-center gap-1">
@@ -141,11 +187,15 @@ const TeacherSchedulesPage = () => {
             </div>
             <div className="text-xs text-gray-600 mb-2 flex items-center gap-1">
                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-               {s.startTime || 'N/A'} - {s.endTime || 'N/A'}
+               {findSlotForSchedule(s)?.startTime || normalizeTime(s.startTime) || 'N/A'} - {findSlotForSchedule(s)?.endTime || normalizeTime(s.endTime) || 'N/A'}
             </div>
-            <Badge status="Not yet" className="text-[10px] px-1.5 py-0.5" />
+            {isThisCardLoading && (
+              <div className="mt-1">
+                <Badge status="Đang mở..." className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700" />
+              </div>
+            )}
           </div>
-        ))}
+        )})}
       </td>
     );
   };
@@ -226,18 +276,10 @@ const TeacherSchedulesPage = () => {
           </div>
         </div>
 
-        {/* Action Loading Indicator */}
-        {actionLoading && (
-          <div className="mb-4 p-3 bg-blue-50 text-blue-800 rounded flex items-center justify-center gap-2 font-medium">
-            <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            Đang xử lý thông tin buổi học...
-          </div>
-        )}
-
         {/* Bảng Timetable */}
         {schedules.length === 0 ? (
           <EmptyState 
-            title="Không tìm thấy lịch dạy" 
+            title="Không có lịch dạy trong tuần này." 
             description="Bạn chưa được phân công lịch giảng dạy nào đang hoạt động."
           />
         ) : (
@@ -259,7 +301,7 @@ const TeacherSchedulesPage = () => {
                   <tr key={slot.slot}>
                     <td className="border border-gray-200 p-2 text-center bg-gray-50">
                       <div className="font-semibold text-gray-700">{slot.label}</div>
-                      <div className="text-xs text-gray-500">{slot.startTime}</div>
+                      <div className="text-xs text-gray-500 whitespace-nowrap">{slot.startTime} - {slot.endTime}</div>
                     </td>
                     {weekDates.map(day => renderScheduleCell(slot, day))}
                   </tr>

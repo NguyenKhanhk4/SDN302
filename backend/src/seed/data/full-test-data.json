@@ -1,0 +1,3915 @@
+{
+  "meta": {
+    "name": "Full Test Data",
+    "version": "1.0",
+    "description": "Dataset for testing Teacher/Admin/Manager modules",
+    "testDataTag": "FULL_TEST_DATA_V1"
+  },
+  "users": [
+    {
+      "key": "admin_main",
+      "fullName": "System Admin",
+      "email": "admin@gmail.com",
+      "password": "123456",
+      "phone": "0900000000",
+      "role": "ADMIN",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "manager_main",
+      "fullName": "Center Manager",
+      "email": "manager@gmail.com",
+      "password": "123456",
+      "phone": "0910000000",
+      "role": "MANAGER",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "teacher_main",
+      "fullName": "Nguyen Van Teacher",
+      "email": "teacher@gmail.com",
+      "password": "123456",
+      "phone": "0920000001",
+      "role": "TEACHER",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "teacher_second",
+      "fullName": "Tran Thi Teacher",
+      "email": "teacher2@gmail.com",
+      "password": "123456",
+      "phone": "0920000002",
+      "role": "TEACHER",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_001",
+      "fullName": "Tran Minh Binh",
+      "email": "student001@gmail.com",
+      "password": "123456",
+      "phone": "0930000001",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_002",
+      "fullName": "Le Ngoc Chi",
+      "email": "student002@gmail.com",
+      "password": "123456",
+      "phone": "0930000002",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_003",
+      "fullName": "Pham Huu Dung",
+      "email": "student003@gmail.com",
+      "password": "123456",
+      "phone": "0930000003",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_004",
+      "fullName": "Hoang Hong Em",
+      "email": "student004@gmail.com",
+      "password": "123456",
+      "phone": "0930000004",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_005",
+      "fullName": "Vu Van Giang",
+      "email": "student005@gmail.com",
+      "password": "123456",
+      "phone": "0930000005",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_006",
+      "fullName": "Vo Minh Hai",
+      "email": "student006@gmail.com",
+      "password": "123456",
+      "phone": "0930000006",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_007",
+      "fullName": "Dang Ngoc Khoa",
+      "email": "student007@gmail.com",
+      "password": "123456",
+      "phone": "0930000007",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_008",
+      "fullName": "Bui Huu Linh",
+      "email": "student008@gmail.com",
+      "password": "123456",
+      "phone": "0930000008",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_009",
+      "fullName": "Do Hong Mai",
+      "email": "student009@gmail.com",
+      "password": "123456",
+      "phone": "0930000009",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_010",
+      "fullName": "Ngo Van Nam",
+      "email": "student010@gmail.com",
+      "password": "123456",
+      "phone": "0930000010",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_011",
+      "fullName": "Duong Minh Oanh",
+      "email": "student011@gmail.com",
+      "password": "123456",
+      "phone": "0930000011",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_012",
+      "fullName": "Ly Ngoc Phuc",
+      "email": "student012@gmail.com",
+      "password": "123456",
+      "phone": "0930000012",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_013",
+      "fullName": "Truong Huu Quang",
+      "email": "student013@gmail.com",
+      "password": "123456",
+      "phone": "0930000013",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_014",
+      "fullName": "Dinh Hong Son",
+      "email": "student014@gmail.com",
+      "password": "123456",
+      "phone": "0930000014",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_015",
+      "fullName": "Nguyen Van Tung",
+      "email": "student015@gmail.com",
+      "password": "123456",
+      "phone": "0930000015",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_016",
+      "fullName": "Tran Minh Uyen",
+      "email": "student016@gmail.com",
+      "password": "123456",
+      "phone": "0930000016",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_017",
+      "fullName": "Le Ngoc Vy",
+      "email": "student017@gmail.com",
+      "password": "123456",
+      "phone": "0930000017",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_018",
+      "fullName": "Pham Huu Xuan",
+      "email": "student018@gmail.com",
+      "password": "123456",
+      "phone": "0930000018",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_019",
+      "fullName": "Hoang Hong Yen",
+      "email": "student019@gmail.com",
+      "password": "123456",
+      "phone": "0930000019",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_020",
+      "fullName": "Vu Van Huy",
+      "email": "student020@gmail.com",
+      "password": "123456",
+      "phone": "0930000020",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_021",
+      "fullName": "Vo Minh Dat",
+      "email": "student021@gmail.com",
+      "password": "123456",
+      "phone": "0930000021",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_022",
+      "fullName": "Dang Ngoc Khanh",
+      "email": "student022@gmail.com",
+      "password": "123456",
+      "phone": "0930000022",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_023",
+      "fullName": "Bui Huu Long",
+      "email": "student023@gmail.com",
+      "password": "123456",
+      "phone": "0930000023",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_024",
+      "fullName": "Do Hong Minh",
+      "email": "student024@gmail.com",
+      "password": "123456",
+      "phone": "0930000024",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_025",
+      "fullName": "Ngo Van Nhi",
+      "email": "student025@gmail.com",
+      "password": "123456",
+      "phone": "0930000025",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_026",
+      "fullName": "Duong Minh Phat",
+      "email": "student026@gmail.com",
+      "password": "123456",
+      "phone": "0930000026",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_027",
+      "fullName": "Ly Ngoc Tam",
+      "email": "student027@gmail.com",
+      "password": "123456",
+      "phone": "0930000027",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_028",
+      "fullName": "Truong Huu Thao",
+      "email": "student028@gmail.com",
+      "password": "123456",
+      "phone": "0930000028",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_029",
+      "fullName": "Dinh Hong Tien",
+      "email": "student029@gmail.com",
+      "password": "123456",
+      "phone": "0930000029",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_030",
+      "fullName": "Nguyen Van Toan",
+      "email": "student030@gmail.com",
+      "password": "123456",
+      "phone": "0930000030",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_031",
+      "fullName": "Tran Minh Trung",
+      "email": "student031@gmail.com",
+      "password": "123456",
+      "phone": "0930000031",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_032",
+      "fullName": "Le Ngoc Tu",
+      "email": "student032@gmail.com",
+      "password": "123456",
+      "phone": "0930000032",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_033",
+      "fullName": "Pham Huu Vinh",
+      "email": "student033@gmail.com",
+      "password": "123456",
+      "phone": "0930000033",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_034",
+      "fullName": "Hoang Hong Hoa",
+      "email": "student034@gmail.com",
+      "password": "123456",
+      "phone": "0930000034",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_035",
+      "fullName": "Vu Van Lan",
+      "email": "student035@gmail.com",
+      "password": "123456",
+      "phone": "0930000035",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_036",
+      "fullName": "Vo Minh Duc",
+      "email": "student036@gmail.com",
+      "password": "123456",
+      "phone": "0930000036",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_037",
+      "fullName": "Dang Ngoc Hung",
+      "email": "student037@gmail.com",
+      "password": "123456",
+      "phone": "0930000037",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_038",
+      "fullName": "Bui Huu Thinh",
+      "email": "student038@gmail.com",
+      "password": "123456",
+      "phone": "0930000038",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_039",
+      "fullName": "Do Hong Bao",
+      "email": "student039@gmail.com",
+      "password": "123456",
+      "phone": "0930000039",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_040",
+      "fullName": "Ngo Van An",
+      "email": "student040@gmail.com",
+      "password": "123456",
+      "phone": "0930000040",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_041",
+      "fullName": "Duong Minh Binh",
+      "email": "student041@gmail.com",
+      "password": "123456",
+      "phone": "0930000041",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_042",
+      "fullName": "Ly Ngoc Chi",
+      "email": "student042@gmail.com",
+      "password": "123456",
+      "phone": "0930000042",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_043",
+      "fullName": "Truong Huu Dung",
+      "email": "student043@gmail.com",
+      "password": "123456",
+      "phone": "0930000043",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_044",
+      "fullName": "Dinh Hong Em",
+      "email": "student044@gmail.com",
+      "password": "123456",
+      "phone": "0930000044",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_045",
+      "fullName": "Nguyen Van Giang",
+      "email": "student045@gmail.com",
+      "password": "123456",
+      "phone": "0930000045",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_046",
+      "fullName": "Tran Minh Hai",
+      "email": "student046@gmail.com",
+      "password": "123456",
+      "phone": "0930000046",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_047",
+      "fullName": "Le Ngoc Khoa",
+      "email": "student047@gmail.com",
+      "password": "123456",
+      "phone": "0930000047",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_048",
+      "fullName": "Pham Huu Linh",
+      "email": "student048@gmail.com",
+      "password": "123456",
+      "phone": "0930000048",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_049",
+      "fullName": "Hoang Hong Mai",
+      "email": "student049@gmail.com",
+      "password": "123456",
+      "phone": "0930000049",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_050",
+      "fullName": "Vu Van Nam",
+      "email": "student050@gmail.com",
+      "password": "123456",
+      "phone": "0930000050",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_051",
+      "fullName": "Vo Minh Oanh",
+      "email": "student051@gmail.com",
+      "password": "123456",
+      "phone": "0930000051",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_052",
+      "fullName": "Dang Ngoc Phuc",
+      "email": "student052@gmail.com",
+      "password": "123456",
+      "phone": "0930000052",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_053",
+      "fullName": "Bui Huu Quang",
+      "email": "student053@gmail.com",
+      "password": "123456",
+      "phone": "0930000053",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_054",
+      "fullName": "Do Hong Son",
+      "email": "student054@gmail.com",
+      "password": "123456",
+      "phone": "0930000054",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_055",
+      "fullName": "Ngo Van Tung",
+      "email": "student055@gmail.com",
+      "password": "123456",
+      "phone": "0930000055",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_056",
+      "fullName": "Duong Minh Uyen",
+      "email": "student056@gmail.com",
+      "password": "123456",
+      "phone": "0930000056",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_057",
+      "fullName": "Ly Ngoc Vy",
+      "email": "student057@gmail.com",
+      "password": "123456",
+      "phone": "0930000057",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_058",
+      "fullName": "Truong Huu Xuan",
+      "email": "student058@gmail.com",
+      "password": "123456",
+      "phone": "0930000058",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_059",
+      "fullName": "Dinh Hong Yen",
+      "email": "student059@gmail.com",
+      "password": "123456",
+      "phone": "0930000059",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_060",
+      "fullName": "Nguyen Van Huy",
+      "email": "student060@gmail.com",
+      "password": "123456",
+      "phone": "0930000060",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_061",
+      "fullName": "Tran Minh Dat",
+      "email": "student061@gmail.com",
+      "password": "123456",
+      "phone": "0930000061",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_062",
+      "fullName": "Le Ngoc Khanh",
+      "email": "student062@gmail.com",
+      "password": "123456",
+      "phone": "0930000062",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_063",
+      "fullName": "Pham Huu Long",
+      "email": "student063@gmail.com",
+      "password": "123456",
+      "phone": "0930000063",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_064",
+      "fullName": "Hoang Hong Minh",
+      "email": "student064@gmail.com",
+      "password": "123456",
+      "phone": "0930000064",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_065",
+      "fullName": "Vu Van Nhi",
+      "email": "student065@gmail.com",
+      "password": "123456",
+      "phone": "0930000065",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_066",
+      "fullName": "Vo Minh Phat",
+      "email": "student066@gmail.com",
+      "password": "123456",
+      "phone": "0930000066",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_067",
+      "fullName": "Dang Ngoc Tam",
+      "email": "student067@gmail.com",
+      "password": "123456",
+      "phone": "0930000067",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_068",
+      "fullName": "Bui Huu Thao",
+      "email": "student068@gmail.com",
+      "password": "123456",
+      "phone": "0930000068",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_069",
+      "fullName": "Do Hong Tien",
+      "email": "student069@gmail.com",
+      "password": "123456",
+      "phone": "0930000069",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_070",
+      "fullName": "Ngo Van Toan",
+      "email": "student070@gmail.com",
+      "password": "123456",
+      "phone": "0930000070",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_071",
+      "fullName": "Duong Minh Trung",
+      "email": "student071@gmail.com",
+      "password": "123456",
+      "phone": "0930000071",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_072",
+      "fullName": "Ly Ngoc Tu",
+      "email": "student072@gmail.com",
+      "password": "123456",
+      "phone": "0930000072",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_073",
+      "fullName": "Truong Huu Vinh",
+      "email": "student073@gmail.com",
+      "password": "123456",
+      "phone": "0930000073",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_074",
+      "fullName": "Dinh Hong Hoa",
+      "email": "student074@gmail.com",
+      "password": "123456",
+      "phone": "0930000074",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_075",
+      "fullName": "Nguyen Van Lan",
+      "email": "student075@gmail.com",
+      "password": "123456",
+      "phone": "0930000075",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_076",
+      "fullName": "Tran Minh Duc",
+      "email": "student076@gmail.com",
+      "password": "123456",
+      "phone": "0930000076",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_077",
+      "fullName": "Le Ngoc Hung",
+      "email": "student077@gmail.com",
+      "password": "123456",
+      "phone": "0930000077",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_078",
+      "fullName": "Pham Huu Thinh",
+      "email": "student078@gmail.com",
+      "password": "123456",
+      "phone": "0930000078",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_079",
+      "fullName": "Hoang Hong Bao",
+      "email": "student079@gmail.com",
+      "password": "123456",
+      "phone": "0930000079",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_080",
+      "fullName": "Vu Van An",
+      "email": "student080@gmail.com",
+      "password": "123456",
+      "phone": "0930000080",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_081",
+      "fullName": "Vo Minh Binh",
+      "email": "student081@gmail.com",
+      "password": "123456",
+      "phone": "0930000081",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_082",
+      "fullName": "Dang Ngoc Chi",
+      "email": "student082@gmail.com",
+      "password": "123456",
+      "phone": "0930000082",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_083",
+      "fullName": "Bui Huu Dung",
+      "email": "student083@gmail.com",
+      "password": "123456",
+      "phone": "0930000083",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_084",
+      "fullName": "Do Hong Em",
+      "email": "student084@gmail.com",
+      "password": "123456",
+      "phone": "0930000084",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_085",
+      "fullName": "Ngo Van Giang",
+      "email": "student085@gmail.com",
+      "password": "123456",
+      "phone": "0930000085",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_086",
+      "fullName": "Duong Minh Hai",
+      "email": "student086@gmail.com",
+      "password": "123456",
+      "phone": "0930000086",
+      "role": "STUDENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_001",
+      "fullName": "Vo Minh Oanh",
+      "email": "parent001@gmail.com",
+      "password": "123456",
+      "phone": "0940000001",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_002",
+      "fullName": "Dang Thanh Phuc",
+      "email": "parent002@gmail.com",
+      "password": "123456",
+      "phone": "0940000002",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_003",
+      "fullName": "Bui Bao Quang",
+      "email": "parent003@gmail.com",
+      "password": "123456",
+      "phone": "0940000003",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_004",
+      "fullName": "Do Huu Son",
+      "email": "parent004@gmail.com",
+      "password": "123456",
+      "phone": "0940000004",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_005",
+      "fullName": "Ngo Xuan Tung",
+      "email": "parent005@gmail.com",
+      "password": "123456",
+      "phone": "0940000005",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_006",
+      "fullName": "Duong Kim Uyen",
+      "email": "parent006@gmail.com",
+      "password": "123456",
+      "phone": "0940000006",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_007",
+      "fullName": "Ly Van Vy",
+      "email": "parent007@gmail.com",
+      "password": "123456",
+      "phone": "0940000007",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_008",
+      "fullName": "Truong Duc Xuan",
+      "email": "parent008@gmail.com",
+      "password": "123456",
+      "phone": "0940000008",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_009",
+      "fullName": "Dinh Quoc Yen",
+      "email": "parent009@gmail.com",
+      "password": "123456",
+      "phone": "0940000009",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_010",
+      "fullName": "Nguyen Ngoc Huy",
+      "email": "parent010@gmail.com",
+      "password": "123456",
+      "phone": "0940000010",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_011",
+      "fullName": "Tran Anh Dat",
+      "email": "parent011@gmail.com",
+      "password": "123456",
+      "phone": "0940000011",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_012",
+      "fullName": "Le Dinh Khanh",
+      "email": "parent012@gmail.com",
+      "password": "123456",
+      "phone": "0940000012",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_013",
+      "fullName": "Pham Hong Long",
+      "email": "parent013@gmail.com",
+      "password": "123456",
+      "phone": "0940000013",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_014",
+      "fullName": "Hoang Phuoc Minh",
+      "email": "parent014@gmail.com",
+      "password": "123456",
+      "phone": "0940000014",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_015",
+      "fullName": "Vu Thi Nhi",
+      "email": "parent015@gmail.com",
+      "password": "123456",
+      "phone": "0940000015",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_016",
+      "fullName": "Vo Minh Phat",
+      "email": "parent016@gmail.com",
+      "password": "123456",
+      "phone": "0940000016",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_017",
+      "fullName": "Dang Thanh Tam",
+      "email": "parent017@gmail.com",
+      "password": "123456",
+      "phone": "0940000017",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_018",
+      "fullName": "Bui Bao Thao",
+      "email": "parent018@gmail.com",
+      "password": "123456",
+      "phone": "0940000018",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_019",
+      "fullName": "Do Huu Tien",
+      "email": "parent019@gmail.com",
+      "password": "123456",
+      "phone": "0940000019",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_020",
+      "fullName": "Ngo Xuan Toan",
+      "email": "parent020@gmail.com",
+      "password": "123456",
+      "phone": "0940000020",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_021",
+      "fullName": "Duong Kim Trung",
+      "email": "parent021@gmail.com",
+      "password": "123456",
+      "phone": "0940000021",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_022",
+      "fullName": "Ly Van Tu",
+      "email": "parent022@gmail.com",
+      "password": "123456",
+      "phone": "0940000022",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_023",
+      "fullName": "Truong Duc Vinh",
+      "email": "parent023@gmail.com",
+      "password": "123456",
+      "phone": "0940000023",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_024",
+      "fullName": "Dinh Quoc Hoa",
+      "email": "parent024@gmail.com",
+      "password": "123456",
+      "phone": "0940000024",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_025",
+      "fullName": "Nguyen Ngoc Lan",
+      "email": "parent025@gmail.com",
+      "password": "123456",
+      "phone": "0940000025",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_026",
+      "fullName": "Tran Anh Duc",
+      "email": "parent026@gmail.com",
+      "password": "123456",
+      "phone": "0940000026",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_027",
+      "fullName": "Le Dinh Hung",
+      "email": "parent027@gmail.com",
+      "password": "123456",
+      "phone": "0940000027",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_028",
+      "fullName": "Pham Hong Thinh",
+      "email": "parent028@gmail.com",
+      "password": "123456",
+      "phone": "0940000028",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_029",
+      "fullName": "Hoang Phuoc Bao",
+      "email": "parent029@gmail.com",
+      "password": "123456",
+      "phone": "0940000029",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_030",
+      "fullName": "Vu Thi An",
+      "email": "parent030@gmail.com",
+      "password": "123456",
+      "phone": "0940000030",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_031",
+      "fullName": "Vo Minh Binh",
+      "email": "parent031@gmail.com",
+      "password": "123456",
+      "phone": "0940000031",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_032",
+      "fullName": "Dang Thanh Chi",
+      "email": "parent032@gmail.com",
+      "password": "123456",
+      "phone": "0940000032",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_033",
+      "fullName": "Bui Bao Dung",
+      "email": "parent033@gmail.com",
+      "password": "123456",
+      "phone": "0940000033",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_034",
+      "fullName": "Do Huu Em",
+      "email": "parent034@gmail.com",
+      "password": "123456",
+      "phone": "0940000034",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_035",
+      "fullName": "Ngo Xuan Giang",
+      "email": "parent035@gmail.com",
+      "password": "123456",
+      "phone": "0940000035",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_036",
+      "fullName": "Duong Kim Hai",
+      "email": "parent036@gmail.com",
+      "password": "123456",
+      "phone": "0940000036",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_037",
+      "fullName": "Ly Van Khoa",
+      "email": "parent037@gmail.com",
+      "password": "123456",
+      "phone": "0940000037",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_038",
+      "fullName": "Truong Duc Linh",
+      "email": "parent038@gmail.com",
+      "password": "123456",
+      "phone": "0940000038",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_039",
+      "fullName": "Dinh Quoc Mai",
+      "email": "parent039@gmail.com",
+      "password": "123456",
+      "phone": "0940000039",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_040",
+      "fullName": "Nguyen Ngoc Nam",
+      "email": "parent040@gmail.com",
+      "password": "123456",
+      "phone": "0940000040",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_041",
+      "fullName": "Tran Anh Oanh",
+      "email": "parent041@gmail.com",
+      "password": "123456",
+      "phone": "0940000041",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_042",
+      "fullName": "Le Dinh Phuc",
+      "email": "parent042@gmail.com",
+      "password": "123456",
+      "phone": "0940000042",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_043",
+      "fullName": "Pham Hong Quang",
+      "email": "parent043@gmail.com",
+      "password": "123456",
+      "phone": "0940000043",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_044",
+      "fullName": "Hoang Phuoc Son",
+      "email": "parent044@gmail.com",
+      "password": "123456",
+      "phone": "0940000044",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_045",
+      "fullName": "Vu Thi Tung",
+      "email": "parent045@gmail.com",
+      "password": "123456",
+      "phone": "0940000045",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_046",
+      "fullName": "Vo Minh Uyen",
+      "email": "parent046@gmail.com",
+      "password": "123456",
+      "phone": "0940000046",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_047",
+      "fullName": "Dang Thanh Vy",
+      "email": "parent047@gmail.com",
+      "password": "123456",
+      "phone": "0940000047",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_048",
+      "fullName": "Bui Bao Xuan",
+      "email": "parent048@gmail.com",
+      "password": "123456",
+      "phone": "0940000048",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_049",
+      "fullName": "Do Huu Yen",
+      "email": "parent049@gmail.com",
+      "password": "123456",
+      "phone": "0940000049",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_050",
+      "fullName": "Ngo Xuan Huy",
+      "email": "parent050@gmail.com",
+      "password": "123456",
+      "phone": "0940000050",
+      "role": "PARENT",
+      "status": "ACTIVE"
+    }
+  ],
+  "teacherProfiles": [
+    {
+      "key": "teacher_profile_main",
+      "userKey": "teacher_main",
+      "subjects": [
+        "Toán",
+        "Vật lý"
+      ],
+      "qualification": "Cử nhân Sư phạm",
+      "experienceYears": 5,
+      "status": "ACTIVE"
+    },
+    {
+      "key": "teacher_profile_second",
+      "userKey": "teacher_second",
+      "subjects": [
+        "Tiếng Anh",
+        "Hóa học"
+      ],
+      "qualification": "Thạc sĩ Giáo dục",
+      "experienceYears": 4,
+      "status": "ACTIVE"
+    }
+  ],
+  "studentProfiles": [
+    {
+      "key": "student_profile_001",
+      "userKey": "student_001",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_002",
+      "userKey": "student_002",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_003",
+      "userKey": "student_003",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_004",
+      "userKey": "student_004",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_005",
+      "userKey": "student_005",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_006",
+      "userKey": "student_006",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_007",
+      "userKey": "student_007",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_008",
+      "userKey": "student_008",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_009",
+      "userKey": "student_009",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_010",
+      "userKey": "student_010",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_011",
+      "userKey": "student_011",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_012",
+      "userKey": "student_012",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_013",
+      "userKey": "student_013",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_014",
+      "userKey": "student_014",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_015",
+      "userKey": "student_015",
+      "grade": "10",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_016",
+      "userKey": "student_016",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_017",
+      "userKey": "student_017",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_018",
+      "userKey": "student_018",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_019",
+      "userKey": "student_019",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_020",
+      "userKey": "student_020",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_021",
+      "userKey": "student_021",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_022",
+      "userKey": "student_022",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_023",
+      "userKey": "student_023",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_024",
+      "userKey": "student_024",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_025",
+      "userKey": "student_025",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_026",
+      "userKey": "student_026",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_027",
+      "userKey": "student_027",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_028",
+      "userKey": "student_028",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_029",
+      "userKey": "student_029",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_030",
+      "userKey": "student_030",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_031",
+      "userKey": "student_031",
+      "grade": "11",
+      "school": "THPT Nguyen Trai",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_032",
+      "userKey": "student_032",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_033",
+      "userKey": "student_033",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_034",
+      "userKey": "student_034",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_035",
+      "userKey": "student_035",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_036",
+      "userKey": "student_036",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_037",
+      "userKey": "student_037",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_038",
+      "userKey": "student_038",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_039",
+      "userKey": "student_039",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_040",
+      "userKey": "student_040",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_041",
+      "userKey": "student_041",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_042",
+      "userKey": "student_042",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_043",
+      "userKey": "student_043",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_044",
+      "userKey": "student_044",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_045",
+      "userKey": "student_045",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_046",
+      "userKey": "student_046",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_047",
+      "userKey": "student_047",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_048",
+      "userKey": "student_048",
+      "grade": "9",
+      "school": "THCS Le Loi",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_049",
+      "userKey": "student_049",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_050",
+      "userKey": "student_050",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_051",
+      "userKey": "student_051",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_052",
+      "userKey": "student_052",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_053",
+      "userKey": "student_053",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_054",
+      "userKey": "student_054",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_055",
+      "userKey": "student_055",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_056",
+      "userKey": "student_056",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_057",
+      "userKey": "student_057",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_058",
+      "userKey": "student_058",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_059",
+      "userKey": "student_059",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_060",
+      "userKey": "student_060",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_061",
+      "userKey": "student_061",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_062",
+      "userKey": "student_062",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_063",
+      "userKey": "student_063",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_064",
+      "userKey": "student_064",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_065",
+      "userKey": "student_065",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_066",
+      "userKey": "student_066",
+      "grade": "12",
+      "school": "THPT Chu Van An",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_067",
+      "userKey": "student_067",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_068",
+      "userKey": "student_068",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_069",
+      "userKey": "student_069",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_070",
+      "userKey": "student_070",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_071",
+      "userKey": "student_071",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_072",
+      "userKey": "student_072",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_073",
+      "userKey": "student_073",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_074",
+      "userKey": "student_074",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_075",
+      "userKey": "student_075",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_076",
+      "userKey": "student_076",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_077",
+      "userKey": "student_077",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_078",
+      "userKey": "student_078",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_079",
+      "userKey": "student_079",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_080",
+      "userKey": "student_080",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_081",
+      "userKey": "student_081",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_082",
+      "userKey": "student_082",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_083",
+      "userKey": "student_083",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_084",
+      "userKey": "student_084",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_085",
+      "userKey": "student_085",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "student_profile_086",
+      "userKey": "student_086",
+      "grade": "9",
+      "school": "THCS Tran Phu",
+      "status": "ACTIVE"
+    }
+  ],
+  "parentProfiles": [
+    {
+      "key": "parent_profile_001",
+      "userKey": "parent_001",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_002",
+      "userKey": "parent_002",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_003",
+      "userKey": "parent_003",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_004",
+      "userKey": "parent_004",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_005",
+      "userKey": "parent_005",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_006",
+      "userKey": "parent_006",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_007",
+      "userKey": "parent_007",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_008",
+      "userKey": "parent_008",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_009",
+      "userKey": "parent_009",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_010",
+      "userKey": "parent_010",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_011",
+      "userKey": "parent_011",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_012",
+      "userKey": "parent_012",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_013",
+      "userKey": "parent_013",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_014",
+      "userKey": "parent_014",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_015",
+      "userKey": "parent_015",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_016",
+      "userKey": "parent_016",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_017",
+      "userKey": "parent_017",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_018",
+      "userKey": "parent_018",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_019",
+      "userKey": "parent_019",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_020",
+      "userKey": "parent_020",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_021",
+      "userKey": "parent_021",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_022",
+      "userKey": "parent_022",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_023",
+      "userKey": "parent_023",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_024",
+      "userKey": "parent_024",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_025",
+      "userKey": "parent_025",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_026",
+      "userKey": "parent_026",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_027",
+      "userKey": "parent_027",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_028",
+      "userKey": "parent_028",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_029",
+      "userKey": "parent_029",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_030",
+      "userKey": "parent_030",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_031",
+      "userKey": "parent_031",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_032",
+      "userKey": "parent_032",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_033",
+      "userKey": "parent_033",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_034",
+      "userKey": "parent_034",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_035",
+      "userKey": "parent_035",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_036",
+      "userKey": "parent_036",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_037",
+      "userKey": "parent_037",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_038",
+      "userKey": "parent_038",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_039",
+      "userKey": "parent_039",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_040",
+      "userKey": "parent_040",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_041",
+      "userKey": "parent_041",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_042",
+      "userKey": "parent_042",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_043",
+      "userKey": "parent_043",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_044",
+      "userKey": "parent_044",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_045",
+      "userKey": "parent_045",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_046",
+      "userKey": "parent_046",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_047",
+      "userKey": "parent_047",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_048",
+      "userKey": "parent_048",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_049",
+      "userKey": "parent_049",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "parent_profile_050",
+      "userKey": "parent_050",
+      "status": "ACTIVE"
+    }
+  ],
+  "parentStudents": [
+    {
+      "key": "ps_001_001",
+      "parentProfileKey": "parent_profile_001",
+      "studentProfileKey": "student_profile_001",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_001_002",
+      "parentProfileKey": "parent_profile_001",
+      "studentProfileKey": "student_profile_002",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_002_003",
+      "parentProfileKey": "parent_profile_002",
+      "studentProfileKey": "student_profile_003",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_002_004",
+      "parentProfileKey": "parent_profile_002",
+      "studentProfileKey": "student_profile_004",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_003_005",
+      "parentProfileKey": "parent_profile_003",
+      "studentProfileKey": "student_profile_005",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_003_006",
+      "parentProfileKey": "parent_profile_003",
+      "studentProfileKey": "student_profile_006",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_004_007",
+      "parentProfileKey": "parent_profile_004",
+      "studentProfileKey": "student_profile_007",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_004_008",
+      "parentProfileKey": "parent_profile_004",
+      "studentProfileKey": "student_profile_008",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_005_009",
+      "parentProfileKey": "parent_profile_005",
+      "studentProfileKey": "student_profile_009",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_005_010",
+      "parentProfileKey": "parent_profile_005",
+      "studentProfileKey": "student_profile_010",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_006_011",
+      "parentProfileKey": "parent_profile_006",
+      "studentProfileKey": "student_profile_011",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_006_012",
+      "parentProfileKey": "parent_profile_006",
+      "studentProfileKey": "student_profile_012",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_007_013",
+      "parentProfileKey": "parent_profile_007",
+      "studentProfileKey": "student_profile_013",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_007_014",
+      "parentProfileKey": "parent_profile_007",
+      "studentProfileKey": "student_profile_014",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_008_015",
+      "parentProfileKey": "parent_profile_008",
+      "studentProfileKey": "student_profile_015",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_008_016",
+      "parentProfileKey": "parent_profile_008",
+      "studentProfileKey": "student_profile_016",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_009_017",
+      "parentProfileKey": "parent_profile_009",
+      "studentProfileKey": "student_profile_017",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_009_018",
+      "parentProfileKey": "parent_profile_009",
+      "studentProfileKey": "student_profile_018",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_010_019",
+      "parentProfileKey": "parent_profile_010",
+      "studentProfileKey": "student_profile_019",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_010_020",
+      "parentProfileKey": "parent_profile_010",
+      "studentProfileKey": "student_profile_020",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_011_021",
+      "parentProfileKey": "parent_profile_011",
+      "studentProfileKey": "student_profile_021",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_011_022",
+      "parentProfileKey": "parent_profile_011",
+      "studentProfileKey": "student_profile_022",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_012_023",
+      "parentProfileKey": "parent_profile_012",
+      "studentProfileKey": "student_profile_023",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_012_024",
+      "parentProfileKey": "parent_profile_012",
+      "studentProfileKey": "student_profile_024",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_013_025",
+      "parentProfileKey": "parent_profile_013",
+      "studentProfileKey": "student_profile_025",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_013_026",
+      "parentProfileKey": "parent_profile_013",
+      "studentProfileKey": "student_profile_026",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_014_027",
+      "parentProfileKey": "parent_profile_014",
+      "studentProfileKey": "student_profile_027",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_014_028",
+      "parentProfileKey": "parent_profile_014",
+      "studentProfileKey": "student_profile_028",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_015_029",
+      "parentProfileKey": "parent_profile_015",
+      "studentProfileKey": "student_profile_029",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_015_030",
+      "parentProfileKey": "parent_profile_015",
+      "studentProfileKey": "student_profile_030",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_016_031",
+      "parentProfileKey": "parent_profile_016",
+      "studentProfileKey": "student_profile_031",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_016_032",
+      "parentProfileKey": "parent_profile_016",
+      "studentProfileKey": "student_profile_032",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_017_033",
+      "parentProfileKey": "parent_profile_017",
+      "studentProfileKey": "student_profile_033",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_017_034",
+      "parentProfileKey": "parent_profile_017",
+      "studentProfileKey": "student_profile_034",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_018_035",
+      "parentProfileKey": "parent_profile_018",
+      "studentProfileKey": "student_profile_035",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_018_036",
+      "parentProfileKey": "parent_profile_018",
+      "studentProfileKey": "student_profile_036",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_019_037",
+      "parentProfileKey": "parent_profile_019",
+      "studentProfileKey": "student_profile_037",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_019_038",
+      "parentProfileKey": "parent_profile_019",
+      "studentProfileKey": "student_profile_038",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_020_039",
+      "parentProfileKey": "parent_profile_020",
+      "studentProfileKey": "student_profile_039",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_020_040",
+      "parentProfileKey": "parent_profile_020",
+      "studentProfileKey": "student_profile_040",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_021_041",
+      "parentProfileKey": "parent_profile_021",
+      "studentProfileKey": "student_profile_041",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_021_042",
+      "parentProfileKey": "parent_profile_021",
+      "studentProfileKey": "student_profile_042",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_022_043",
+      "parentProfileKey": "parent_profile_022",
+      "studentProfileKey": "student_profile_043",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_022_044",
+      "parentProfileKey": "parent_profile_022",
+      "studentProfileKey": "student_profile_044",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_023_045",
+      "parentProfileKey": "parent_profile_023",
+      "studentProfileKey": "student_profile_045",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_023_046",
+      "parentProfileKey": "parent_profile_023",
+      "studentProfileKey": "student_profile_046",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_024_047",
+      "parentProfileKey": "parent_profile_024",
+      "studentProfileKey": "student_profile_047",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_024_048",
+      "parentProfileKey": "parent_profile_024",
+      "studentProfileKey": "student_profile_048",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_025_049",
+      "parentProfileKey": "parent_profile_025",
+      "studentProfileKey": "student_profile_049",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_025_050",
+      "parentProfileKey": "parent_profile_025",
+      "studentProfileKey": "student_profile_050",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_026_051",
+      "parentProfileKey": "parent_profile_026",
+      "studentProfileKey": "student_profile_051",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_026_052",
+      "parentProfileKey": "parent_profile_026",
+      "studentProfileKey": "student_profile_052",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_027_053",
+      "parentProfileKey": "parent_profile_027",
+      "studentProfileKey": "student_profile_053",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_027_054",
+      "parentProfileKey": "parent_profile_027",
+      "studentProfileKey": "student_profile_054",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_028_055",
+      "parentProfileKey": "parent_profile_028",
+      "studentProfileKey": "student_profile_055",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_028_056",
+      "parentProfileKey": "parent_profile_028",
+      "studentProfileKey": "student_profile_056",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_029_057",
+      "parentProfileKey": "parent_profile_029",
+      "studentProfileKey": "student_profile_057",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_029_058",
+      "parentProfileKey": "parent_profile_029",
+      "studentProfileKey": "student_profile_058",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_030_059",
+      "parentProfileKey": "parent_profile_030",
+      "studentProfileKey": "student_profile_059",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_030_060",
+      "parentProfileKey": "parent_profile_030",
+      "studentProfileKey": "student_profile_060",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_031_061",
+      "parentProfileKey": "parent_profile_031",
+      "studentProfileKey": "student_profile_061",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_031_062",
+      "parentProfileKey": "parent_profile_031",
+      "studentProfileKey": "student_profile_062",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_032_063",
+      "parentProfileKey": "parent_profile_032",
+      "studentProfileKey": "student_profile_063",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_032_064",
+      "parentProfileKey": "parent_profile_032",
+      "studentProfileKey": "student_profile_064",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_033_065",
+      "parentProfileKey": "parent_profile_033",
+      "studentProfileKey": "student_profile_065",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_033_066",
+      "parentProfileKey": "parent_profile_033",
+      "studentProfileKey": "student_profile_066",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_034_067",
+      "parentProfileKey": "parent_profile_034",
+      "studentProfileKey": "student_profile_067",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_034_068",
+      "parentProfileKey": "parent_profile_034",
+      "studentProfileKey": "student_profile_068",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_035_069",
+      "parentProfileKey": "parent_profile_035",
+      "studentProfileKey": "student_profile_069",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_035_070",
+      "parentProfileKey": "parent_profile_035",
+      "studentProfileKey": "student_profile_070",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_036_071",
+      "parentProfileKey": "parent_profile_036",
+      "studentProfileKey": "student_profile_071",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_036_072",
+      "parentProfileKey": "parent_profile_036",
+      "studentProfileKey": "student_profile_072",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_037_073",
+      "parentProfileKey": "parent_profile_037",
+      "studentProfileKey": "student_profile_073",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_038_074",
+      "parentProfileKey": "parent_profile_038",
+      "studentProfileKey": "student_profile_074",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_039_075",
+      "parentProfileKey": "parent_profile_039",
+      "studentProfileKey": "student_profile_075",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_040_076",
+      "parentProfileKey": "parent_profile_040",
+      "studentProfileKey": "student_profile_076",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_041_077",
+      "parentProfileKey": "parent_profile_041",
+      "studentProfileKey": "student_profile_077",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_042_078",
+      "parentProfileKey": "parent_profile_042",
+      "studentProfileKey": "student_profile_078",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_043_079",
+      "parentProfileKey": "parent_profile_043",
+      "studentProfileKey": "student_profile_079",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_044_080",
+      "parentProfileKey": "parent_profile_044",
+      "studentProfileKey": "student_profile_080",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_045_081",
+      "parentProfileKey": "parent_profile_045",
+      "studentProfileKey": "student_profile_081",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_046_082",
+      "parentProfileKey": "parent_profile_046",
+      "studentProfileKey": "student_profile_082",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_047_083",
+      "parentProfileKey": "parent_profile_047",
+      "studentProfileKey": "student_profile_083",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_048_084",
+      "parentProfileKey": "parent_profile_048",
+      "studentProfileKey": "student_profile_084",
+      "relationship": "Father",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_049_085",
+      "parentProfileKey": "parent_profile_049",
+      "studentProfileKey": "student_profile_085",
+      "relationship": "Mother",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "ps_050_086",
+      "parentProfileKey": "parent_profile_050",
+      "studentProfileKey": "student_profile_086",
+      "relationship": "Guardian",
+      "status": "ACTIVE"
+    }
+  ],
+  "subjects": [
+    {
+      "key": "subject_math_10",
+      "name": "Toán 10 Nâng Cao",
+      "gradeLevel": "10",
+      "defaultTuitionFee": 1200000,
+      "status": "ACTIVE"
+    },
+    {
+      "key": "subject_physics_11",
+      "name": "Vật Lý 11",
+      "gradeLevel": "11",
+      "defaultTuitionFee": 1300000,
+      "status": "ACTIVE"
+    },
+    {
+      "key": "subject_english_9",
+      "name": "Tiếng Anh 9",
+      "gradeLevel": "9",
+      "defaultTuitionFee": 1100000,
+      "status": "ACTIVE"
+    },
+    {
+      "key": "subject_chemistry_12",
+      "name": "Hóa Học 12",
+      "gradeLevel": "12",
+      "defaultTuitionFee": 1400000,
+      "status": "ACTIVE"
+    },
+    {
+      "key": "subject_math_9",
+      "name": "Toán 9 Luyện Thi",
+      "gradeLevel": "9",
+      "defaultTuitionFee": 1250000,
+      "status": "ACTIVE"
+    }
+  ],
+  "classes": [
+    {
+      "key": "class_toan_10a",
+      "name": "Lớp Toán 10A",
+      "subjectKey": "subject_math_10",
+      "teacherProfileKey": "teacher_profile_main",
+      "room": "Phòng B201",
+      "maxStudents": 20,
+      "status": "ACTIVE",
+      "startDate": "2026-06-15",
+      "endDate": "2026-09-15"
+    },
+    {
+      "key": "class_ly_11a",
+      "name": "Lớp Lý 11A",
+      "subjectKey": "subject_physics_11",
+      "teacherProfileKey": "teacher_profile_main",
+      "room": "Phòng B202",
+      "maxStudents": 20,
+      "status": "ACTIVE",
+      "startDate": "2026-06-15",
+      "endDate": "2026-09-15"
+    },
+    {
+      "key": "class_anh_9a",
+      "name": "Lớp Anh 9A",
+      "subjectKey": "subject_english_9",
+      "teacherProfileKey": "teacher_profile_second",
+      "room": "Phòng B203",
+      "maxStudents": 20,
+      "status": "ACTIVE",
+      "startDate": "2026-06-15",
+      "endDate": "2026-09-15"
+    },
+    {
+      "key": "class_hoa_12a",
+      "name": "Lớp Hóa 12A",
+      "subjectKey": "subject_chemistry_12",
+      "teacherProfileKey": "teacher_profile_second",
+      "room": "Phòng B204",
+      "maxStudents": 20,
+      "status": "ACTIVE",
+      "startDate": "2026-06-15",
+      "endDate": "2026-09-15"
+    },
+    {
+      "key": "class_toan_9a",
+      "name": "Lớp Toán 9A",
+      "subjectKey": "subject_math_9",
+      "teacherProfileKey": "teacher_profile_main",
+      "room": "Phòng B205",
+      "maxStudents": 20,
+      "status": "ACTIVE",
+      "startDate": "2026-06-15",
+      "endDate": "2026-09-15"
+    }
+  ],
+  "classStudents": [
+    {
+      "key": "cs_class_toan_10a_001",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_001",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_002",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_002",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_003",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_003",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_004",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_004",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_005",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_005",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_006",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_006",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_007",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_007",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_008",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_008",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_009",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_009",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_010",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_010",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_011",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_011",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_012",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_012",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_013",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_013",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_014",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_014",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_10a_015",
+      "classKey": "class_toan_10a",
+      "studentProfileKey": "student_profile_015",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_016",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_016",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_017",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_017",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_018",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_018",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_019",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_019",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_020",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_020",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_021",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_021",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_022",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_022",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_023",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_023",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_024",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_024",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_025",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_025",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_026",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_026",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_027",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_027",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_028",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_028",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_029",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_029",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_030",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_030",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_ly_11a_031",
+      "classKey": "class_ly_11a",
+      "studentProfileKey": "student_profile_031",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_032",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_032",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_033",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_033",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_034",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_034",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_035",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_035",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_036",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_036",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_037",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_037",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_038",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_038",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_039",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_039",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_040",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_040",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_041",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_041",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_042",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_042",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_043",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_043",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_044",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_044",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_045",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_045",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_046",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_046",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_047",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_047",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_anh_9a_048",
+      "classKey": "class_anh_9a",
+      "studentProfileKey": "student_profile_048",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_049",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_049",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_050",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_050",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_051",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_051",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_052",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_052",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_053",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_053",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_054",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_054",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_055",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_055",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_056",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_056",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_057",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_057",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_058",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_058",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_059",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_059",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_060",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_060",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_061",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_061",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_062",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_062",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_063",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_063",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_064",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_064",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_065",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_065",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_hoa_12a_066",
+      "classKey": "class_hoa_12a",
+      "studentProfileKey": "student_profile_066",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_067",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_067",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_068",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_068",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_069",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_069",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_070",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_070",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_071",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_071",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_072",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_072",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_073",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_073",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_074",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_074",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_075",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_075",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_076",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_076",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_077",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_077",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_078",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_078",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_079",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_079",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_080",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_080",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_081",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_081",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_082",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_082",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_083",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_083",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_084",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_084",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_085",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_085",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "cs_class_toan_9a_086",
+      "classKey": "class_toan_9a",
+      "studentProfileKey": "student_profile_086",
+      "status": "ACTIVE"
+    }
+  ],
+  "schedules": [
+    {
+      "key": "schedule_001",
+      "classKey": "class_toan_10a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 1,
+      "startTime": "07:30",
+      "endTime": "09:30",
+      "room": "Phòng B201",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_002",
+      "classKey": "class_toan_10a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 3,
+      "startTime": "07:30",
+      "endTime": "09:30",
+      "room": "Phòng B201",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_003",
+      "classKey": "class_ly_11a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 2,
+      "startTime": "09:30",
+      "endTime": "11:30",
+      "room": "Phòng B202",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_004",
+      "classKey": "class_ly_11a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 4,
+      "startTime": "09:30",
+      "endTime": "11:30",
+      "room": "Phòng B202",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_005",
+      "classKey": "class_anh_9a",
+      "teacherProfileKey": "teacher_profile_second",
+      "dayOfWeek": 1,
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "room": "Phòng B203",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_006",
+      "classKey": "class_anh_9a",
+      "teacherProfileKey": "teacher_profile_second",
+      "dayOfWeek": 5,
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "room": "Phòng B203",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_007",
+      "classKey": "class_hoa_12a",
+      "teacherProfileKey": "teacher_profile_second",
+      "dayOfWeek": 2,
+      "startTime": "16:00",
+      "endTime": "18:00",
+      "room": "Phòng B204",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_008",
+      "classKey": "class_hoa_12a",
+      "teacherProfileKey": "teacher_profile_second",
+      "dayOfWeek": 4,
+      "startTime": "16:00",
+      "endTime": "18:00",
+      "room": "Phòng B204",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_009",
+      "classKey": "class_toan_9a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 3,
+      "startTime": "18:00",
+      "endTime": "20:00",
+      "room": "Phòng B205",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "schedule_010",
+      "classKey": "class_toan_9a",
+      "teacherProfileKey": "teacher_profile_main",
+      "dayOfWeek": 6,
+      "startTime": "18:00",
+      "endTime": "20:00",
+      "room": "Phòng B205",
+      "status": "ACTIVE"
+    }
+  ],
+  "sessions": [
+    {
+      "key": "session_001",
+      "classKey": "class_toan_10a",
+      "scheduleKey": "schedule_001",
+      "sessionDate": "2026-06-15",
+      "topic": "Buổi học ngày 15/06/2026",
+      "status": "COMPLETED"
+    },
+    {
+      "key": "session_002",
+      "classKey": "class_ly_11a",
+      "scheduleKey": "schedule_003",
+      "sessionDate": "2026-06-16",
+      "topic": "Buổi học ngày 16/06/2026",
+      "status": "COMPLETED"
+    },
+    {
+      "key": "session_003",
+      "classKey": "class_anh_9a",
+      "scheduleKey": "schedule_005",
+      "sessionDate": "2026-06-15",
+      "topic": "Buổi học ngày 15/06/2026",
+      "status": "SCHEDULED"
+    }
+  ],
+  "attendances": [
+    {
+      "key": "att_session_001_001",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_001",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_002",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_002",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_003",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_003",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_004",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_004",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_005",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_005",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_006",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_006",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_007",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_007",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_008",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_008",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_009",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_009",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_010",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_010",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_011",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_011",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_012",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_012",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_001_013",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_013",
+      "status": "LATE",
+      "note": "Đến trễ 10 phút"
+    },
+    {
+      "key": "att_session_001_014",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_014",
+      "status": "LATE",
+      "note": "Đến trễ 10 phút"
+    },
+    {
+      "key": "att_session_001_015",
+      "sessionKey": "session_001",
+      "studentProfileKey": "student_profile_015",
+      "status": "ABSENT",
+      "note": "Vắng không phép"
+    },
+    {
+      "key": "att_session_002_016",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_016",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_017",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_017",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_018",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_018",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_019",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_019",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_020",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_020",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_021",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_021",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_022",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_022",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_023",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_023",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_024",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_024",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_025",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_025",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_026",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_026",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_027",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_027",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_028",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_028",
+      "status": "PRESENT",
+      "note": ""
+    },
+    {
+      "key": "att_session_002_029",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_029",
+      "status": "LATE",
+      "note": "Đến trễ 10 phút"
+    },
+    {
+      "key": "att_session_002_030",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_030",
+      "status": "LATE",
+      "note": "Đến trễ 10 phút"
+    },
+    {
+      "key": "att_session_002_031",
+      "sessionKey": "session_002",
+      "studentProfileKey": "student_profile_031",
+      "status": "ABSENT",
+      "note": "Vắng không phép"
+    }
+  ],
+  "invoices": [
+    {
+      "key": "invoice_001",
+      "studentProfileKey": "student_profile_001",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_002",
+      "studentProfileKey": "student_profile_002",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_003",
+      "studentProfileKey": "student_profile_003",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_004",
+      "studentProfileKey": "student_profile_004",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_005",
+      "studentProfileKey": "student_profile_005",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_006",
+      "studentProfileKey": "student_profile_006",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_007",
+      "studentProfileKey": "student_profile_007",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_008",
+      "studentProfileKey": "student_profile_008",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_009",
+      "studentProfileKey": "student_profile_009",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_010",
+      "studentProfileKey": "student_profile_010",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PAID",
+      "paidAmount": 1200000
+    },
+    {
+      "key": "invoice_011",
+      "studentProfileKey": "student_profile_011",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_012",
+      "studentProfileKey": "student_profile_012",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_013",
+      "studentProfileKey": "student_profile_013",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_014",
+      "studentProfileKey": "student_profile_014",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_015",
+      "studentProfileKey": "student_profile_015",
+      "classKey": "class_toan_10a",
+      "amount": 1200000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_016",
+      "studentProfileKey": "student_profile_016",
+      "classKey": "class_ly_11a",
+      "amount": 1300000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_017",
+      "studentProfileKey": "student_profile_017",
+      "classKey": "class_ly_11a",
+      "amount": 1300000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "UNPAID",
+      "paidAmount": 0
+    },
+    {
+      "key": "invoice_018",
+      "studentProfileKey": "student_profile_018",
+      "classKey": "class_ly_11a",
+      "amount": 1300000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PARTIAL",
+      "paidAmount": 650000
+    },
+    {
+      "key": "invoice_019",
+      "studentProfileKey": "student_profile_019",
+      "classKey": "class_ly_11a",
+      "amount": 1300000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PARTIAL",
+      "paidAmount": 650000
+    },
+    {
+      "key": "invoice_020",
+      "studentProfileKey": "student_profile_020",
+      "classKey": "class_ly_11a",
+      "amount": 1300000,
+      "month": "2026-06",
+      "dueDate": "2026-06-30",
+      "status": "PARTIAL",
+      "paidAmount": 650000
+    }
+  ]
+}
