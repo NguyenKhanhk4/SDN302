@@ -4,6 +4,7 @@ const morgan = require('morgan');
 
 const teacherRoutes = require('./routes/teacher.routes');
 const authRoutes = require('./routes/auth.routes');
+const parentRoutes = require('./routes/parent.routes');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/parent', parentRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

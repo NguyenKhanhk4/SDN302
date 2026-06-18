@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cổng Thông Tin Phụ Huynh - SDN302</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
+  <div id="login-screen" class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Trung tâm Gia sư</h1>
+        <p>Đăng nhập vào tài khoản phụ huynh của bạn</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Địa chỉ Email</label>
+          <input type="email" id="email" required placeholder="parent@gmail.com" value="parent@gmail.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input type="password" id="password" required placeholder="Nhập mật khẩu của bạn" value="123456">
+        </div>
+        <button type="submit" class="btn">Đăng nhập</button>
+        <div id="error-message" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MÀN HÌNH DASHBOARD PHỤ HUYNH (ĐỒNG BỘ ẢNH) -->
+  <div id="app-screen" class="app-container">
+    
+    <!-- THANH MENU BÊN TRÁI (SIDEBAR TỐI) -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-icon">🎓</div>
+        <div>
+          <h2>Tutor Center</h2>
+          <p>Quản lý học tập</p>
+        </div>
+      </div>
+      
+      <nav class="nav-menu">
+        <li>
+          <a class="nav-item active" data-tab="dashboard">
+            <span>📊</span> Tổng quan
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="classes">
+            <span>📁</span> Lớp học của con
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="schedules">
+            <span>📅</span> Lịch học chi tiết
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="grades">
+            <span>📈</span> Bảng điểm số
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="teachers">
+            <span>👨‍🏫</span> Giáo viên dạy học
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="profile">
+            <span>👤</span> Hồ sơ & Liên kết
+          </a>
+        </li>
+      </nav>
+    </aside>
+
+    <!-- BÊN PHẢI (TOP HEADER + SCROLLABLE MAIN CONTENT) -->
+    <div style="display: flex; flex-direction: column; height: 100vh; overflow: hidden; width: 100%;">
+      
+      <!-- TOP HEADER SÁNG (ĐỒNG BỘ ẢNH) -->
+      <header class="top-header">
+        <div class="header-left">
+          <span class="breadcrumb-pill">Trang Phụ Huynh</span>
+          <div class="search-bar-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Tìm lớp học, lịch học, giáo viên...">
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <div class="notification-bell">🔔</div>
+          <div class="user-profile-pill">
+            <div class="avatar" id="parent-avatar-letter">P</div>
+            <div class="info">
+              <span class="name" id="parent-display-name">Phụ huynh</span>
+              <span class="role">parent</span>
+            </div>
+          </div>
+          <button id="logout-btn" class="btn-logout btn-danger-logout">🚪 Đăng xuất</button>
+        </div>
+      </header>
+
+      <!-- KHU VỰC NỘI DUNG CHÍNH (MAIN CONTENT - CUỘN ĐƯỢC) -->
+      <main class="main-content">
+        
+        <!-- BẢNG ĐIỀU KHIỂN BANNER TRÊN CÙNG (ĐỒNG BỘ ẢNH) -->
+        <section class="dashboard-banner">
+          <div class="banner-left">
+            <div class="banner-subtitle">Bảng điều khiển</div>
+            <h1 id="welcome-text">Trang Tổng Quan Học Tập</h1>
+            <p>Theo dõi hoạt động học tập của con - lớp học, lịch học, điểm số và giáo viên giảng dạy trong một màn hình duy nhất.</p>
+          </div>
+          <div class="banner-right-widget">
+            <div class="widget-label">Tổng số con</div>
+            <div class="widget-value" id="children-count-value">1 Học sinh</div>
+          </div>
+        </section>
+
+        <!-- CHỌN CON & TÓM TẮT HỒ SƠ -->
+        <section class="main-header" style="margin-bottom: 20px;">
+          <div class="welcome-section" style="margin-bottom: 0;">
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Hồ sơ học viên</h2>
+          </div>
+          <div class="kid-selector">
+            <span>Đang chọn con:</span>
+            <select id="kid-select">
+              <!-- Sẽ được load động bằng JS -->
+            </select>
+          </div>
+        </section>
+
+        <!-- Profile Strip -->
+        <section class="child-summary">
+          <div class="avatar-circle" id="child-avatar">S</div>
+          <div class="child-details-grid">
+            <div class="detail-item">
+              <div class="detail-label">Họ và tên con</div>
+              <div class="detail-value" id="child-name">-</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Khối lớp</div>
+              <div class="detail-value" id="child-grade">-</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Trường học</div>
+              <div class="detail-value" id="child-school">-</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Email học sinh</div>
+              <div class="detail-value" id="child-email">-</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- NỘI DUNG ĐỘNG (DASHBOARD HOẶC TAB CHI TIẾT) -->
+        <div id="dynamic-dashboard-content">
+          <!-- Khi ở tab 'dashboard', khu vực này hiển thị các thẻ thống kê.
+               Khi ở tab khác, nó hiển thị bảng thông tin chi tiết. -->
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+</body>
+</html>
