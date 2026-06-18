@@ -30,7 +30,7 @@ const SessionSchema = new mongoose.Schema(
   }
 );
 
-// Compound index: mot class chi co 1 session cho moi ngay
-SessionSchema.index({ classId: 1, sessionDate: 1 }, { unique: true });
+// Compound index: mot class chi co 1 session cho moi schedule trong 1 ngay
+SessionSchema.index({ classId: 1, scheduleId: 1, sessionDate: 1 }, { unique: true });
 
 module.exports = mongoose.model('Session', SessionSchema);

@@ -11,10 +11,10 @@ const {
   createSession,
   getAttendanceBySession,
   takeAttendance,
-} = require('../controllers/teacher.controller');
+} = require('./teacher.controller');
 
-const { protect } = require('../middlewares/auth.middleware');
-const { authorize } = require('../middlewares/role.middleware');
+const { protect } = require('../../middlewares/auth.middleware');
+const { authorize } = require('../../middlewares/role.middleware');
 
 // Áp dụng protect + authorize('teacher') cho toàn bộ routes bên dưới
 router.use(protect, authorize('teacher'));

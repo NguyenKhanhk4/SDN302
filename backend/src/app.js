@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const teacherRoutes = require('./routes/teacher.routes');
+const teacherRoutes = require('./modules/teacher');
 const authRoutes = require('./routes/auth.routes');
+const profileRoutes = require('./routes/profile.routes');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/profile', profileRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

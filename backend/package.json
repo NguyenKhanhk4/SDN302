@@ -6,13 +6,15 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed:teacher-basic": "node src/seed/teacher-basic.seed.js",
+    "seed:teacher-basic": "node src/seed/teacher/teacher-basic.seed.js",
     "seed:add-students": "node src/seed/add-students.seed.js",
-    "seed:teacher-schedule": "node src/seed/teacher-schedule.seed.js",
+    "seed:teacher-schedule": "node src/seed/teacher/teacher-schedule.seed.js",
     "seed:full": "node src/seed/full-system.seed.js",
     "seed:full-test-data": "node src/seed/full-test-data.seed.js",
     "cleanup:full-test-data": "node src/seed/cleanup-full-test-data.js",
-    "reset:full-test-data": "npm run cleanup:full-test-data && npm run seed:full-test-data"
+    "reset:full-test-data": "npm run cleanup:full-test-data && npm run seed:full-test-data",
+    "seed:generate-fixed-sessions": "node src/seed/teacher/generate-fixed-sessions.seed.js",
+    "seed:cleanup-excess-sessions": "node src/seed/cleanup-excess-sessions.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

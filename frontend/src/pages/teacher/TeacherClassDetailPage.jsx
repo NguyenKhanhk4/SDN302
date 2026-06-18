@@ -23,7 +23,7 @@ const TeacherClassDetailPage = () => {
       setLoading(true);
       setError(null);
       const data = await teacherApi.getClassDetail(classId);
-      
+
       // Data might be wrapped depending on backend convention
       const detail = data?.class || data?.data || data;
       setClassDetail(detail);
@@ -55,13 +55,13 @@ const TeacherClassDetailPage = () => {
         <p className="font-medium">Lỗi</p>
         <p className="text-sm">{error}</p>
         <div className="mt-4 flex space-x-4">
-          <button 
+          <button
             onClick={fetchClassDetail}
             className="text-sm font-medium text-red-700 hover:text-red-800 underline focus:outline-none"
           >
             Thử lại
           </button>
-          <button 
+          <button
             onClick={() => navigate('/teacher/classes')}
             className="text-sm font-medium text-gray-700 hover:text-gray-900 underline focus:outline-none"
           >
@@ -102,11 +102,11 @@ const TeacherClassDetailPage = () => {
               <p className="text-base text-gray-900">{classDetail.room || 'Không có'}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Số học viên tối đa</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Học viên</p>
               <p className="text-base text-gray-900">{classDetail.maxStudents || classDetail.capacity || 'Không có'}</p>
             </div>
           </div>
-          
+
           <div className="space-y-5">
             <div>
               <p className="text-sm text-gray-500 font-medium mb-1">Trạng thái</p>
@@ -124,16 +124,16 @@ const TeacherClassDetailPage = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-4">
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             onClick={() => navigate(`/teacher/classes/${classId}/students`)}
           >
             Xem học viên
           </Button>
-          <Button 
-            variant="secondary" 
+          <Button
+            variant="secondary"
             onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}
           >
             Xem buổi học

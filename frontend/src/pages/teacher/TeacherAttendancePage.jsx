@@ -6,6 +6,34 @@ import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
 import Button from '../../components/common/Button';
 
+const normalizeAttendanceStatus = (status) => {
+  if (status === "PRESENT" || status === "ABSENT") {
+    return status;
+  }
+  return "";
+};
+
+const getStatusButtonClass = (currentStatus, buttonStatus) => {
+  const isActive = currentStatus === buttonStatus;
+
+  const baseClass =
+    "px-4 py-2 rounded-lg border text-sm transition font-medium";
+
+  if (buttonStatus === "PRESENT") {
+    return isActive
+      ? `${baseClass} bg-green-100 text-green-700 border-green-300 font-semibold opacity-100`
+      : `${baseClass} bg-gray-50 text-gray-400 border-gray-200 opacity-50 hover:opacity-80`;
+  }
+
+  if (buttonStatus === "ABSENT") {
+    return isActive
+      ? `${baseClass} bg-red-100 text-red-700 border-red-300 font-semibold opacity-100`
+      : `${baseClass} bg-gray-50 text-gray-400 border-gray-200 opacity-50 hover:opacity-80`;
+  }
+
+  return baseClass;
+};
+
 const TeacherAttendancePage = () => {
   const { classId, sessionId } = useParams();
   const navigate = useNavigate();
@@ -62,7 +90,7 @@ const TeacherAttendancePage = () => {
         const sId = att.studentId?._id || att.studentId || att.student;
         if (sId) {
           attMap[sId] = {
-            status: att.status || 'PRESENT',
+            status: normalizeAttendanceStatus(att.status),
             note: att.note || ''
           };
         }
@@ -75,7 +103,7 @@ const TeacherAttendancePage = () => {
         if (sId) {
           const existing = attMap[sId];
           initialForm[sId] = {
-            status: existing ? existing.status : 'PRESENT', // Default PRESENT
+            status: existing && existing.status ? existing.status : '', // Default empty
             note: existing ? existing.note : ''
           };
         }
@@ -122,11 +150,18 @@ const TeacherAttendancePage = () => {
       setSuccessMessage('');
 
       // Build array of attendance objects for the API
-      const attendances = Object.keys(attendanceForm).map(sId => ({
-        studentId: sId,
-        status: attendanceForm[sId].status,
-        note: attendanceForm[sId].note
-      }));
+      const attendances = [];
+      for (const sId of Object.keys(attendanceForm)) {
+        const formRow = attendanceForm[sId];
+        if (!formRow.status) {
+          throw new Error("Vui lòng chọn trạng thái điểm danh cho tất cả học viên.");
+        }
+        attendances.push({
+          studentId: sId,
+          status: formRow.status,
+          note: formRow.note
+        });
+      }
 
       await teacherApi.takeAttendance(classId, sessionId, { attendances });
       
@@ -212,7 +247,7 @@ const TeacherAttendancePage = () => {
                     const info = getStudentInfo(item);
                     if (!info.id) return null;
                     
-                    const formRow = attendanceForm[info.id] || { status: 'PRESENT', note: '' };
+                    const formRow = attendanceForm[info.id] || { status: '', note: '' };
 
                     return (
                       <tr key={info.id || index} className="hover:bg-gray-50 transition-colors">
@@ -223,21 +258,23 @@ const TeacherAttendancePage = () => {
                           <div className="text-sm text-gray-500">{info.email}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <select
-                            value={formRow.status}
-                            onChange={(e) => handleStatusChange(info.id, e.target.value)}
-                            className={`text-sm border rounded-md py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors ${
-                              formRow.status === 'PRESENT' ? 'bg-green-50 border-green-200 text-green-700' :
-                              formRow.status === 'ABSENT' ? 'bg-red-50 border-red-200 text-red-700' :
-                              formRow.status === 'LATE' ? 'bg-yellow-50 border-yellow-200 text-yellow-700' :
-                              'bg-blue-50 border-blue-200 text-blue-700'
-                            }`}
-                          >
-                            <option value="PRESENT">Có mặt</option>
-                            <option value="ABSENT">Vắng mặt</option>
-                            <option value="LATE">Muộn</option>
-                            <option value="EXCUSED">Có phép</option>
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleStatusChange(info.id, "PRESENT")}
+                              className={getStatusButtonClass(formRow.status, "PRESENT")}
+                            >
+                              Present
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleStatusChange(info.id, "ABSENT")}
+                              className={getStatusButtonClass(formRow.status, "ABSENT")}
+                            >
+                              Absent
+                            </button>
+                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <input

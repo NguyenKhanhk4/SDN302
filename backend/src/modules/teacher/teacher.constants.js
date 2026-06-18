@@ -1,0 +1,25 @@
+const ATTENDANCE_STATUS = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  EXCUSED: 'EXCUSED'
+};
+
+const SESSION_STATUS = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+const CLASS_STATUS = {
+  SCHEDULED: 'scheduled',
+  ONGOING: 'ongoing',
+  COMPLETED: 'completed',
+  CANCELLED: 'cancelled'
+};
+
+module.exports = {
+  ATTENDANCE_STATUS,
+  SESSION_STATUS,
+  CLASS_STATUS
+};
