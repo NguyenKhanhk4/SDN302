@@ -1,0 +1,386 @@
+/**
+ * Script sinh file full-test-data.json
+ * Chạy: node src/seed/data/generate-full-test-data.js
+ */
+const fs = require('fs');
+const path = require('path');
+
+// Vietnamese names pool
+const hoVN = ['Nguyen', 'Tran', 'Le', 'Pham', 'Hoang', 'Vu', 'Vo', 'Dang', 'Bui', 'Do', 'Ngo', 'Duong', 'Ly', 'Truong', 'Dinh'];
+const demVN = ['Van', 'Thi', 'Duc', 'Minh', 'Quoc', 'Thanh', 'Ngoc', 'Bao', 'Anh', 'Huu', 'Dinh', 'Xuan', 'Hong', 'Kim', 'Phuoc'];
+const tenVN = ['An', 'Binh', 'Chi', 'Dung', 'Em', 'Giang', 'Hai', 'Khoa', 'Linh', 'Mai', 'Nam', 'Oanh', 'Phuc', 'Quang', 'Son', 'Tung', 'Uyen', 'Vy', 'Xuan', 'Yen', 'Huy', 'Dat', 'Khanh', 'Long', 'Minh', 'Nhi', 'Phat', 'Tam', 'Thao', 'Tien', 'Toan', 'Trung', 'Tu', 'Vinh', 'Hoa', 'Lan', 'Duc', 'Hung', 'Thinh', 'Bao'];
+
+function pickName(i) {
+  const h = hoVN[i % hoVN.length];
+  const d = demVN[(i * 3) % demVN.length];
+  const t = tenVN[i % tenVN.length];
+  return `${h} ${d} ${t}`;
+}
+
+function pickParentName(i) {
+  const h = hoVN[(i + 5) % hoVN.length];
+  const d = demVN[(i * 2 + 1) % demVN.length];
+  const t = tenVN[(i + 10) % tenVN.length];
+  return `${h} ${d} ${t}`;
+}
+
+const pad = (n, len = 3) => String(n).padStart(len, '0');
+
+const data = {
+  meta: {
+    name: "Full Test Data",
+    version: "1.0",
+    description: "Dataset for testing Teacher/Admin/Manager modules",
+    testDataTag: "FULL_TEST_DATA_V1"
+  },
+  users: [],
+  teacherProfiles: [],
+  studentProfiles: [],
+  parentProfiles: [],
+  parentStudents: [],
+  subjects: [],
+  classes: [],
+  classStudents: [],
+  schedules: [],
+  sessions: [],
+  attendances: [],
+  invoices: []
+};
+
+// ============ USERS ============
+
+// Admin
+data.users.push({
+  key: "admin_main",
+  fullName: "System Admin",
+  email: "admin@gmail.com",
+  password: "123456",
+  phone: "0900000000",
+  role: "ADMIN",
+  status: "ACTIVE"
+});
+
+// Manager
+data.users.push({
+  key: "manager_main",
+  fullName: "Center Manager",
+  email: "manager@gmail.com",
+  password: "123456",
+  phone: "0910000000",
+  role: "MANAGER",
+  status: "ACTIVE"
+});
+
+// Teacher 1
+data.users.push({
+  key: "teacher_main",
+  fullName: "Nguyen Van Teacher",
+  email: "teacher@gmail.com",
+  password: "123456",
+  phone: "0920000001",
+  role: "TEACHER",
+  status: "ACTIVE"
+});
+
+// Teacher 2
+data.users.push({
+  key: "teacher_second",
+  fullName: "Tran Thi Teacher",
+  email: "teacher2@gmail.com",
+  password: "123456",
+  phone: "0920000002",
+  role: "TEACHER",
+  status: "ACTIVE"
+});
+
+// 86 Students
+for (let i = 1; i <= 86; i++) {
+  data.users.push({
+    key: `student_${pad(i)}`,
+    fullName: pickName(i),
+    email: `student${pad(i)}@gmail.com`,
+    password: "123456",
+    phone: `093${pad(i, 7)}`,
+    role: "STUDENT",
+    status: "ACTIVE"
+  });
+}
+
+// 50 Parents
+for (let i = 1; i <= 50; i++) {
+  data.users.push({
+    key: `parent_${pad(i)}`,
+    fullName: pickParentName(i),
+    email: `parent${pad(i)}@gmail.com`,
+    password: "123456",
+    phone: `094${pad(i, 7)}`,
+    role: "PARENT",
+    status: "ACTIVE"
+  });
+}
+
+// ============ TEACHER PROFILES ============
+
+data.teacherProfiles.push({
+  key: "teacher_profile_main",
+  userKey: "teacher_main",
+  subjects: ["Toán", "Vật lý"],
+  qualification: "Cử nhân Sư phạm",
+  experienceYears: 5,
+  status: "ACTIVE"
+});
+
+data.teacherProfiles.push({
+  key: "teacher_profile_second",
+  userKey: "teacher_second",
+  subjects: ["Tiếng Anh", "Hóa học"],
+  qualification: "Thạc sĩ Giáo dục",
+  experienceYears: 4,
+  status: "ACTIVE"
+});
+
+// ============ STUDENT PROFILES ============
+
+for (let i = 1; i <= 86; i++) {
+  data.studentProfiles.push({
+    key: `student_profile_${pad(i)}`,
+    userKey: `student_${pad(i)}`,
+    grade: i <= 15 ? "10" : i <= 31 ? "11" : i <= 48 ? "9" : i <= 66 ? "12" : "9",
+    school: i <= 31 ? "THPT Nguyen Trai" : i <= 48 ? "THCS Le Loi" : i <= 66 ? "THPT Chu Van An" : "THCS Tran Phu",
+    status: "ACTIVE"
+  });
+}
+
+// ============ PARENT PROFILES ============
+
+for (let i = 1; i <= 50; i++) {
+  data.parentProfiles.push({
+    key: `parent_profile_${pad(i)}`,
+    userKey: `parent_${pad(i)}`,
+    status: "ACTIVE"
+  });
+}
+
+// ============ PARENT-STUDENT LINKS ============
+
+const relationships = ["Father", "Mother", "Guardian"];
+let studentIdx = 1;
+// Parents 1-36: each linked to 2 students
+for (let p = 1; p <= 36; p++) {
+  for (let s = 0; s < 2 && studentIdx <= 86; s++) {
+    data.parentStudents.push({
+      key: `ps_${pad(p)}_${pad(studentIdx)}`,
+      parentProfileKey: `parent_profile_${pad(p)}`,
+      studentProfileKey: `student_profile_${pad(studentIdx)}`,
+      relationship: relationships[(p + s) % 3],
+      status: "ACTIVE"
+    });
+    studentIdx++;
+  }
+}
+// Parents 37-50: each linked to 1 student
+for (let p = 37; p <= 50 && studentIdx <= 86; p++) {
+  data.parentStudents.push({
+    key: `ps_${pad(p)}_${pad(studentIdx)}`,
+    parentProfileKey: `parent_profile_${pad(p)}`,
+    studentProfileKey: `student_profile_${pad(studentIdx)}`,
+    relationship: relationships[p % 3],
+    status: "ACTIVE"
+  });
+  studentIdx++;
+}
+
+// ============ SUBJECTS ============
+
+data.subjects.push(
+  { key: "subject_math_10", name: "Toán 10 Nâng Cao", gradeLevel: "10", defaultTuitionFee: 1200000, status: "ACTIVE" },
+  { key: "subject_physics_11", name: "Vật Lý 11", gradeLevel: "11", defaultTuitionFee: 1300000, status: "ACTIVE" },
+  { key: "subject_english_9", name: "Tiếng Anh 9", gradeLevel: "9", defaultTuitionFee: 1100000, status: "ACTIVE" },
+  { key: "subject_chemistry_12", name: "Hóa Học 12", gradeLevel: "12", defaultTuitionFee: 1400000, status: "ACTIVE" },
+  { key: "subject_math_9", name: "Toán 9 Luyện Thi", gradeLevel: "9", defaultTuitionFee: 1250000, status: "ACTIVE" }
+);
+
+// ============ CLASSES ============
+
+data.classes.push(
+  { key: "class_toan_10a", name: "Lớp Toán 10A", subjectKey: "subject_math_10", teacherProfileKey: "teacher_profile_main", room: "Phòng B201", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
+  { key: "class_ly_11a", name: "Lớp Lý 11A", subjectKey: "subject_physics_11", teacherProfileKey: "teacher_profile_main", room: "Phòng B202", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
+  { key: "class_anh_9a", name: "Lớp Anh 9A", subjectKey: "subject_english_9", teacherProfileKey: "teacher_profile_second", room: "Phòng B203", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
+  { key: "class_hoa_12a", name: "Lớp Hóa 12A", subjectKey: "subject_chemistry_12", teacherProfileKey: "teacher_profile_second", room: "Phòng B204", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
+  { key: "class_toan_9a", name: "Lớp Toán 9A", subjectKey: "subject_math_9", teacherProfileKey: "teacher_profile_main", room: "Phòng B205", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" }
+);
+
+// ============ CLASS STUDENTS ============
+
+const classStudentRanges = [
+  { classKey: "class_toan_10a", from: 1, to: 15 },
+  { classKey: "class_ly_11a", from: 16, to: 31 },
+  { classKey: "class_anh_9a", from: 32, to: 48 },
+  { classKey: "class_hoa_12a", from: 49, to: 66 },
+  { classKey: "class_toan_9a", from: 67, to: 86 }
+];
+
+classStudentRanges.forEach(range => {
+  for (let i = range.from; i <= range.to; i++) {
+    data.classStudents.push({
+      key: `cs_${range.classKey}_${pad(i)}`,
+      classKey: range.classKey,
+      studentProfileKey: `student_profile_${pad(i)}`,
+      status: "ACTIVE"
+    });
+  }
+});
+
+// ============ SCHEDULES ============
+
+const slots = [
+  { startTime: "07:30", endTime: "09:30" },  // Ca 1
+  { startTime: "09:30", endTime: "11:30" },  // Ca 2
+  { startTime: "14:00", endTime: "16:00" },  // Ca 3
+  { startTime: "16:00", endTime: "18:00" },  // Ca 4
+  { startTime: "18:00", endTime: "20:00" }   // Ca 5
+];
+
+const scheduleEntries = [
+  { classKey: "class_toan_10a", teacherProfileKey: "teacher_profile_main",  dayOfWeek: 1, slot: 0, room: "Phòng B201" },
+  { classKey: "class_toan_10a", teacherProfileKey: "teacher_profile_main",  dayOfWeek: 3, slot: 0, room: "Phòng B201" },
+  { classKey: "class_ly_11a",   teacherProfileKey: "teacher_profile_main",  dayOfWeek: 2, slot: 1, room: "Phòng B202" },
+  { classKey: "class_ly_11a",   teacherProfileKey: "teacher_profile_main",  dayOfWeek: 4, slot: 1, room: "Phòng B202" },
+  { classKey: "class_anh_9a",   teacherProfileKey: "teacher_profile_second", dayOfWeek: 1, slot: 2, room: "Phòng B203" },
+  { classKey: "class_anh_9a",   teacherProfileKey: "teacher_profile_second", dayOfWeek: 5, slot: 2, room: "Phòng B203" },
+  { classKey: "class_hoa_12a",  teacherProfileKey: "teacher_profile_second", dayOfWeek: 2, slot: 3, room: "Phòng B204" },
+  { classKey: "class_hoa_12a",  teacherProfileKey: "teacher_profile_second", dayOfWeek: 4, slot: 3, room: "Phòng B204" },
+  { classKey: "class_toan_9a",  teacherProfileKey: "teacher_profile_main",  dayOfWeek: 3, slot: 4, room: "Phòng B205" },
+  { classKey: "class_toan_9a",  teacherProfileKey: "teacher_profile_main",  dayOfWeek: 6, slot: 4, room: "Phòng B205" }
+];
+
+scheduleEntries.forEach((e, idx) => {
+  data.schedules.push({
+    key: `schedule_${pad(idx + 1)}`,
+    classKey: e.classKey,
+    teacherProfileKey: e.teacherProfileKey,
+    dayOfWeek: e.dayOfWeek,
+    startTime: slots[e.slot].startTime,
+    endTime: slots[e.slot].endTime,
+    room: e.room,
+    status: "ACTIVE"
+  });
+});
+
+// ============ SESSIONS ============
+
+data.sessions.push(
+  { key: "session_001", classKey: "class_toan_10a", scheduleKey: "schedule_001", sessionDate: "2026-06-15", topic: "Buổi học ngày 15/06/2026", status: "COMPLETED" },
+  { key: "session_002", classKey: "class_ly_11a",   scheduleKey: "schedule_003", sessionDate: "2026-06-16", topic: "Buổi học ngày 16/06/2026", status: "COMPLETED" },
+  { key: "session_003", classKey: "class_anh_9a",   scheduleKey: "schedule_005", sessionDate: "2026-06-15", topic: "Buổi học ngày 15/06/2026", status: "SCHEDULED" }
+);
+
+// ============ ATTENDANCES ============
+
+function generateAttendances(sessionKey, classKey, fromStudent, toStudent) {
+  const total = toStudent - fromStudent + 1;
+  const presentCount = Math.round(total * 0.8);
+  const lateCount = Math.round(total * 0.1);
+  // rest = absent
+
+  const results = [];
+  for (let i = fromStudent; i <= toStudent; i++) {
+    const idx = i - fromStudent;
+    let status, note;
+    if (idx < presentCount) {
+      status = "PRESENT";
+      note = "";
+    } else if (idx < presentCount + lateCount) {
+      status = "LATE";
+      note = "Đến trễ 10 phút";
+    } else {
+      status = "ABSENT";
+      note = "Vắng không phép";
+    }
+    results.push({
+      key: `att_${sessionKey}_${pad(i)}`,
+      sessionKey: sessionKey,
+      studentProfileKey: `student_profile_${pad(i)}`,
+      status: status,
+      note: note
+    });
+  }
+  return results;
+}
+
+// Session 1: class_toan_10a students 1-15
+data.attendances.push(...generateAttendances("session_001", "class_toan_10a", 1, 15));
+// Session 2: class_ly_11a students 16-31
+data.attendances.push(...generateAttendances("session_002", "class_ly_11a", 16, 31));
+
+// ============ INVOICES ============
+
+// 20 students đầu tiên (lớp Toán 10A 15 + 5 Lý 11A)
+for (let i = 1; i <= 20; i++) {
+  let status, paidAmount;
+  const classKey = i <= 15 ? "class_toan_10a" : "class_ly_11a";
+  const amount = i <= 15 ? 1200000 : 1300000;
+
+  if (i <= 10) {
+    status = "PAID";
+    paidAmount = amount;
+  } else if (i <= 17) {
+    status = "UNPAID";
+    paidAmount = 0;
+  } else {
+    status = "PARTIAL";
+    paidAmount = Math.round(amount / 2);
+  }
+
+  data.invoices.push({
+    key: `invoice_${pad(i)}`,
+    studentProfileKey: `student_profile_${pad(i)}`,
+    classKey: classKey,
+    amount: amount,
+    month: "2026-06",
+    dueDate: "2026-06-30",
+    status: status,
+    paidAmount: paidAmount
+  });
+}
+
+// ============ WRITE FILE ============
+
+const outputPath = path.join(__dirname, 'full-test-data.json');
+fs.writeFileSync(outputPath, JSON.stringify(data, null, 2), 'utf-8');
+
+// Validate counts
+console.log('=== VALIDATION ===');
+console.log(`Users: ${data.users.length} (expect 140 = 1 admin + 1 manager + 2 teachers + 86 students + 50 parents)`);
+console.log(`TeacherProfiles: ${data.teacherProfiles.length} (expect 2)`);
+console.log(`StudentProfiles: ${data.studentProfiles.length} (expect 86)`);
+console.log(`ParentProfiles: ${data.parentProfiles.length} (expect 50)`);
+console.log(`ParentStudents: ${data.parentStudents.length} (expect 86)`);
+console.log(`Subjects: ${data.subjects.length} (expect 5)`);
+console.log(`Classes: ${data.classes.length} (expect 5)`);
+console.log(`ClassStudents: ${data.classStudents.length} (expect 86)`);
+console.log(`Schedules: ${data.schedules.length} (expect 10)`);
+console.log(`Sessions: ${data.sessions.length} (expect 3)`);
+console.log(`Attendances: ${data.attendances.length} (expect 31 = 15 + 16)`);
+console.log(`Invoices: ${data.invoices.length} (expect 20)`);
+
+// Class size verification
+classStudentRanges.forEach(r => {
+  const count = data.classStudents.filter(cs => cs.classKey === r.classKey).length;
+  console.log(`  ${r.classKey}: ${count} students`);
+});
+
+// Schedule conflict check
+const scheduleMap = {};
+let conflicts = 0;
+data.schedules.forEach(s => {
+  const teacherSlot = `teacher:${s.teacherProfileKey}_day:${s.dayOfWeek}_time:${s.startTime}`;
+  const roomSlot = `room:${s.room}_day:${s.dayOfWeek}_time:${s.startTime}`;
+  if (scheduleMap[teacherSlot]) { console.error(`CONFLICT teacher: ${teacherSlot}`); conflicts++; }
+  if (scheduleMap[roomSlot]) { console.error(`CONFLICT room: ${roomSlot}`); conflicts++; }
+  scheduleMap[teacherSlot] = true;
+  scheduleMap[roomSlot] = true;
+});
+console.log(`Schedule conflicts: ${conflicts}`);
+
+console.log(`\n✅ File saved to: ${outputPath}`);
