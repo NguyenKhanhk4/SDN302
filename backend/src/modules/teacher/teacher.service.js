@@ -1,6 +1,6 @@
-const TeacherProfile = require('../models/TeacherProfile');
-const Class = require('../models/Class');
-const ClassStudent = require('../models/ClassStudent');
+const TeacherProfile = require('../../models/TeacherProfile');
+const Class = require('../../models/Class');
+const ClassStudent = require('../../models/ClassStudent');
 
 /**
  * Tìm TeacherProfile theo userId.

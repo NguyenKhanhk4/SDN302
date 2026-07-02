@@ -1,13 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { teacherApi } from '../../api/teacherApi';
-import { formatDate } from '../../utils/formatDate';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
-import Badge from '../../components/common/Badge';
 import Button from '../../components/common/Button';
-import Input from '../../components/common/Input';
+
+const formatSessionDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const weekdays = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+  const day = weekdays[date.getDay()];
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const y = date.getFullYear();
+  return `${day} ${d}/${m}/${y}`;
+};
+
+const getSlot = (startTime, endTime) => {
+  if (startTime === '07:30' && endTime === '09:30') return 'Ca 1 (07:30 - 09:30)';
+  if (startTime === '09:30' && endTime === '11:30') return 'Ca 2 (09:30 - 11:30)';
+  if (startTime === '14:00' && endTime === '16:00') return 'Ca 3 (14:00 - 16:00)';
+  if (startTime === '16:00' && endTime === '18:00') return 'Ca 4 (16:00 - 18:00)';
+  if (startTime === '18:00' && endTime === '20:00') return 'Ca 5 (18:00 - 20:00)';
+  if (startTime && endTime) return `${startTime} - ${endTime}`;
+  return '-';
+};
+
+const renderStatusBadge = (status) => {
+  switch (status) {
+    case 'FUTURE':
+      return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700 border border-gray-200">Tương lai</span>;
+    case 'NOT_YET':
+      return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">Chưa điểm danh</span>;
+    case 'COMPLETED':
+      return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">Đã điểm danh</span>;
+    case 'CANCELLED':
+      return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">Đã hủy</span>;
+    default:
+      return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-700">{status}</span>;
+  }
+};
+
+const renderActionButton = (status, sessionId, classId, navigate) => {
+  if (status === 'FUTURE') {
+    return (
+      <Button variant="outline" disabled className="!py-1.5 !px-3 !text-xs opacity-50 cursor-not-allowed">
+        Chưa đến ngày
+      </Button>
+    );
+  }
+  if (status === 'CANCELLED') {
+    return null;
+  }
+  
+  const text = status === 'COMPLETED' ? 'Xem/Sửa điểm danh' : 'Điểm danh';
+  return (
+    <Button 
+      variant={status === 'COMPLETED' ? "outline" : "secondary"} 
+      onClick={() => navigate(`/teacher/classes/${classId}/sessions/${sessionId}/attendance`)}
+      className="!py-1.5 !px-3 !text-xs text-primary hover:text-primary-hover hover:bg-blue-50 border border-primary/20"
+    >
+      {text}
+    </Button>
+  );
+};
 
 const TeacherSessionsPage = () => {
   const { classId } = useParams();
@@ -16,12 +73,9 @@ const TeacherSessionsPage = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Form state
-  const [formData, setFormData] = useState({ sessionDate: '', topic: '' });
-  const [creating, setCreating] = useState(false);
-  const [formError, setFormError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+
+  const userStr = localStorage.getItem('user');
+  const lecturerName = userStr ? JSON.parse(userStr).fullName || JSON.parse(userStr).name || '-' : '-';
 
   useEffect(() => {
     fetchSessions();
@@ -46,45 +100,6 @@ const TeacherSessionsPage = () => {
     }
   };
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (formError) setFormError('');
-    if (successMessage) setSuccessMessage('');
-  };
-
-  const handleCreateSession = async (e) => {
-    e.preventDefault();
-    if (!formData.sessionDate) {
-      setFormError('Ngày học là bắt buộc.');
-      return;
-    }
-    if (!formData.topic.trim()) {
-      setFormError('Chủ đề là bắt buộc.');
-      return;
-    }
-
-    try {
-      setCreating(true);
-      setFormError('');
-      setSuccessMessage('');
-      
-      await teacherApi.createSession(classId, {
-        sessionDate: formData.sessionDate,
-        topic: formData.topic
-      });
-      
-      setSuccessMessage('Tạo buổi học thành công!');
-      setFormData({ sessionDate: '', topic: '' });
-      fetchSessions(); // Reload list directly after success
-      
-    } catch (err) {
-      setFormError(err.message || err.error || 'Không thể tạo buổi học. Vui lòng kiểm tra lại thông tin nhập.');
-    } finally {
-      setCreating(false);
-    }
-  };
-
   if (loading && sessions.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -98,7 +113,7 @@ const TeacherSessionsPage = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Các buổi học của lớp</h1>
-          <p className="mt-1 text-sm text-gray-500">Quản lý các buổi học cho lớp học này.</p>
+          <p className="mt-1 text-sm text-gray-500">Danh sách buổi học được tạo tự động theo lịch học của lớp.</p>
         </div>
         <div className="space-x-3">
           <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}`)}>
@@ -118,89 +133,71 @@ const TeacherSessionsPage = () => {
         </div>
       )}
 
-      {/* Create Session Form */}
-      <Card title="Tạo buổi học mới" className="mb-8 border-l-4 border-l-primary shadow-sm">
-        <form onSubmit={handleCreateSession} className="space-y-4">
-          {successMessage && (
-            <div className="p-3 bg-green-50 text-green-700 text-sm font-medium rounded border border-green-200">
-              {successMessage}
-            </div>
-          )}
-          {formError && (
-            <div className="p-3 bg-red-50 text-red-700 text-sm font-medium rounded border border-red-200">
-              {formError}
-            </div>
-          )}
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="Ngày học"
-              name="sessionDate"
-              type="date"
-              value={formData.sessionDate}
-              onChange={handleFormChange}
-            />
-            <Input
-              label="Chủ đề / Nội dung bài học"
-              name="topic"
-              type="text"
-              placeholder="VD: Ôn tập đại số"
-              value={formData.topic}
-              onChange={handleFormChange}
-            />
-          </div>
-          <div className="pt-2">
-            <Button type="submit" variant="primary" loading={creating}>
-              Tạo buổi học
-            </Button>
-          </div>
-        </form>
-      </Card>
-
       {/* Sessions List Table */}
-      <Card title="Danh sách buổi học" className="w-full">
+      <Card className="w-full p-0 overflow-hidden border-t-4 border-t-primary shadow-sm">
+        <div className="bg-blue-50/50 px-6 py-4 border-b border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-800">Danh sách buổi học</h2>
+        </div>
+        
         {loading && sessions.length > 0 ? (
            <div className="py-8"><Loading text="Đang cập nhật danh sách..." /></div>
         ) : sessions.length === 0 ? (
           <EmptyState 
-            title="Không tìm thấy buổi học" 
-            description="Bạn chưa tạo buổi học nào cho lớp học này."
+            title="Chưa có buổi học" 
+            description="Chưa có buổi học nào được tạo cho lớp này."
           />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-blue-50/30">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày học</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ đề</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">No.</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slot</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Room</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lecturer</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Class Name</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Attendance Status</th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-100">
                 {sessions.map((item, index) => {
                   const id = item._id || item.id;
+                  const startTime = item.scheduleId?.startTime;
+                  const endTime = item.scheduleId?.endTime;
+                  const room = item.scheduleId?.room || item.classId?.room || '-';
+                  const className = item.classId?.name || '-';
+                  
                   return (
                     <tr key={id || index} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {formatDate(item.sessionDate || item.date)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-500">{item.topic || 'Không có'}</div>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {index + 1}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge status={item.status || 'SCHEDULED'} />
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {formatSessionDate(item.sessionDate || item.date)}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Button 
-                          variant="secondary" 
-                          onClick={() => navigate(`/teacher/classes/${classId}/sessions/${id}/attendance`)}
-                          className="!py-1.5 !px-3 !text-xs text-primary hover:text-primary-hover hover:bg-blue-50 border border-primary/20"
-                        >
-                          Điểm danh
-                        </Button>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-orange-50 text-orange-700 border border-orange-100">
+                          {getSlot(startTime, endTime)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {room}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                        {lecturerName}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {className}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {renderStatusBadge(item.attendanceStatus)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        {renderActionButton(item.attendanceStatus, id, classId, navigate)}
                       </td>
                     </tr>
                   );

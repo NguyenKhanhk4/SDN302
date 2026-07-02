@@ -1,20 +1,22 @@
-const Class = require('../models/Class');
-const Schedule = require('../models/Schedule');
-const ClassStudent = require('../models/ClassStudent');
-const Session = require('../models/Session');
-const Attendance = require('../models/Attendance');
+const Class = require('../../models/Class');
+const Schedule = require('../../models/Schedule');
+const ClassStudent = require('../../models/ClassStudent');
+const Session = require('../../models/Session');
+const Attendance = require('../../models/Attendance');
 
 // Phai require cac model duoc dung trong populate()
 // de Mongoose dang ky schema truoc khi query
-require('../models/Subject');
-require('../models/TeacherProfile');
-require('../models/StudentProfile');
+require('../../models/Subject');
+require('../../models/TeacherProfile');
+require('../../models/StudentProfile');
 
 const {
   getTeacherProfileByUserId,
   checkTeacherOwnsClass,
   getActiveStudentsInClass,
-} = require('../services/teacher.service');
+} = require('./teacher.service');
+
+const { ensureSessionsForClass } = require('./session-generation.service');
 
 
 // ============================================================
@@ -185,13 +187,60 @@ const getSessionsByClass = async (req, res) => {
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
 
+    // Tu dong sinh session theo lich co dinh (neu chua co)
+    await ensureSessionsForClass(classId, teacherProfile._id);
+
     const sessions = await Session.find({ classId })
-      .sort({ sessionDate: -1 });
+      .populate('scheduleId')
+      .populate('classId')
+      .sort({ sessionDate: 1 }); // Xep tang dan theo thoi gian
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const dataWithStatus = await Promise.all(
+      sessions.map(async (session) => {
+        let attendanceStatus = 'NOT_YET';
+
+        const sessionDate = new Date(session.sessionDate);
+        sessionDate.setHours(0, 0, 0, 0);
+
+        if (session.status === 'CANCELLED') {
+          attendanceStatus = 'CANCELLED';
+        } else if (session.status === 'COMPLETED') {
+          attendanceStatus = 'COMPLETED';
+        } else if (sessionDate > today) {
+          attendanceStatus = 'FUTURE';
+        } else {
+          attendanceStatus = 'NOT_YET';
+        }
+
+        // Kiem tra du lieu diem danh thuc te
+        const attendances = await Attendance.find({ sessionId: session._id });
+        const total = attendances.length;
+        if (total > 0) {
+          attendanceStatus = 'COMPLETED';
+        }
+
+        const present = attendances.filter(a => a.status === 'PRESENT').length;
+        const absent = attendances.filter(a => a.status === 'ABSENT').length;
+
+        return {
+          ...session.toObject(),
+          attendanceStatus,
+          attendanceSummary: {
+            total,
+            present,
+            absent,
+          },
+        };
+      })
+    );
 
     return res.status(200).json({
       success: true,
-      total: sessions.length,
-      data: sessions,
+      total: dataWithStatus.length,
+      data: dataWithStatus,
     });
   } catch (error) {
     if (error.message === 'You are not assigned to this class') {

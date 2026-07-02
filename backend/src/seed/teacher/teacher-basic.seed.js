@@ -9,13 +9,13 @@ require('dotenv').config({ path: '../../.env' });
 const mongoose = require('mongoose');
 
 // Models
-const User = require('../models/User');
-const TeacherProfile = require('../models/TeacherProfile');
-const StudentProfile = require('../models/StudentProfile');
-const Subject = require('../models/Subject');
-const Class = require('../models/Class');
-const ClassStudent = require('../models/ClassStudent');
-const Schedule = require('../models/Schedule');
+const User = require('../../models/User');
+const TeacherProfile = require('../../models/TeacherProfile');
+const StudentProfile = require('../../models/StudentProfile');
+const Subject = require('../../models/Subject');
+const Class = require('../../models/Class');
+const ClassStudent = require('../../models/ClassStudent');
+const Schedule = require('../../models/Schedule');
 
 const MONGO_URI =
   process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/sdn302_db';

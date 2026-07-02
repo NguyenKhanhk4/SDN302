@@ -96,7 +96,7 @@ const TeacherSchedulesPage = () => {
       
       const data = await teacherApi.getSessionsByClass(classId).catch(err => {
          console.warn("Lỗi khi tải session:", err);
-         return { sessions: [] };
+         return { data: [] };
       });
       
       let sessionList = [];
@@ -105,7 +105,13 @@ const TeacherSchedulesPage = () => {
       else if (data && Array.isArray(data.data)) sessionList = data.data;
 
       const existingSession = sessionList.find(s => {
-        const sDate = s.sessionDate ? s.sessionDate.split('T')[0] : '';
+        if (!s.sessionDate) return false;
+        const sDateObj = new Date(s.sessionDate);
+        const sYear = sDateObj.getFullYear();
+        const sMonth = String(sDateObj.getMonth() + 1).padStart(2, '0');
+        const sDay = String(sDateObj.getDate()).padStart(2, '0');
+        const sDate = `${sYear}-${sMonth}-${sDay}`;
+        
         const matchDate = sDate === dayDateStr;
         
         if (s.scheduleId) {
@@ -118,19 +124,7 @@ const TeacherSchedulesPage = () => {
       if (existingSession) {
         navigate(`/teacher/classes/${classId}/sessions/${existingSession._id}/attendance?from=schedule`);
       } else {
-        const [year, month, day] = dayDateStr.split('-');
-        const createRes = await teacherApi.createSession(classId, {
-          scheduleId: scheduleId,
-          sessionDate: dayDateStr,
-          topic: `Buổi học ngày ${day}/${month}/${year}`
-        });
-
-        const newSessionId = createRes?.data?._id || createRes?._id || createRes?.data?.session?._id;
-        if (newSessionId) {
-           navigate(`/teacher/classes/${classId}/sessions/${newSessionId}/attendance?from=schedule`);
-        } else {
-           throw new Error("Không lấy được sessionId sau khi tạo.");
-        }
+        alert("Không tìm thấy buổi học tương ứng. Vui lòng kiểm tra lịch học của lớp.");
       }
     } catch (err) {
       console.error(err);
