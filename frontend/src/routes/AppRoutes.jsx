@@ -6,6 +6,7 @@ import TeacherLayout from '../components/layout/TeacherLayout';
 import ProtectedRoute from './ProtectedRoute';
 
 import LoginPage from '../pages/auth/LoginPage';
+import HomePage from '../pages/HomePage';
 import TeacherDashboardPage from '../pages/teacher/TeacherDashboardPage';
 import TeacherClassesPage from '../pages/teacher/TeacherClassesPage';
 import TeacherClassDetailPage from '../pages/teacher/TeacherClassDetailPage';
@@ -18,9 +19,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Root Route redirect based on auth status */}
-      <Route path="/" element={
-        localStorage.getItem('token') ? <Navigate to="/teacher/dashboard" replace /> : <Navigate to="/login" replace />
-      } />
+      {/* Public Home Route */}
+      <Route path="/" element={<HomePage />} />
 
       {/* Auth Routes */}
       <Route element={<AuthLayout />}>
