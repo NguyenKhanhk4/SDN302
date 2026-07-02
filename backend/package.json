@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "sync:to-local": "node src/seed/sync-db.js atlas-to-local",
+    "sync:to-atlas": "node src/seed/sync-db.js local-to-atlas",
     "seed:teacher-basic": "node src/seed/teacher/teacher-basic.seed.js",
     "seed:add-students": "node src/seed/add-students.seed.js",
     "seed:teacher-schedule": "node src/seed/teacher/teacher-schedule.seed.js",
