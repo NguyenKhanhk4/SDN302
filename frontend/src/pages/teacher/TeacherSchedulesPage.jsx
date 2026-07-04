@@ -61,7 +61,7 @@ const TeacherSchedulesPage = () => {
       
       const data = await teacherApi.getSessionsByClass(classId).catch(err => {
          console.warn("Lỗi khi tải session, có thể api chưa implement hoặc trả lỗi:", err);
-         return { sessions: [] };
+         return { sessions: [], data: [] };
       });
       
       let sessionList = [];
@@ -70,8 +70,20 @@ const TeacherSchedulesPage = () => {
       else if (data && Array.isArray(data.data)) sessionList = data.data;
 
       const existingSession = sessionList.find(s => {
-        const sDate = s.sessionDate ? s.sessionDate.split('T')[0] : '';
-        return sDate === dayDateStr;
+        if (!s.sessionDate) return false;
+        const sDateObj = new Date(s.sessionDate);
+        const sYear = sDateObj.getFullYear();
+        const sMonth = String(sDateObj.getMonth() + 1).padStart(2, '0');
+        const sDay = String(sDateObj.getDate()).padStart(2, '0');
+        const sDate = `${sYear}-${sMonth}-${sDay}`;
+        
+        const matchDate = sDate === dayDateStr;
+        
+        if (s.scheduleId) {
+          const sIdStr = typeof s.scheduleId === 'object' ? s.scheduleId._id : s.scheduleId;
+          return matchDate && sIdStr === scheduleId;
+        }
+        return matchDate;
       });
 
       if (existingSession) {

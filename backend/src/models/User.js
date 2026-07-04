@@ -22,6 +22,13 @@ const UserSchema = new mongoose.Schema(
       minlength: [6, 'Mật khẩu phải có ít nhất 6 ký tự'],
       select: false, 
     },
+    phone: String,
+    address: String,
+    dateOfBirth: Date,
+    gender: {
+      type: String,
+      enum: ['MALE', 'FEMALE', 'OTHER']
+    },
     role: {
       type: String,
       enum: ['admin', 'teacher', 'student', 'parent', 'manager', 'accountant'],

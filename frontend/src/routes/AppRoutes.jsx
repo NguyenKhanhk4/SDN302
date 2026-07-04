@@ -6,6 +6,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from './ProtectedRoute';
 
 import LoginPage from '../pages/auth/LoginPage';
+import HomePage from '../pages/HomePage';
 import TeacherDashboardPage from '../pages/teacher/TeacherDashboardPage';
 import TeacherClassesPage from '../pages/teacher/TeacherClassesPage';
 import TeacherClassDetailPage from '../pages/teacher/TeacherClassDetailPage';

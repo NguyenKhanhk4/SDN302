@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const teacherRoutes = require('./routes/teacher.routes');
+const teacherRoutes = require('./modules/teacher');
 const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
+const profileRoutes = require('./routes/profile.routes');
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use('/api/enrollment', enrollmentRoutes);
 app.use('/api/session', sessionRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/report', reportRoutes);
+app.use('/api/profile', profileRoutes);
 
 // 404 handler
 app.use((req, res, next) => {
