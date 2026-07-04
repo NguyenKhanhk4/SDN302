@@ -19,6 +19,27 @@ const SessionSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    teacherId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TeacherProfile',
+      required: true,
+    },
+    originalTeacherId: { // Used when there is a substitute teacher
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TeacherProfile',
+    },
+    room: {
+      type: String,
+      required: true,
+    },
+    startTime: {
+      type: Date,
+      required: true,
+    },
+    endTime: {
+      type: Date,
+      required: true,
+    },
     status: {
       type: String,
       enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED'],

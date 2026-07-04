@@ -13,6 +13,13 @@ const SubjectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    syllabus: {
+      type: String, // URL or path to syllabus file
+      default: '',
+    },
+    materials: [{
+      type: String, // URLs to material files
+    }],
     status: {
       type: String,
       enum: ['active', 'inactive'],

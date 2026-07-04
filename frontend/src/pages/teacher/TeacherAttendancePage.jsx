@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { teacherApi } from '../../api/teacherApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
@@ -9,10 +9,6 @@ import Button from '../../components/common/Button';
 const TeacherAttendancePage = () => {
   const { classId, sessionId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const from = searchParams.get('from');
-  const isFromSchedule = from === 'schedule';
 
   const [students, setStudents] = useState([]);
   const [attendanceForm, setAttendanceForm] = useState({});
@@ -130,15 +126,10 @@ const TeacherAttendancePage = () => {
 
       await teacherApi.takeAttendance(classId, sessionId, { attendances });
       
-      // Reload data to ensure synchronization FIRST
+      setSuccessMessage('Lưu thông tin điểm danh thành công!');
+      
+      // Reload data to ensure synchronization
       await fetchData();
-      
-      setSuccessMessage('Đã điểm danh xong');
-      
-      // Auto hide after 3 seconds
-      setTimeout(() => {
-        setSuccessMessage((current) => current === 'Đã điểm danh xong' ? '' : current);
-      }, 3000);
     } catch (err) {
       setError(err.message || err.error || 'Không thể lưu điểm danh. Vui lòng kiểm tra lại dữ liệu.');
     } finally {
@@ -161,17 +152,8 @@ const TeacherAttendancePage = () => {
           <h1 className="text-2xl font-bold text-gray-900">Điểm danh</h1>
           <p className="mt-1 text-sm text-gray-500">Thực hiện hoặc xem lại điểm danh cho buổi học này.</p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={() => {
-            if (isFromSchedule) {
-              navigate('/teacher/schedules');
-            } else {
-              navigate(`/teacher/classes/${classId}/sessions`);
-            }
-          }}
-        >
-          {isFromSchedule ? "← Quay lại lịch dạy" : "← Quay lại danh sách buổi học"}
+        <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}>
+          &larr; Quay lại danh sách buổi học
         </Button>
       </div>
 

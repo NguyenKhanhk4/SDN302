@@ -6,12 +6,12 @@
 require('dotenv').config({ path: '../../.env' });
 const mongoose = require('mongoose');
 
-const User = require('../models/User');
-const TeacherProfile = require('../models/TeacherProfile');
-const Class = require('../models/Class');
-const Schedule = require('../models/Schedule');
-const Session = require('../models/Session');
-const Attendance = require('../models/Attendance');
+const User = require('../../models/User');
+const TeacherProfile = require('../../models/TeacherProfile');
+const Class = require('../../models/Class');
+const Schedule = require('../../models/Schedule');
+const Session = require('../../models/Session');
+const Attendance = require('../../models/Attendance');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/sdn302_db';
 

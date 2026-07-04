@@ -157,15 +157,15 @@ const run = async () => {
     let schedule = await Schedule.findOne({
       classId: classroom._id,
       teacherId: teacherProfile._id,
-      dayOfWeek: 'Monday',
+      dayOfWeek: '1',
     });
     if (!schedule) {
       schedule = await Schedule.create({
         classId: classroom._id,
         teacherId: teacherProfile._id,
-        dayOfWeek: 'Monday',
-        startTime: '07:30',
-        endTime: '09:30',
+        dayOfWeek: '1',
+        startTime: '08:00',
+        endTime: '10:00',
         room: 'Phong B201',
         status: 'active',
       });
@@ -178,15 +178,15 @@ const run = async () => {
     let schedule2 = await Schedule.findOne({
       classId: classroom._id,
       teacherId: teacherProfile._id,
-      dayOfWeek: 'Wednesday',
+      dayOfWeek: '3',
     });
     if (!schedule2) {
       schedule2 = await Schedule.create({
         classId: classroom._id,
         teacherId: teacherProfile._id,
-        dayOfWeek: 'Wednesday',
-        startTime: '07:30',
-        endTime: '09:30',
+        dayOfWeek: '3',
+        startTime: '08:00',
+        endTime: '10:00',
         room: 'Phong B201',
         status: 'active',
       });
@@ -200,7 +200,7 @@ const run = async () => {
     console.log('   Student login: student@gmail.com / 123456');
     console.log('   Class: Lop Toan 10A');
     console.log('   Subject: Toan Nang Cao');
-    console.log('   Schedules: Monday & Wednesday 07:30-09:30');
+    console.log('   Schedules: Monday & Wednesday 08:00-10:00');
 
     await mongoose.disconnect();
     process.exit(0);
