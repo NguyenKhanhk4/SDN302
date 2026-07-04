@@ -24,18 +24,23 @@ const Session = require('../models/Session');
 const Attendance = require('../models/Attendance');
 
 // Models mới
-let ParentProfile, ParentStudent, Invoice;
+let ParentProfile, ParentStudent, Invoice, Enrollment, Payroll, Receipt;
 try { ParentProfile = require('../models/ParentProfile'); } catch (e) { console.warn('⚠ Model ParentProfile chưa tồn tại, sẽ bỏ qua.'); }
 try { ParentStudent = require('../models/ParentStudent'); } catch (e) { console.warn('⚠ Model ParentStudent chưa tồn tại, sẽ bỏ qua.'); }
 try { Invoice = require('../models/Invoice'); } catch (e) { console.warn('⚠ Model Invoice chưa tồn tại, sẽ bỏ qua.'); }
+try { Enrollment = require('../models/Enrollment'); } catch (e) { console.warn('⚠ Model Enrollment chưa tồn tại, sẽ bỏ qua.'); }
+try { Payroll = require('../models/Payroll'); } catch (e) { console.warn('⚠ Model Payroll chưa tồn tại, sẽ bỏ qua.'); }
+try { Receipt = require('../models/Receipt'); } catch (e) { console.warn('⚠ Model Receipt chưa tồn tại, sẽ bỏ qua.'); }
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/sdn302_db';
 const TEST_TAG = 'FULL_TEST_DATA_V1';
 
-// dayOfWeek number -> string mapping for Schedule model
+// dayOfWeek mapping for Schedule model
 const DAY_MAP = {
-  0: 'Sunday', 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday',
-  4: 'Thursday', 5: 'Friday', 6: 'Saturday'
+  'Sunday': '0', 'Monday': '1', 'Tuesday': '2', 'Wednesday': '3',
+  'Thursday': '4', 'Friday': '5', 'Saturday': '6',
+  '0': '0', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6',
+  0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'
 };
 
 const run = async () => {
@@ -92,8 +97,21 @@ const run = async () => {
         console.log(`  Xóa ${delCS.deletedCount} ClassStudent cũ`);
 
         if (Invoice) {
+          if (Receipt) {
+            const oldInvoices = await Invoice.find({ classId: { $in: oldClassIds } });
+            const oldInvoiceIds = oldInvoices.map(i => i._id);
+            if (oldInvoiceIds.length > 0) {
+              const delRec = await Receipt.deleteMany({ invoiceId: { $in: oldInvoiceIds } });
+              console.log(`  Xóa ${delRec.deletedCount} Receipt cũ`);
+            }
+          }
           const delInv = await Invoice.deleteMany({ classId: { $in: oldClassIds } });
           console.log(`  Xóa ${delInv.deletedCount} Invoice cũ`);
+        }
+
+        if (Enrollment) {
+          const delEnroll = await Enrollment.deleteMany({ classId: { $in: oldClassIds } });
+          console.log(`  Xóa ${delEnroll.deletedCount} Enrollment cũ`);
         }
 
         const delClass = await Class.deleteMany({ _id: { $in: oldClassIds } });
@@ -117,6 +135,12 @@ const run = async () => {
       const testSubjectNames = data.subjects.map(s => s.name);
       const delSubj = await Subject.deleteMany({ name: { $in: testSubjectNames } });
       console.log(`  Xóa ${delSubj.deletedCount} Subject cũ`);
+
+      // Xóa Payrolls
+      if (Payroll) {
+        const delPay = await Payroll.deleteMany({ teacherId: { $in: oldTeacherProfileIds } });
+        console.log(`  Xóa ${delPay.deletedCount} Payroll cũ`);
+      }
 
       // Xóa Profiles
       const delTP = await TeacherProfile.deleteMany({ userId: { $in: oldUserIds } });
@@ -146,6 +170,7 @@ const run = async () => {
     const classMap = new Map();
     const scheduleMap = new Map();
     const sessionMap = new Map();
+    const invoiceMap = new Map();
 
     // ============ 5. INSERT THEO THỨ TỰ ============
     console.log('\n--- INSERT DỮ LIỆU MỚI ---');
@@ -267,6 +292,31 @@ const run = async () => {
     const createdCS = await ClassStudent.insertMany(csDocs);
     console.log(`✔ ClassStudents created: ${createdCS.length}`);
 
+    // --- 5.8.5 ENROLLMENTS ---
+    let createdEnrollCount = 0;
+    if (Enrollment && data.enrollments && data.enrollments.length > 0) {
+      // Find User ID corresponding to StudentProfile ID
+      // studentProfileMap.get() returns the StudentProfile ID.
+      // EnrollmentSchema requires studentId as User ID!
+      const enrollDocs = [];
+      for (const en of data.enrollments) {
+        const spId = studentProfileMap.get(en.studentProfileKey);
+        const spDoc = createdSP.find(sp => sp._id.toString() === spId.toString());
+        if (spDoc) {
+          enrollDocs.push({
+            studentId: spDoc.userId, // This is the User ID!
+            classId: classMap.get(en.classKey),
+            status: en.status || 'APPROVED',
+            enrollmentDate: new Date(en.enrollmentDate),
+            notes: en.notes || ''
+          });
+        }
+      }
+      const createdEnroll = await Enrollment.insertMany(enrollDocs);
+      createdEnrollCount = createdEnroll.length;
+    }
+    console.log(`✔ Enrollments created: ${createdEnrollCount}`);
+
     // --- 5.9 SCHEDULES ---
     const schedDocs = data.schedules.map(s => ({
       classId: classMap.get(s.classKey),
@@ -284,13 +334,35 @@ const run = async () => {
     console.log(`✔ Schedules created: ${createdSched.length}`);
 
     // --- 5.10 SESSIONS ---
-    const sessDocs = data.sessions.map(s => ({
-      classId: classMap.get(s.classKey),
-      scheduleId: scheduleMap.get(s.scheduleKey),
-      sessionDate: new Date(s.sessionDate),
-      topic: s.topic || '',
-      status: s.status || 'SCHEDULED',
-    }));
+    const sessDocs = data.sessions.map(s => {
+      // Find the corresponding schedule in data.schedules to get required fields
+      const scheduleData = data.schedules.find(sched => sched.key === s.scheduleKey);
+      
+      // Create proper Date objects for startTime and endTime
+      const sessDate = new Date(s.sessionDate);
+      const startD = new Date(sessDate);
+      const endD = new Date(sessDate);
+      
+      if (scheduleData) {
+        const [startH, startM] = scheduleData.startTime.split(':');
+        startD.setHours(parseInt(startH), parseInt(startM), 0);
+        
+        const [endH, endM] = scheduleData.endTime.split(':');
+        endD.setHours(parseInt(endH), parseInt(endM), 0);
+      }
+      
+      return {
+        classId: classMap.get(s.classKey),
+        scheduleId: scheduleMap.get(s.scheduleKey),
+        sessionDate: sessDate,
+        topic: s.topic || '',
+        status: s.status || 'SCHEDULED',
+        teacherId: scheduleData ? teacherProfileMap.get(scheduleData.teacherProfileKey) : null,
+        room: scheduleData ? (scheduleData.room || 'N/A') : 'N/A',
+        startTime: startD,
+        endTime: endD
+      };
+    });
     const createdSess = await Session.insertMany(sessDocs);
     data.sessions.forEach((s, i) => {
       sessionMap.set(s.key, createdSess[i]._id);
@@ -311,20 +383,72 @@ const run = async () => {
     let createdInvCount = 0;
     if (Invoice && data.invoices && data.invoices.length > 0) {
       console.log('⚠ Invoice: JSON không có paymentDate, note. Schema không yêu cầu paymentDate, bổ sung default note rỗng.');
-      const invDocs = data.invoices.map(inv => ({
-        studentId: studentProfileMap.get(inv.studentProfileKey),
-        classId: classMap.get(inv.classKey),
-        amount: inv.amount,
-        paidAmount: inv.paidAmount || 0,
-        month: inv.month,
-        dueDate: new Date(inv.dueDate),
-        status: inv.status || 'UNPAID',
-        note: inv.note || ''
-      }));
+      const invDocs = [];
+      for (const inv of data.invoices) {
+        const spId = studentProfileMap.get(inv.studentProfileKey);
+        const spDoc = createdSP.find(sp => sp._id.toString() === spId.toString());
+        if (spDoc) {
+          invDocs.push({
+            studentId: spDoc.userId, // This is User ID
+            amount: inv.amount,
+            totalAmount: inv.amount,
+            discount: 0,
+            status: inv.status || 'UNPAID',
+            dueDate: new Date(inv.dueDate),
+            notes: inv.note || ''
+          });
+        }
+      }
       const createdInv = await Invoice.insertMany(invDocs);
+      data.invoices.forEach((inv, i) => {
+        invoiceMap.set(inv.key, createdInv[i]._id);
+      });
       createdInvCount = createdInv.length;
     }
     console.log(`✔ Invoices created: ${createdInvCount}`);
+
+    // --- 5.13 RECEIPTS ---
+    let createdRecCount = 0;
+    if (Receipt && data.receipts && data.receipts.length > 0) {
+      const recDocs = [];
+      for (const rec of data.receipts) {
+        const spId = studentProfileMap.get(rec.studentProfileKey);
+        const spDoc = createdSP.find(sp => sp._id.toString() === spId.toString());
+        if (spDoc && invoiceMap.has(rec.invoiceKey)) {
+          recDocs.push({
+            invoiceId: invoiceMap.get(rec.invoiceKey),
+            studentId: spDoc.userId, // This is User ID
+            amountPaid: rec.amountPaid,
+            paymentDate: new Date(rec.paymentDate),
+            paymentMethod: rec.paymentMethod || 'BANK_TRANSFER',
+            transactionId: rec.transactionId || '',
+            notes: rec.notes || ''
+          });
+        }
+      }
+      const createdRec = await Receipt.insertMany(recDocs);
+      createdRecCount = createdRec.length;
+    }
+    console.log(`✔ Receipts created: ${createdRecCount}`);
+
+    // --- 5.14 PAYROLLS ---
+    let createdPayCount = 0;
+    if (Payroll && data.payrolls && data.payrolls.length > 0) {
+      const payDocs = data.payrolls.map(pay => ({
+        teacherId: teacherProfileMap.get(pay.teacherProfileKey),
+        month: pay.month,
+        year: pay.year,
+        totalSessions: pay.totalSessions,
+        baseAmount: pay.baseAmount,
+        bonusAmount: pay.bonusAmount,
+        totalAmount: pay.totalAmount,
+        status: pay.status || 'DRAFT',
+        details: []
+      }));
+      const createdPay = await Payroll.insertMany(payDocs);
+      createdPayCount = createdPay.length;
+    }
+    console.log(`✔ Payrolls created: ${createdPayCount}`);
 
     // ============ 6. TỔNG KẾT ============
     console.log('\n========================================');
@@ -338,10 +462,13 @@ const run = async () => {
     console.log(`  Subjects:        ${createdSubj.length}`);
     console.log(`  Classes:         ${createdClass.length}`);
     console.log(`  ClassStudents:   ${createdCS.length}`);
+    console.log(`  Enrollments:     ${createdEnrollCount}`);
     console.log(`  Schedules:       ${createdSched.length}`);
     console.log(`  Sessions:        ${createdSess.length}`);
     console.log(`  Attendances:     ${createdAtt.length}`);
     console.log(`  Invoices:        ${createdInvCount}`);
+    console.log(`  Receipts:        ${createdRecCount}`);
+    console.log(`  Payrolls:        ${createdPayCount}`);
     console.log('----------------------------------------');
     console.log('Tài khoản test (password: 123456):');
     console.log('  Admin:     admin@gmail.com');
