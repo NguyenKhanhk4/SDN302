@@ -213,7 +213,7 @@ const AdminEnrollmentsPage = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-600">
-                    {new Date(enroll.createdAt).toLocaleDateString('vi-VN')}
+                    {new Date(enroll.enrollmentDate || enroll.createdAt).toLocaleDateString('vi-VN')}
                   </td>
                   <td className="px-6 py-4">
                     {getStatusBadge(enroll.status)}

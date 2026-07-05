@@ -111,11 +111,12 @@ export const adminApi = {
 
   // 8. Reports (Phase 4)
   getEnrollmentTrends: (year) => {
-    return axiosClient.get(`/report/trends/enrollment${year ? `?year=${year}` : ''}`);
+    return axiosClient.get('/report/trends/enrollment', { params: { year } });
   },
   exportRevenueReport: (year) => {
-    return axiosClient.get(`/report/export/revenue${year ? `?year=${year}` : ''}`, {
-      responseType: 'blob'
-    });
+    return axiosClient.get('/report/export/revenue', { params: { year }, responseType: 'blob' });
+  },
+  getAdvancedStatistics: (year) => {
+    return axiosClient.get('/report/statistics', { params: { year } });
   }
 };

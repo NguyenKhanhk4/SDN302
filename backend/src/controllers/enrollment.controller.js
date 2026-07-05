@@ -118,7 +118,7 @@ exports.getAllEnrollments = async (req, res, next) => {
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
-      query.createdAt = { $gte: startOfDay, $lte: endOfDay };
+      query.enrollmentDate = { $gte: startOfDay, $lte: endOfDay };
     }
 
     if (search) {
@@ -137,7 +137,7 @@ exports.getAllEnrollments = async (req, res, next) => {
           select: 'name'
         }
       })
-      .sort({ createdAt: -1 });
+      .sort({ enrollmentDate: -1 });
 
     res.status(200).json({
       success: true,
