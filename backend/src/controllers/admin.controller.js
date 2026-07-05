@@ -5,16 +5,18 @@ const Subject = require('../models/Subject');
 const Class = require('../models/Class');
 const ClassStudent = require('../models/ClassStudent');
 const Schedule = require('../models/Schedule');
+const ParentStudent = require('../models/ParentStudent');
+const ParentProfile = require('../models/ParentProfile');
 
 // Helper to map DB user to FE user format
 const mapUserToFE = async (user) => {
-  let phone = '';
+  let phone = user.phone || '';
   if (user.role === 'teacher') {
     const profile = await TeacherProfile.findOne({ userId: user._id });
-    if (profile) phone = profile.phoneNumber || '';
+    if (profile && profile.phoneNumber) phone = profile.phoneNumber;
   } else if (user.role === 'student') {
     const profile = await StudentProfile.findOne({ userId: user._id });
-    if (profile) phone = profile.parentPhone || '';
+    if (profile && profile.parentPhone) phone = profile.parentPhone;
   }
 
   return {
@@ -25,6 +27,89 @@ const mapUserToFE = async (user) => {
     role: user.role.toUpperCase(),
     status: user.isActive ? 'ACTIVE' : 'INACTIVE',
     createdAt: user.createdAt
+  };
+};
+
+const mapUserDetailToFE = async (user) => {
+  let profileData = {};
+  let linkedParent = null;
+  let linkedStudents = [];
+  
+  if (user.role === 'teacher') {
+    const profile = await TeacherProfile.findOne({ userId: user._id });
+    if (profile) {
+      profileData = {
+        specialization: profile.specialization,
+        experienceYears: profile.experienceYears,
+        bio: profile.bio,
+        phone: profile.phoneNumber,
+      };
+    }
+  } else if (user.role === 'student') {
+    const profile = await StudentProfile.findOne({ userId: user._id });
+    if (profile) {
+      profileData = {
+        parentName: profile.parentName,
+        parentPhone: profile.parentPhone,
+        grade: profile.grade,
+        school: profile.school,
+        phone: profile.parentPhone,
+      };
+
+      // Fetch linked parent
+      const parentLink = await ParentStudent.findOne({ studentId: profile._id }).populate({
+        path: 'parentId',
+        populate: { path: 'userId', model: 'User' }
+      });
+
+      if (parentLink && parentLink.parentId && parentLink.parentId.userId) {
+        linkedParent = {
+          _id: parentLink.parentId.userId._id,
+          name: parentLink.parentId.userId.name,
+          phone: parentLink.parentId.userId.phone || profile.parentPhone
+        };
+      }
+    }
+  } else if (user.role === 'parent') {
+    const profile = await ParentProfile.findOne({ userId: user._id });
+    if (profile) {
+      profileData = {
+        occupation: profile.occupation,
+        address: profile.address,
+        phone: user.phone
+      };
+
+      // Fetch linked students
+      const studentLinks = await ParentStudent.find({ parentId: profile._id }).populate({
+        path: 'studentId',
+        populate: { path: 'userId', model: 'User' }
+      });
+
+      linkedStudents = studentLinks
+        .filter(link => link.studentId && link.studentId.userId)
+        .map(link => ({
+          _id: link.studentId.userId._id,
+          name: link.studentId.userId.name,
+          grade: link.studentId.grade,
+          school: link.studentId.school
+        }));
+    }
+  }
+
+  return {
+    _id: user._id,
+    fullName: user.name,
+    email: user.email,
+    phone: profileData.phone || user.phone || '',
+    role: user.role.toUpperCase(),
+    status: user.isActive ? 'ACTIVE' : 'INACTIVE',
+    createdAt: user.createdAt,
+    dateOfBirth: user.dateOfBirth,
+    gender: user.gender,
+    address: user.address,
+    profile: profileData,
+    linkedParent,
+    linkedStudents
   };
 };
 
@@ -177,7 +262,7 @@ const getUserDetail = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    const feUser = await mapUserToFE(user);
+    const feUser = await mapUserDetailToFE(user);
     return res.status(200).json({
       success: true,
       message: "Get user detail successfully",

@@ -44,17 +44,6 @@ const AdminHeader = ({ onToggleSidebar }) => {
         </div>
       </div>
 
-      {/* Center Area: Search Input */}
-      <div className="hidden md:flex items-center w-full max-w-md mx-4 bg-[#F8FAFC] border border-gray-200 rounded-full px-5 py-2 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all duration-200">
-        <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Tìm học viên, lớp học, hóa đơn..."
-          className="bg-transparent text-xs text-gray-700 outline-none w-full placeholder-gray-400 ml-2.5"
-        />
-      </div>
 
       {/* Right Area: Actions & Profile */}
       <div className="flex items-center gap-4">
