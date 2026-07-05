@@ -5,6 +5,7 @@ import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Loading from '../../components/common/Loading';
+import { toast } from 'react-hot-toast';
 
 const AdminEditUserPage = () => {
   const { userId } = useParams();
@@ -18,8 +19,6 @@ const AdminEditUserPage = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [globalError, setGlobalError] = useState('');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,10 +34,10 @@ const AdminEditUserPage = () => {
             role: user.role || 'STUDENT'
           });
         } else {
-          setGlobalError(response.message || 'Không tìm thấy người dùng');
+          toast.error(response.message || 'Không tìm thấy người dùng');
         }
       } catch (err) {
-        setGlobalError(err.message || 'Đã xảy ra lỗi khi tải thông tin người dùng');
+        toast.error(err.message || 'Đã xảy ra lỗi khi tải thông tin người dùng');
       } finally {
         setLoading(false);
       }
@@ -70,24 +69,25 @@ const AdminEditUserPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error('Vui lòng điền đầy đủ thông tin hợp lệ');
+      return;
+    }
 
     setSaving(true);
-    setGlobalError('');
-    setSuccessMsg('');
 
     try {
       const response = await adminApi.updateUser(userId, formData);
       if (response.success) {
-        setSuccessMsg('Cập nhật thông tin người dùng thành công!');
+        toast.success('Cập nhật người dùng thành công!');
         setTimeout(() => {
-          navigate(`/admin/users/${userId}`);
+          navigate('/admin/users');
         }, 1500);
       } else {
-        setGlobalError(response.message || 'Cập nhật thất bại');
+        toast.error(response.message || 'Cập nhật người dùng thất bại');
       }
     } catch (err) {
-      setGlobalError(err.message || 'Đã xảy ra lỗi khi lưu thông tin người dùng');
+      toast.error(err.message || 'Có lỗi xảy ra khi cập nhật người dùng');
     } finally {
       setSaving(false);
     }
@@ -102,28 +102,16 @@ const AdminEditUserPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Chỉnh sửa người dùng</h1>
-          <p className="text-sm text-gray-500 mt-1">Cập nhật hồ sơ thông tin cho tài khoản người dùng.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Sửa thông tin người dùng</h1>
+          <p className="text-sm text-gray-500 mt-1">Cập nhật thông tin chi tiết của người dùng.</p>
         </div>
-        <Button variant="outline" onClick={() => navigate(`/admin/users/${userId}`)}>
-          Hủy bỏ
+        <Button variant="outline" onClick={() => navigate('/admin/users')}>
+          Quay lại danh sách
         </Button>
       </div>
 
       {/* Form Card */}
       <Card>
-        {globalError && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">
-            {globalError}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg border border-green-100 text-sm font-medium">
-            {successMsg}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Họ và tên"

@@ -52,8 +52,21 @@ const AdminFinancePage = () => {
     }
   };
 
-  if (loading && invoices.length === 0 && payrolls.length === 0) return <Loading text="Đang tải dữ liệu..." />;
+  const handleCalculateAllPayrolls = async () => {
+    try {
+      setLoading(true);
+      const res = await adminApi.calculateAllPayrolls();
+      if (res.success) {
+        toast.success(res.message || 'Chốt lương tháng này thành công!');
+        fetchData();
+      }
+    } catch (err) {
+      toast.error(err.message || 'Lỗi khi chốt lương');
+      setLoading(false);
+    }
+  };
 
+  if (loading && invoices.length === 0 && payrolls.length === 0) return <Loading text="Đang tải dữ liệu..." />;
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };
@@ -70,27 +83,39 @@ const AdminFinancePage = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 bg-slate-100/50 p-1 rounded-2xl w-max">
-        <button
-          onClick={() => setActiveTab('invoices')}
-          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-            activeTab === 'invoices' 
-              ? 'bg-white text-indigo-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-          }`}
-        >
-          Hóa Đơn Thu
-        </button>
-        <button
-          onClick={() => setActiveTab('payrolls')}
-          className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-            activeTab === 'payrolls' 
-              ? 'bg-white text-indigo-600 shadow-sm' 
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-          }`}
-        >
-          Bảng Lương
-        </button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 bg-slate-100/50 p-1 rounded-2xl w-max">
+          <button
+            onClick={() => setActiveTab('invoices')}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+              activeTab === 'invoices' 
+                ? 'bg-white text-indigo-600 shadow-sm' 
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+            }`}
+          >
+            Hóa Đơn Thu
+          </button>
+          <button
+            onClick={() => setActiveTab('payrolls')}
+            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+              activeTab === 'payrolls' 
+                ? 'bg-white text-indigo-600 shadow-sm' 
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+            }`}
+          >
+            Bảng Lương
+          </button>
+        </div>
+
+        {activeTab === 'payrolls' && (
+          <button
+            onClick={handleCalculateAllPayrolls}
+            disabled={loading}
+            className="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white text-sm font-bold rounded-xl shadow-sm transition-all border border-indigo-100 hover:border-transparent disabled:opacity-50"
+          >
+            {loading ? 'Đang xử lý...' : 'Chốt lương tự động'}
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
@@ -187,7 +212,7 @@ const AdminFinancePage = () => {
                           <FileSignature className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-800">{pr.teacherId?.name || 'Unknown'}</p>
+                          <p className="text-sm font-bold text-slate-800">{pr.teacherId?.userId?.name || 'Unknown'}</p>
                         </div>
                       </div>
                     </td>

@@ -3,6 +3,7 @@ const Receipt = require('../models/Receipt');
 const Session = require('../models/Session');
 const Payroll = require('../models/Payroll');
 const Attendance = require('../models/Attendance');
+const TeacherProfile = require('../models/TeacherProfile');
 
 // 1. Pay Invoice (Create Receipt)
 exports.payInvoice = async (req, res, next) => {
@@ -128,8 +129,81 @@ exports.getAllInvoices = async (req, res, next) => {
 
 exports.getAllPayrolls = async (req, res, next) => {
   try {
-    const payrolls = await Payroll.find().populate('teacherId', 'name email').sort({ createdAt: -1 });
+    const payrolls = await Payroll.find()
+      .populate({
+        path: 'teacherId',
+        populate: {
+          path: 'userId',
+          select: 'name email'
+        }
+      })
+      .sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: payrolls });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.calculateAllPayrolls = async (req, res, next) => {
+  try {
+    const currentMonth = new Date().getMonth() + 1; // 1-12
+    const currentYear = new Date().getFullYear();
+
+    const teachers = await TeacherProfile.find();
+    if (!teachers || teachers.length === 0) {
+      return res.status(400).json({ success: false, message: 'Chưa có giáo viên nào trong hệ thống.' });
+    }
+
+    const startDate = new Date(currentYear, currentMonth - 1, 1);
+    const endDate = new Date(currentYear, currentMonth, 0, 23, 59, 59);
+
+    const generatedPayrolls = [];
+    for (const teacher of teachers) {
+      // Tìm các ca dạy đã hoàn thành của giáo viên này trong tháng
+      const sessions = await Session.find({
+        teacherId: teacher._id,
+        status: 'COMPLETED',
+        sessionDate: { $gte: startDate, $lte: endDate }
+      });
+
+      const RATE_PER_SESSION = 200000;
+      let totalSessions = 0;
+      let baseAmount = 0;
+      const details = [];
+
+      for (const session of sessions) {
+        totalSessions++;
+        baseAmount += RATE_PER_SESSION;
+        details.push({
+          sessionId: session._id,
+          amount: RATE_PER_SESSION
+        });
+      }
+
+      // Có thể lấy bonusAmount từ đâu đó, tạm thời là 0
+      const bonusAmount = 0; 
+      const totalAmount = baseAmount + bonusAmount;
+
+      const payroll = await Payroll.findOneAndUpdate(
+        { teacherId: teacher._id, month: currentMonth, year: currentYear },
+        {
+          totalSessions,
+          baseAmount,
+          bonusAmount,
+          totalAmount,
+          status: 'DRAFT',
+          details
+        },
+        { new: true, upsert: true }
+      );
+      generatedPayrolls.push(payroll);
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      message: `Đã chốt lương cho ${teachers.length} giáo viên theo dữ liệu thực tế!`, 
+      data: generatedPayrolls 
+    });
   } catch (error) {
     next(error);
   }

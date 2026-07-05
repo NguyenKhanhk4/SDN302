@@ -1,9 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api/adminApi';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { toast } from 'react-hot-toast';
+
+const TIME_SLOTS = [
+  { start: '07:30', end: '09:30', label: 'Ca 1 (07:30 - 09:30)' },
+  { start: '09:30', end: '11:30', label: 'Ca 2 (09:30 - 11:30)' },
+  { start: '13:30', end: '15:30', label: 'Ca 3 (13:30 - 15:30)' },
+  { start: '15:30', end: '17:30', label: 'Ca 4 (15:30 - 17:30)' },
+  { start: '18:00', end: '20:00', label: 'Ca 5 (18:00 - 20:00)' },
+  { start: '20:00', end: '22:00', label: 'Ca 6 (20:00 - 22:00)' },
+];
 
 const AdminCreateSchedulePage = () => {
   const navigate = useNavigate();
@@ -20,6 +30,43 @@ const AdminCreateSchedulePage = () => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [globalError, setGlobalError] = useState('');
+  const [existingSchedules, setExistingSchedules] = useState([]);
+  const [classList, setClassList] = useState([]);
+  const [teacherList, setTeacherList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [resSchedules, resClasses, resUsers] = await Promise.all([
+          adminApi.getSchedules(),
+          adminApi.getClasses(),
+          adminApi.getUsers({ role: 'TEACHER' })
+        ]);
+
+        if (resSchedules.success) {
+          setExistingSchedules(resSchedules.data);
+        }
+        
+        if (resClasses.success && resClasses.data) {
+          setClassList(resClasses.data);
+          // Set default value if formData is empty and we have data
+          if (resClasses.data.length > 0) {
+            setFormData(prev => ({ ...prev, class: resClasses.data[0].name }));
+          }
+        }
+
+        if (resUsers.success && resUsers.data) {
+          setTeacherList(resUsers.data);
+          if (resUsers.data.length > 0) {
+            setFormData(prev => ({ ...prev, teacher: resUsers.data[0].fullName }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch data', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,20 +76,32 @@ const AdminCreateSchedulePage = () => {
     }
   };
 
+  const isSlotTaken = (start, end) => {
+    if (!formData.room) return false;
+    return existingSchedules.some(sch => {
+      // Ignore cancelled schedules
+      if (sch.status === 'CANCELLED' || sch.status === 'cancelled') return false;
+      return sch.dayOfWeek === formData.dayOfWeek && 
+             sch.room?.toLowerCase() === formData.room.trim().toLowerCase() &&
+             sch.startTime === start && 
+             sch.endTime === end;
+    });
+  };
+
+  const handleSlotSelect = (start, end) => {
+    if (isSlotTaken(start, end)) return;
+    setFormData(prev => ({ ...prev, startTime: start, endTime: end }));
+    setErrors(prev => ({ ...prev, startTime: '', endTime: '' }));
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!formData.class.trim()) newErrors.class = 'Tên lớp học là bắt buộc';
     if (!formData.teacher.trim()) newErrors.teacher = 'Tên giáo viên là bắt buộc';
-    if (!formData.startTime.trim()) newErrors.startTime = 'Giờ bắt đầu là bắt buộc';
-    if (!formData.endTime.trim()) newErrors.endTime = 'Giờ kết thúc là bắt buộc';
-    if (!formData.room.trim()) newErrors.room = 'Phòng học là bắt buộc';
-
-    // Simple time validation (startTime < endTime)
-    if (formData.startTime && formData.endTime) {
-      if (formData.startTime >= formData.endTime) {
-        newErrors.endTime = 'Giờ kết thúc phải sau giờ bắt đầu';
-      }
+    if (!formData.startTime.trim() || !formData.endTime.trim()) {
+      newErrors.startTime = 'Vui lòng chọn khung giờ';
     }
+    if (!formData.room.trim()) newErrors.room = 'Phòng học là bắt buộc';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -50,32 +109,30 @@ const AdminCreateSchedulePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+      return;
+    }
 
     setLoading(true);
-    setGlobalError('');
-    setSuccessMsg('');
 
     try {
       const response = await adminApi.createSchedule(formData);
       if (response.success) {
-        setSuccessMsg('Tạo lịch học thành công! Đang chuyển hướng...');
+        toast.success('Tạo lịch học thành công!');
         setTimeout(() => {
           navigate('/admin/schedules');
         }, 1500);
       } else {
-        setGlobalError(response.message || 'Tạo lịch học thất bại');
+        toast.error(response.message || 'Tạo lịch học thất bại');
       }
     } catch (err) {
-      setGlobalError(err.message || 'Đã xảy ra lỗi khi tạo lịch học');
+      toast.error(err.message || 'Đã xảy ra lỗi khi tạo lịch học');
     } finally {
       setLoading(false);
     }
   };
 
-  // Mock choices
-  const classes = ['Lop Toan 10A', 'Lop Ly 9B', 'Lop Anh 101', 'Lop Toan Demo Huy'];
-  const teachers = ['Nguyen Van Teacher', 'Nguyen Thi Manager'];
   const days = [
     { value: '1', label: 'Thứ Hai' },
     { value: '2', label: 'Thứ Ba' },
@@ -101,19 +158,7 @@ const AdminCreateSchedulePage = () => {
 
       {/* Form Card */}
       <Card>
-        {globalError && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">
-            {globalError}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg border border-green-100 text-sm font-medium">
-            {successMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
               <label htmlFor="class" className="mb-1 text-sm font-medium text-gray-700">Lớp học</label>
@@ -124,8 +169,9 @@ const AdminCreateSchedulePage = () => {
                 onChange={handleChange}
                 className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
               >
-                {classes.map((cls, idx) => (
-                  <option key={idx} value={cls}>{cls}</option>
+                {classList.length === 0 && <option value="">Đang tải lớp học...</option>}
+                {classList.map((cls) => (
+                  <option key={cls._id} value={cls.name}>{cls.name}</option>
                 ))}
               </select>
             </div>
@@ -139,14 +185,15 @@ const AdminCreateSchedulePage = () => {
                 onChange={handleChange}
                 className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
               >
-                {teachers.map((teach, idx) => (
-                  <option key={idx} value={teach}>{teach}</option>
+                {teacherList.length === 0 && <option value="">Đang tải giáo viên...</option>}
+                {teacherList.map((teach) => (
+                  <option key={teach._id} value={teach.fullName}>{teach.fullName}</option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
               <label htmlFor="dayOfWeek" className="mb-1 text-sm font-medium text-gray-700">Thứ trong tuần</label>
               <select
@@ -163,55 +210,69 @@ const AdminCreateSchedulePage = () => {
             </div>
 
             <Input
-              label="Giờ bắt đầu"
-              name="startTime"
-              type="time"
-              value={formData.startTime}
-              onChange={handleChange}
-              error={errors.startTime}
-            />
-
-            <Input
-              label="Giờ kết thúc"
-              name="endTime"
-              type="time"
-              value={formData.endTime}
-              onChange={handleChange}
-              error={errors.endTime}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Phòng học"
+              label="Phòng học (Nhập để kiểm tra trùng lịch)"
               name="room"
               placeholder="Ví dụ: Phong B201"
               value={formData.room}
               onChange={handleChange}
               error={errors.room}
             />
-
-            <div className="flex flex-col">
-              <label htmlFor="status" className="mb-1 text-sm font-medium text-gray-700">Trạng thái</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
-              >
-                <option value="ACTIVE">Hoạt động</option>
-                <option value="CANCELLED">Đã hủy</option>
-              </select>
-            </div>
           </div>
 
-          <div className="pt-4 flex justify-end">
+          {/* Time Slots Grid */}
+          <div className="flex flex-col">
+            <label className="mb-2 text-sm font-medium text-gray-700">Khung giờ</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {TIME_SLOTS.map((slot) => {
+                const taken = isSlotTaken(slot.start, slot.end);
+                const selected = formData.startTime === slot.start && formData.endTime === slot.end;
+                return (
+                  <button
+                    key={slot.label}
+                    type="button"
+                    disabled={taken}
+                    onClick={() => handleSlotSelect(slot.start, slot.end)}
+                    className={`p-3 text-sm font-medium rounded-xl border transition-all ${
+                      taken 
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'
+                        : selected
+                        ? 'bg-primary/10 text-primary border-primary ring-2 ring-primary/20'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-primary/50 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <span>{slot.label}</span>
+                      {taken && <span className="text-xs mt-1 text-red-500/80 font-semibold bg-red-50 px-2 py-0.5 rounded-full">Đã có lớp</span>}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+            {errors.startTime && (
+              <p className="mt-2 text-sm text-red-500">{errors.startTime}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col w-1/2">
+            <label htmlFor="status" className="mb-1 text-sm font-medium text-gray-700">Trạng thái</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
+            >
+              <option value="ACTIVE">Hoạt động</option>
+              <option value="CANCELLED">Đã hủy</option>
+            </select>
+          </div>
+
+          <div className="pt-4 flex justify-end border-t border-gray-100">
             <Button
               type="submit"
               variant="primary"
               loading={loading}
-              className="px-6"
+              className="px-8"
             >
               Tạo Lịch học
             </Button>

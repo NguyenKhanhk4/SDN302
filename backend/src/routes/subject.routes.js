@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { uploadSubjectFiles, getAllSubjects } = require('../controllers/subject.controller');
+const { uploadSubjectFiles, getAllSubjects, createSubject, updateSubject, deleteSubject, deleteSubjectFile } = require('../controllers/subject.controller');
 
 const router = express.Router();
 
@@ -18,6 +18,10 @@ const upload = multer({ storage: storage });
 
 // Routes
 router.get('/', getAllSubjects);
+router.post('/', createSubject);
+router.put('/:id', updateSubject);
+router.delete('/:id', deleteSubject);
+router.delete('/:id/file', deleteSubjectFile);
 
 // Upload files for a specific subject
 router.post(

@@ -62,12 +62,31 @@ const getDashboard = async (req, res) => {
     const activeSchedules = await Schedule.countDocuments({ status: 'active' });
     const cancelledSchedules = await Schedule.countDocuments({ status: 'cancelled' });
 
-    // 4. Mock Finance (Since no invoice model is implemented)
+    // 4. Real Finance Stats
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(currentYear, currentMonth, 1);
+    
+    // Require Invoice here if not at top level
+    const Invoice = require('../models/Invoice');
+    
+    const invoices = await Invoice.find();
+    const totalInvoices = invoices.length;
+    const paidInvoices = invoices.filter(i => i.status === 'PAID').length;
+    const unpaidInvoices = totalInvoices - paidInvoices;
+
+    const monthlyInvoices = await Invoice.find({
+      createdAt: { $gte: startDate },
+      status: 'PAID'
+    });
+    
+    const monthlyRevenue = monthlyInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
+
     const finance = {
-      totalInvoices: 9,
-      monthlyRevenue: 1550000,
-      paidInvoices: 5,
-      unpaidInvoices: 3
+      totalInvoices,
+      monthlyRevenue,
+      paidInvoices,
+      unpaidInvoices
     };
 
     return res.status(200).json({
@@ -554,16 +573,16 @@ const createSchedule = async (req, res) => {
 
     const foundClass = await Class.findOne({ name: className });
     if (!foundClass) {
-      return res.status(404).json({ success: false, message: `Class '${className}' not found` });
+      return res.status(404).json({ success: false, message: `Không tìm thấy lớp học '${className}'` });
     }
 
     const foundUser = await User.findOne({ name: teacherName, role: 'teacher' });
     if (!foundUser) {
-      return res.status(404).json({ success: false, message: `Teacher user '${teacherName}' not found` });
+      return res.status(404).json({ success: false, message: `Không tìm thấy giáo viên '${teacherName}'` });
     }
     const foundTeacherProfile = await TeacherProfile.findOne({ userId: foundUser._id });
     if (!foundTeacherProfile) {
-      return res.status(404).json({ success: false, message: `Teacher profile not found for '${teacherName}'` });
+      return res.status(404).json({ success: false, message: `Không tìm thấy hồ sơ của giáo viên '${teacherName}'` });
     }
 
     const schedule = await Schedule.create({

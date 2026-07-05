@@ -4,6 +4,7 @@ import { adminApi } from '../../api/adminApi';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { toast } from 'react-hot-toast';
 
 const AdminCreateUserPage = () => {
   const navigate = useNavigate();
@@ -17,8 +18,6 @@ const AdminCreateUserPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [globalError, setGlobalError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,24 +48,25 @@ const AdminCreateUserPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error('Vui lòng điền đầy đủ thông tin hợp lệ');
+      return;
+    }
 
     setLoading(true);
-    setGlobalError('');
-    setSuccessMsg('');
 
     try {
       const response = await adminApi.createUser(formData);
       if (response.success) {
-        setSuccessMsg('Thêm người dùng thành công! Đang chuyển hướng...');
+        toast.success('Thêm người dùng thành công!');
         setTimeout(() => {
           navigate('/admin/users');
         }, 1500);
       } else {
-        setGlobalError(response.message || 'Thêm người dùng thất bại');
+        toast.error(response.message || 'Thêm người dùng thất bại');
       }
     } catch (err) {
-      setGlobalError(err.message || 'Có lỗi xảy ra khi tạo người dùng');
+      toast.error(err.message || 'Có lỗi xảy ra khi tạo người dùng');
     } finally {
       setLoading(false);
     }
@@ -87,17 +87,6 @@ const AdminCreateUserPage = () => {
 
       {/* Form Card */}
       <Card>
-        {globalError && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">
-            {globalError}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg border border-green-100 text-sm font-medium">
-            {successMsg}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input

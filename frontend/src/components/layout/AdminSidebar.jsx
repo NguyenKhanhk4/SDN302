@@ -16,7 +16,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
   const menuItems = [
     { name: 'Tổng quan', path: '/admin/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
     { name: 'Tuyển sinh', path: '/admin/enrollments', icon: <FileText className="w-5 h-5" /> },
-    { name: 'Học viên', path: '/admin/users', icon: <Users className="w-5 h-5" /> },
+    { name: 'Người dùng', path: '/admin/users', icon: <Users className="w-5 h-5" /> },
     { name: 'Giáo trình', path: '/admin/subjects', icon: <BookOpen className="w-5 h-5" /> },
     { name: 'Lớp học', path: '/admin/classes', icon: <GraduationCap className="w-5 h-5" /> },
     { name: 'Lịch học', path: '/admin/schedules', icon: <Calendar className="w-5 h-5" /> },

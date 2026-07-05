@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api/adminApi';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { toast } from 'react-hot-toast';
 
 const AdminCreateClassPage = () => {
   const navigate = useNavigate();
@@ -20,7 +21,36 @@ const AdminCreateClassPage = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  const [globalError, setGlobalError] = useState('');
+  const [subjectList, setSubjectList] = useState([]);
+  const [teacherList, setTeacherList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [resSubjects, resUsers] = await Promise.all([
+          adminApi.getSubjects(),
+          adminApi.getUsers({ role: 'TEACHER' })
+        ]);
+
+        if (resSubjects.success && resSubjects.data) {
+          setSubjectList(resSubjects.data);
+          if (resSubjects.data.length > 0) {
+            setFormData(prev => ({ ...prev, subject: resSubjects.data[0].name }));
+          }
+        }
+
+        if (resUsers.success && resUsers.data) {
+          setTeacherList(resUsers.data);
+          if (resUsers.data.length > 0) {
+            setFormData(prev => ({ ...prev, teacher: resUsers.data[0].fullName }));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch data for create class form', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,32 +79,29 @@ const AdminCreateClassPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+      return;
+    }
 
     setLoading(true);
-    setGlobalError('');
-    setSuccessMsg('');
 
     try {
       const response = await adminApi.createClass(formData);
       if (response.success) {
-        setSuccessMsg('Tạo lớp học thành công! Đang chuyển hướng...');
+        toast.success('Tạo lớp học thành công!');
         setTimeout(() => {
           navigate('/admin/classes');
         }, 1500);
       } else {
-        setGlobalError(response.message || 'Tạo lớp học thất bại');
+        toast.error(response.message || 'Tạo lớp học thất bại');
       }
     } catch (err) {
-      setGlobalError(err.message || 'Đã xảy ra lỗi khi tạo lớp học');
+      toast.error(err.message || 'Đã xảy ra lỗi khi tạo lớp học');
     } finally {
       setLoading(false);
     }
   };
-
-  // Mock subjects & teachers for select options
-  const subjects = ['Toan Nang Cao', 'Vat Ly Co Ban', 'Tieng Anh Giao Tiep'];
-  const teachers = ['Nguyen Van Teacher', 'Nguyen Thi Manager'];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -91,18 +118,6 @@ const AdminCreateClassPage = () => {
 
       {/* Form Card */}
       <Card>
-        {globalError && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm font-medium">
-            {globalError}
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mb-4 p-3 bg-green-50 text-green-600 rounded-lg border border-green-100 text-sm font-medium">
-            {successMsg}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             label="Tên lớp học"
@@ -123,8 +138,9 @@ const AdminCreateClassPage = () => {
                 onChange={handleChange}
                 className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
               >
-                {subjects.map((sub, idx) => (
-                  <option key={idx} value={sub}>{sub}</option>
+                {subjectList.length === 0 && <option value="">Đang tải môn học...</option>}
+                {subjectList.map((sub) => (
+                  <option key={sub._id} value={sub.name}>{sub.name}</option>
                 ))}
               </select>
             </div>
@@ -138,8 +154,9 @@ const AdminCreateClassPage = () => {
                 onChange={handleChange}
                 className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
               >
-                {teachers.map((teach, idx) => (
-                  <option key={idx} value={teach}>{teach}</option>
+                {teacherList.length === 0 && <option value="">Đang tải giáo viên...</option>}
+                {teacherList.map((teach) => (
+                  <option key={teach._id} value={teach.fullName}>{teach.fullName}</option>
                 ))}
               </select>
             </div>

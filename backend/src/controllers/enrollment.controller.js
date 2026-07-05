@@ -102,7 +102,32 @@ exports.approveEnrollment = async (req, res, next) => {
 
 exports.getAllEnrollments = async (req, res, next) => {
   try {
-    const enrollments = await Enrollment.find()
+    const { search, classId, date, status } = req.query;
+    let query = {};
+
+    if (classId) {
+      query.classId = classId;
+    }
+    
+    if (status) {
+      query.status = status;
+    }
+
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      query.createdAt = { $gte: startOfDay, $lte: endOfDay };
+    }
+
+    if (search) {
+      const users = await User.find({ name: { $regex: search, $options: 'i' } }).select('_id');
+      const userIds = users.map(u => u._id);
+      query.studentId = { $in: userIds };
+    }
+
+    const enrollments = await Enrollment.find(query)
       .populate('studentId', 'name email')
       .populate({
         path: 'classId',
@@ -117,6 +142,52 @@ exports.getAllEnrollments = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: enrollments
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateEnrollmentStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!['PENDING', 'APPROVED', 'CANCELLED'].includes(status)) {
+       return res.status(400).json({ success: false, message: 'Invalid status' });
+    }
+
+    const enrollment = await Enrollment.findById(id).populate('classId');
+    if (!enrollment) {
+      return res.status(404).json({ success: false, message: 'Enrollment not found' });
+    }
+
+    if (enrollment.status === status) {
+      return res.status(400).json({ success: false, message: `Enrollment is already ${status}` });
+    }
+
+    if (status === 'APPROVED') {
+        const targetClass = enrollment.classId;
+        const currentStudentsCount = await Enrollment.countDocuments({ 
+          classId: targetClass._id, 
+          status: 'APPROVED' 
+        });
+
+        if (currentStudentsCount >= targetClass.maxStudents) {
+          return res.status(400).json({ 
+            success: false, 
+            message: 'Class is full. Cannot approve enrollment.' 
+          });
+        }
+    }
+
+    enrollment.status = status;
+    await enrollment.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Enrollment status updated to ${status}`,
+      data: enrollment
     });
   } catch (error) {
     next(error);
