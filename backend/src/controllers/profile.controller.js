@@ -36,7 +36,8 @@ exports.getMyProfile = async (req, res) => {
           status: user.isActive ? 'ACTIVE' : 'INACTIVE',
           address: user.address || '',
           dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString().split('T')[0] : '',
-          gender: user.gender || ''
+          gender: user.gender || '',
+          avatar: user.avatar || ''
         },
         profile
       }
@@ -87,7 +88,8 @@ exports.updateMyProfile = async (req, res) => {
           status: updatedUser.isActive ? 'ACTIVE' : 'INACTIVE',
           address: updatedUser.address || '',
           dateOfBirth: updatedUser.dateOfBirth ? updatedUser.dateOfBirth.toISOString().split('T')[0] : '',
-          gender: updatedUser.gender || ''
+          gender: updatedUser.gender || '',
+          avatar: updatedUser.avatar || ''
         }
       }
     });
@@ -126,7 +128,87 @@ exports.clearMyProfile = async (req, res) => {
           status: updatedUser.isActive ? 'ACTIVE' : 'INACTIVE',
           address: '',
           dateOfBirth: '',
-          gender: ''
+          gender: '',
+          avatar: updatedUser.avatar || ''
+        }
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// @desc    Change user password
+// @route   PUT /api/profile/me/password
+// @access  Private
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp mật khẩu hiện tại và mật khẩu mới' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu mới phải có tối thiểu 6 ký tự' });
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Người dùng không tồn tại' });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu hiện tại không chính xác' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Đổi mật khẩu thành công'
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// @desc    Update user avatar
+// @route   PUT /api/profile/me/avatar
+// @access  Private
+exports.updateAvatar = async (req, res) => {
+  try {
+    const { avatar } = req.body;
+
+    if (avatar === undefined) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp ảnh đại diện' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true }
+    ).select('-password');
+
+    res.json({
+      success: true,
+      message: 'Cập nhật ảnh đại diện thành công',
+      data: {
+        user: {
+          _id: updatedUser._id,
+          fullName: updatedUser.name,
+          email: updatedUser.email,
+          phone: updatedUser.phone || '',
+          role: updatedUser.role.toUpperCase(),
+          status: updatedUser.isActive ? 'ACTIVE' : 'INACTIVE',
+          address: updatedUser.address || '',
+          dateOfBirth: updatedUser.dateOfBirth ? updatedUser.dateOfBirth.toISOString().split('T')[0] : '',
+          gender: updatedUser.gender || '',
+          avatar: updatedUser.avatar || ''
         }
       }
     });

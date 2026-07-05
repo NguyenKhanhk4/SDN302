@@ -11,6 +11,14 @@ const profileApi = {
   
   clearMyProfile: () => {
     return axiosClient.patch('/profile/me/clear');
+  },
+
+  changePassword: (data) => {
+    return axiosClient.put('/profile/me/password', data);
+  },
+
+  updateAvatar: (data) => {
+    return axiosClient.put('/profile/me/avatar', data);
   }
 };
 

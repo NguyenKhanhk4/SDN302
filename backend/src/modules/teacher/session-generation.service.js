@@ -55,22 +55,22 @@ const ensureSessionsForClass = async (classId, teacherId) => {
   });
 
   const current = new Date(cls.startDate);
-  current.setHours(0, 0, 0, 0);
+  current.setUTCHours(0, 0, 0, 0);
 
   const maxLoops = 365 * 2; // Prevent infinite loop
   let loops = 0;
 
   while (generatedOrFoundCount < targetTotal && loops < maxLoops) {
-    const dayIndex = current.getDay();
+    const dayIndex = current.getUTCDay();
     const daySchedules = schedulesByDay[dayIndex];
 
     if (daySchedules && daySchedules.length > 0) {
       const sessionDate = new Date(current);
-      sessionDate.setHours(0, 0, 0, 0);
+      sessionDate.setUTCHours(0, 0, 0, 0);
 
-      const d = String(sessionDate.getDate()).padStart(2, '0');
-      const m = String(sessionDate.getMonth() + 1).padStart(2, '0');
-      const y = sessionDate.getFullYear();
+      const d = String(sessionDate.getUTCDate()).padStart(2, '0');
+      const m = String(sessionDate.getUTCMonth() + 1).padStart(2, '0');
+      const y = sessionDate.getUTCFullYear();
 
       for (const schedule of daySchedules) {
         if (generatedOrFoundCount >= targetTotal) break;
@@ -107,7 +107,7 @@ const ensureSessionsForClass = async (classId, teacherId) => {
       }
     }
 
-    current.setDate(current.getDate() + 1);
+    current.setUTCDate(current.getUTCDate() + 1);
     loops++;
   }
 

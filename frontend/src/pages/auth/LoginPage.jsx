@@ -49,8 +49,15 @@ const LoginPage = () => {
       const user = response.user;
       const token = response.token;
 
-      if (!user || String(user.role).toUpperCase() !== 'TEACHER') {
-        setGlobalError('Chỉ tài khoản giảng viên mới có thể truy cập cổng thông tin này');
+      if (!user) {
+        setGlobalError('Không tìm thấy thông tin tài khoản');
+        setLoading(false);
+        return;
+      }
+
+      const roleUpper = String(user.role).toUpperCase();
+      if (roleUpper !== 'TEACHER' && roleUpper !== 'STUDENT') {
+        setGlobalError('Chỉ tài khoản giảng viên hoặc học sinh mới có thể truy cập cổng thông tin này');
         setLoading(false);
         return;
       }
@@ -58,8 +65,12 @@ const LoginPage = () => {
       // Lưu token & user info
       saveAuth(token, user);
       
-      // Chuyển hướng tới Dashboard
-      navigate('/teacher/dashboard', { replace: true });
+      // Chuyển hướng tới Dashboard thích hợp
+      if (roleUpper === 'TEACHER') {
+        navigate('/teacher/dashboard', { replace: true });
+      } else {
+        navigate('/student/dashboard', { replace: true });
+      }
 
     } catch (err) {
       setGlobalError(err.message || err.error || 'Email hoặc mật khẩu không hợp lệ');
@@ -73,7 +84,7 @@ const LoginPage = () => {
       <div className="p-2">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-gray-900">Trung tâm Gia sư</h2>
-          <p className="mt-2 text-sm text-gray-600">Đăng nhập vào tài khoản giảng viên của bạn</p>
+          <p className="mt-2 text-sm text-gray-600">Đăng nhập vào tài khoản của bạn</p>
         </div>
 
         {globalError && (
@@ -87,7 +98,7 @@ const LoginPage = () => {
             label="Địa chỉ Email"
             name="email"
             type="email"
-            placeholder="giangvien@gmail.com"
+            placeholder="tai-khoan@gmail.com"
             value={formData.email}
             onChange={handleChange}
             error={errors.email}

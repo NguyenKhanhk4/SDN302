@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const teacherRoutes = require('./modules/teacher');
 const authRoutes = require('./routes/auth.routes');
 const profileRoutes = require('./routes/profile.routes');
+const studentRoutes = require('./routes/student.routes');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/student', studentRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

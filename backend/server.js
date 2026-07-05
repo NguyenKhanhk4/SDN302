@@ -11,8 +11,11 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-// Connect to Database
-connectDB();
+// Connect to Database and seed initial data
+connectDB().then(() => {
+  const { seedAnnouncements } = require('./src/utils/seeder');
+  seedAnnouncements();
+});
 
 const PORT = process.env.PORT || 5000;
 

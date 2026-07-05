@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProfileModal from './ProfileModal';
 
 const ProfileMenu = ({ user, onLogout, onProfileUpdated }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef(null);
@@ -23,7 +25,11 @@ const ProfileMenu = ({ user, onLogout, onProfileUpdated }) => {
 
   const handleProfileClick = () => {
     setIsOpen(false);
-    setIsModalOpen(true);
+    if (user?.role?.toUpperCase() === 'STUDENT') {
+      navigate('/student/profile');
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const handleLogoutClick = () => {
@@ -42,8 +48,12 @@ const ProfileMenu = ({ user, onLogout, onProfileUpdated }) => {
           <p className="text-sm font-medium text-gray-900">{user?.name || user?.fullName || 'Người dùng'}</p>
           <p className="text-xs text-gray-500 font-medium">{user?.role?.toUpperCase() === 'TEACHER' ? 'Giảng viên' : user?.role}</p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200 shadow-sm hover:bg-blue-200 transition-colors">
-          {getInitial(user?.name || user?.fullName)}
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200 shadow-sm hover:bg-blue-200 transition-colors">
+          {user?.avatar ? (
+            <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            getInitial(user?.name || user?.fullName)
+          )}
         </div>
       </button>
 
@@ -51,8 +61,12 @@ const ProfileMenu = ({ user, onLogout, onProfileUpdated }) => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-40 animate-fade-in">
           <div className="p-4 border-b border-gray-50 flex items-center gap-3 bg-gray-50/50">
-            <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl flex-shrink-0">
-              {getInitial(user?.name || user?.fullName)}
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl flex-shrink-0">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                getInitial(user?.name || user?.fullName)
+              )}
             </div>
             <div className="overflow-hidden">
               <p className="font-semibold text-gray-800 truncate" title={user?.name || user?.fullName}>

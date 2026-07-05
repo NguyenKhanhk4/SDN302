@@ -16,8 +16,8 @@ require('../../models/Subject');
 
 const generateFixedSessions = async () => {
   try {
-    console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
+    const mongoUri = process.env.MONGO_URI || process.env.MONGO_URI_LOCAL || 'mongodb://127.0.0.1:27017/sdn302_db';
+    await mongoose.connect(mongoUri);
     console.log('MongoDB Connected.');
 
     const classes = await Class.find({ status: { $in: ['scheduled', 'ongoing', 'completed'] } });
