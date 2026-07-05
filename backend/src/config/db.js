@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Timeout in milliseconds before giving up on a connection attempt
-const CONNECTION_TIMEOUT_MS = 5000;
+const CONNECTION_TIMEOUT_MS = 35000;
 
 /**
  * Attempt to connect to a single MongoDB URI.

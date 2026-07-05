@@ -14,11 +14,20 @@ process.on('uncaughtException', (err) => {
 // Connect to Database
 connectDB();
 
+// Start Background Jobs
+const { startCronJobs } = require('./src/services/cron.service');
+startCronJobs();
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
+
+// Initialize Socket.io
+const socketService = require('./src/services/socket.service');
+const io = socketService.init(server);
+console.log('Socket.io initialized');
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {

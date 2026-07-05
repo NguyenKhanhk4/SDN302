@@ -4,45 +4,50 @@ const InvoiceSchema = new mongoose.Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'StudentProfile',
+      ref: 'User',
       required: true,
     },
-    classId: {
+    enrollmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Class',
-      required: true,
+      ref: 'Enrollment',
     },
     amount: {
       type: Number,
       required: true,
+      min: 0,
     },
-    paidAmount: {
+    discount: {
       type: Number,
       default: 0,
+      min: 0,
     },
-    month: {
-      type: String, // "YYYY-MM"
+    totalAmount: {
+      type: Number,
       required: true,
+      min: 0,
+    },
+    status: {
+      type: String,
+      enum: ['UNPAID', 'PARTIAL', 'PAID', 'CANCELLED'],
+      default: 'UNPAID',
     },
     dueDate: {
       type: Date,
       required: true,
     },
-    status: {
-      type: String,
-      enum: ['PAID', 'UNPAID', 'PARTIAL', 'OVERDUE'],
-      default: 'UNPAID',
-    },
-    note: {
-      type: String,
-      default: '',
-    },
+    notes: String,
   },
   {
     timestamps: true,
   }
 );
 
-InvoiceSchema.index({ studentId: 1, classId: 1, month: 1 }, { unique: true });
+// Calculate totalAmount before saving if not set
+InvoiceSchema.pre('save', function (next) {
+  if (this.isModified('amount') || this.isModified('discount')) {
+    this.totalAmount = this.amount - this.discount;
+  }
+  next();
+});
 
 module.exports = mongoose.model('Invoice', InvoiceSchema);
