@@ -4,6 +4,7 @@ const morgan = require('morgan');
 
 const teacherRoutes = require('./modules/teacher');
 const authRoutes = require('./routes/auth.routes');
+const adminRoutes = require('./routes/admin.routes');
 const profileRoutes = require('./routes/profile.routes');
 const studentRoutes = require('./routes/student.routes');
 
@@ -31,9 +32,23 @@ app.get('/', (req, res) => {
   });
 });
 
+const dataRoutes = require('./routes/data.routes');
+const subjectRoutes = require('./routes/subject.routes');
+const enrollmentRoutes = require('./routes/enrollment.routes');
+const sessionRoutes = require('./routes/session.routes');
+const financeRoutes = require('./routes/finance.routes');
+const reportRoutes = require('./routes/report.routes');
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/teacher', teacherRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/data', dataRoutes);
+app.use('/api/subject', subjectRoutes);
+app.use('/api/enrollment', enrollmentRoutes);
+app.use('/api/session', sessionRoutes);
+app.use('/api/finance', financeRoutes);
+app.use('/api/report', reportRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/student', studentRoutes);
 

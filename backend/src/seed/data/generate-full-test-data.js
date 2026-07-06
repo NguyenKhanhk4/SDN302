@@ -44,7 +44,10 @@ const data = {
   schedules: [],
   sessions: [],
   attendances: [],
-  invoices: []
+  invoices: [],
+  enrollments: [],
+  payrolls: [],
+  receipts: []
 };
 
 // ============ USERS ============
@@ -102,7 +105,7 @@ for (let i = 1; i <= 86; i++) {
     password: "123456",
     phone: `093${pad(i, 7)}`,
     role: "STUDENT",
-    status: "ACTIVE"
+    status: i % 15 === 0 ? "INACTIVE" : "ACTIVE"
   });
 }
 
@@ -115,7 +118,7 @@ for (let i = 1; i <= 50; i++) {
     password: "123456",
     phone: `094${pad(i, 7)}`,
     role: "PARENT",
-    status: "ACTIVE"
+    status: i % 10 === 0 ? "INACTIVE" : "ACTIVE"
   });
 }
 
@@ -205,9 +208,9 @@ data.subjects.push(
 data.classes.push(
   { key: "class_toan_10a", name: "Lớp Toán 10A", subjectKey: "subject_math_10", teacherProfileKey: "teacher_profile_main", room: "Phòng B201", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
   { key: "class_ly_11a", name: "Lớp Lý 11A", subjectKey: "subject_physics_11", teacherProfileKey: "teacher_profile_main", room: "Phòng B202", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
-  { key: "class_anh_9a", name: "Lớp Anh 9A", subjectKey: "subject_english_9", teacherProfileKey: "teacher_profile_second", room: "Phòng B203", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
-  { key: "class_hoa_12a", name: "Lớp Hóa 12A", subjectKey: "subject_chemistry_12", teacherProfileKey: "teacher_profile_second", room: "Phòng B204", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
-  { key: "class_toan_9a", name: "Lớp Toán 9A", subjectKey: "subject_math_9", teacherProfileKey: "teacher_profile_main", room: "Phòng B205", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" }
+  { key: "class_anh_9a", name: "Lớp Anh 9A", subjectKey: "subject_english_9", teacherProfileKey: "teacher_profile_second", room: "Phòng B203", maxStudents: 20, status: "UPCOMING", startDate: "2026-10-01", endDate: "2026-12-30" },
+  { key: "class_hoa_12a", name: "Lớp Hóa 12A", subjectKey: "subject_chemistry_12", teacherProfileKey: "teacher_profile_second", room: "Phòng B204", maxStudents: 20, status: "FINISHED", startDate: "2025-09-01", endDate: "2025-12-30" },
+  { key: "class_toan_9a", name: "Lớp Toán 9A", subjectKey: "subject_math_9", teacherProfileKey: "teacher_profile_main", room: "Phòng B205", maxStudents: 20, status: "CANCELLED", startDate: "2026-06-15", endDate: "2026-09-15" }
 );
 
 // ============ CLASS STUDENTS ============
@@ -221,12 +224,40 @@ const classStudentRanges = [
 ];
 
 classStudentRanges.forEach(range => {
+  let csStatus = "ACTIVE";
+  let enStatus = "APPROVED";
+  
+  if (range.classKey === "class_anh_9a") {
+    enStatus = "PENDING";
+  } else if (range.classKey === "class_hoa_12a") {
+    csStatus = "COMPLETED";
+    enStatus = "APPROVED";
+  } else if (range.classKey === "class_toan_9a") {
+    csStatus = "DROPPED";
+    enStatus = "CANCELLED";
+  }
+
   for (let i = range.from; i <= range.to; i++) {
+    const studentKey = `student_profile_${pad(i)}`;
+    
+    // Add dropout for a few active students
+    let finalCsStatus = csStatus;
+    if (csStatus === "ACTIVE" && i % 12 === 0) finalCsStatus = "DROPPED";
+
     data.classStudents.push({
       key: `cs_${range.classKey}_${pad(i)}`,
       classKey: range.classKey,
-      studentProfileKey: `student_profile_${pad(i)}`,
-      status: "ACTIVE"
+      studentProfileKey: studentKey,
+      status: finalCsStatus
+    });
+    // Add Enrollment for each classStudent
+    data.enrollments.push({
+      key: `enrollment_${range.classKey}_${pad(i)}`,
+      studentProfileKey: studentKey,
+      classKey: range.classKey,
+      status: enStatus,
+      enrollmentDate: "2026-05-15",
+      notes: "Enrolled from test data"
     });
   }
 });
@@ -255,6 +286,9 @@ const scheduleEntries = [
 ];
 
 scheduleEntries.forEach((e, idx) => {
+  let sStatus = "ACTIVE";
+  if (e.classKey === "class_toan_9a") sStatus = "CANCELLED";
+  
   data.schedules.push({
     key: `schedule_${pad(idx + 1)}`,
     classKey: e.classKey,
@@ -263,17 +297,20 @@ scheduleEntries.forEach((e, idx) => {
     startTime: slots[e.slot].startTime,
     endTime: slots[e.slot].endTime,
     room: e.room,
-    status: "ACTIVE"
+    status: sStatus
   });
 });
 
 // ============ SESSIONS ============
 
-data.sessions.push(
-  { key: "session_001", classKey: "class_toan_10a", scheduleKey: "schedule_001", sessionDate: "2026-06-15", topic: "Buổi học ngày 15/06/2026", status: "COMPLETED" },
-  { key: "session_002", classKey: "class_ly_11a",   scheduleKey: "schedule_003", sessionDate: "2026-06-16", topic: "Buổi học ngày 16/06/2026", status: "COMPLETED" },
-  { key: "session_003", classKey: "class_anh_9a",   scheduleKey: "schedule_005", sessionDate: "2026-06-15", topic: "Buổi học ngày 15/06/2026", status: "SCHEDULED" }
-);
+// Let's generate 15 sessions for the first 3 schedules to have more data
+for (let i = 1; i <= 5; i++) {
+  data.sessions.push(
+    { key: `session_${pad(i * 3 - 2)}`, classKey: "class_toan_10a", scheduleKey: "schedule_001", sessionDate: `2026-06-${pad(10+i)}`, topic: `Toán Đại Số phần ${i}`, status: "COMPLETED" },
+    { key: `session_${pad(i * 3 - 1)}`, classKey: "class_ly_11a",   scheduleKey: "schedule_003", sessionDate: `2026-06-${pad(11+i)}`, topic: `Động Lực Học phần ${i}`, status: i <= 3 ? "COMPLETED" : "SCHEDULED" },
+    { key: `session_${pad(i * 3)}`, classKey: "class_anh_9a",   scheduleKey: "schedule_005", sessionDate: `2026-06-${pad(12+i)}`, topic: `Reading Practice ${i}`, status: i <= 2 ? "COMPLETED" : "SCHEDULED" }
+  );
+}
 
 // ============ ATTENDANCES ============
 
@@ -310,6 +347,7 @@ function generateAttendances(sessionKey, classKey, fromStudent, toStudent) {
 
 // Session 1: class_toan_10a students 1-15
 data.attendances.push(...generateAttendances("session_001", "class_toan_10a", 1, 15));
+data.attendances.push(...generateAttendances("session_004", "class_toan_10a", 1, 15));
 // Session 2: class_ly_11a students 16-31
 data.attendances.push(...generateAttendances("session_002", "class_ly_11a", 16, 31));
 
@@ -342,7 +380,46 @@ for (let i = 1; i <= 20; i++) {
     status: status,
     paidAmount: paidAmount
   });
+
+  // Create receipts for invoices
+  if (status === "PAID" || status === "PARTIAL") {
+    data.receipts.push({
+      key: `receipt_${pad(i)}`,
+      invoiceKey: `invoice_${pad(i)}`,
+      studentProfileKey: `student_profile_${pad(i)}`,
+      amountPaid: paidAmount,
+      paymentDate: "2026-06-15",
+      paymentMethod: "BANK_TRANSFER",
+      transactionId: `TXN${10000 + i}`,
+      notes: "Payment for tuition fee"
+    });
+  }
 }
+
+// ============ PAYROLLS ============
+data.payrolls.push({
+  key: "payroll_teacher1_06",
+  teacherProfileKey: "teacher_profile_main",
+  month: 6,
+  year: 2026,
+  totalSessions: 12,
+  baseAmount: 6000000,
+  bonusAmount: 500000,
+  totalAmount: 6500000,
+  status: "PAID",
+  details: []
+}, {
+  key: "payroll_teacher2_06",
+  teacherProfileKey: "teacher_profile_second",
+  month: 6,
+  year: 2026,
+  totalSessions: 8,
+  baseAmount: 4000000,
+  bonusAmount: 0,
+  totalAmount: 4000000,
+  status: "DRAFT",
+  details: []
+});
 
 // ============ WRITE FILE ============
 
@@ -359,10 +436,13 @@ console.log(`ParentStudents: ${data.parentStudents.length} (expect 86)`);
 console.log(`Subjects: ${data.subjects.length} (expect 5)`);
 console.log(`Classes: ${data.classes.length} (expect 5)`);
 console.log(`ClassStudents: ${data.classStudents.length} (expect 86)`);
+console.log(`Enrollments: ${data.enrollments.length} (expect 86)`);
 console.log(`Schedules: ${data.schedules.length} (expect 10)`);
-console.log(`Sessions: ${data.sessions.length} (expect 3)`);
-console.log(`Attendances: ${data.attendances.length} (expect 31 = 15 + 16)`);
+console.log(`Sessions: ${data.sessions.length} (expect 15)`);
+console.log(`Attendances: ${data.attendances.length} (expect 46)`);
 console.log(`Invoices: ${data.invoices.length} (expect 20)`);
+console.log(`Receipts: ${data.receipts.length} (expect 13)`);
+console.log(`Payrolls: ${data.payrolls.length} (expect 2)`);
 
 // Class size verification
 classStudentRanges.forEach(r => {

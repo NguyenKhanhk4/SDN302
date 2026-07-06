@@ -39,8 +39,8 @@ export const getWeekOptions = (year) => {
     const end = new Date(d);
     end.setDate(end.getDate() + 6);
     
-    const label = `${formatDate(start)} - ${formatDate(end)}`;
-    options.push({ value: week, label, startDate: start, endDate: end });
+    const label = `Tuần ${week} (${formatDate(start)} - ${formatDate(end)})`;
+    options.push({ value: week, label });
     
     d.setDate(d.getDate() + 7);
     week++;
@@ -54,7 +54,7 @@ export const getWeekDates = (year, weekNumber) => {
   startOfWeek.setDate(startOfWeek.getDate() + (weekNumber - 1) * 7);
   
   const dates = [];
-  const dayLabels = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
+  const dayLabels = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   const backendDays = [1, 2, 3, 4, 5, 6, 0]; // Monday=1, Sunday=0 in backend
 
   for (let i = 0; i < 7; i++) {

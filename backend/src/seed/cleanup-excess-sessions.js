@@ -32,7 +32,7 @@ const cleanupExcessSessions = async () => {
         const excessSessions = sessions.slice(targetTotal);
         
         for (const session of excessSessions) {
-          // Check if this session has any attendance records
+        
           const attendanceCount = await Attendance.countDocuments({ sessionId: session._id });
           
           if (attendanceCount > 0) {

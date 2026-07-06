@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Mật khẩu là bắt buộc'],
       minlength: [6, 'Mật khẩu phải có ít nhất 6 ký tự'],
-      select: false, // Không trả password trong query mặc định
+      select: false, 
     },
     phone: String,
     address: String,
@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'manager', 'teacher', 'student', 'parent'],
+      enum: ['admin', 'teacher', 'student', 'parent', 'manager', 'accountant'],
       default: 'student',
     },
     isActive: {
@@ -44,13 +44,11 @@ const UserSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Tự động tạo createdAt, updatedAt
+    timestamps: true, 
   }
 );
 
-// Hash password trước khi lưu
 UserSchema.pre('save', async function (next) {
-  // Chỉ hash khi password bị thay đổi
   if (!this.isModified('password')) return next();
 
   const salt = await bcrypt.genSalt(10);
@@ -58,7 +56,6 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-// Method: So sánh password khi đăng nhập
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
