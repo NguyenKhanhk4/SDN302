@@ -1,36 +1,35 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, CalendarDays, LogOut, GraduationCap } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, Users, BookOpen, GraduationCap, Contact, BookText, Calendar, Receipt } from 'lucide-react';
 
-const Sidebar = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+const ManagerSidebar = () => {
   const menuItems = [
-    { name: 'Bảng điều khiển', path: '/teacher/dashboard', icon: LayoutDashboard },
-    { name: 'Lớp học của tôi', path: '/teacher/classes', icon: BookOpen },
-    { name: 'Lịch dạy', path: '/teacher/schedules', icon: CalendarDays },
+    { path: '/manager/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
+    { path: '/manager/students', label: 'Học viên', icon: Users },
+    { path: '/manager/teachers', label: 'Giáo viên', icon: GraduationCap },
+    { path: '/manager/subjects', label: 'Môn học', icon: BookText },
+    { path: '/manager/classes', label: 'Lớp học', icon: BookOpen },
+    { path: '/manager/schedules', label: 'Lịch học', icon: Calendar },
+    { path: '/manager/invoices', label: 'Hóa đơn', icon: Receipt },
   ];
 
   return (
-    <div className="w-64 bg-slate-900 text-slate-300 flex flex-col h-full border-r border-slate-800 relative overflow-hidden z-40">
+    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col hidden md:flex border-r border-slate-800 relative overflow-hidden z-40">
       {/* Decorative blurred background layer */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-blue-600/10 blur-[50px] pointer-events-none"></div>
 
+      {/* Logo Header */}
       <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10">
         <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
           <GraduationCap className="h-4 w-4" />
         </div>
         <div>
           <h1 className="text-sm font-bold text-white tracking-wide">Tutor Center</h1>
-          <p className="text-[10px] text-blue-400 font-medium">Teacher Portal</p>
+          <p className="text-[10px] text-blue-400 font-medium">Manager Portal</p>
         </div>
       </div>
-      
+
+      {/* Menu items */}
       <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -50,7 +49,7 @@ const Sidebar = () => {
                 <>
                   {isActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-500 rounded-r-full shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>}
                   <Icon className={`h-5 w-5 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
-                  <span className="text-sm tracking-wide">{item.name}</span>
+                  <span className="text-sm tracking-wide">{item.label}</span>
                 </>
               )}
             </NavLink>
@@ -58,6 +57,7 @@ const Sidebar = () => {
         })}
       </div>
 
+      {/* Bottom Tip Card & Footer */}
       <div className="p-4 border-t border-slate-800 relative z-10">
         <div className="bg-gradient-to-br from-slate-800/80 to-slate-800/40 border border-slate-700/80 rounded-xl p-4 mb-4 backdrop-blur-sm">
           <h4 className="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
@@ -65,12 +65,15 @@ const Sidebar = () => {
             Mẹo nhỏ
           </h4>
           <p className="text-[11px] text-slate-300 leading-relaxed">
-            Điểm danh học viên sau mỗi buổi học để theo dõi tiến độ chính xác.
+            Theo dõi doanh thu và hóa đơn chưa đóng mỗi đầu tuần để giữ dòng tiền ổn định.
           </p>
         </div>
+        <div className="text-[10px] text-slate-500 text-center font-medium tracking-wide">
+          &copy; 2026 Tutor Center
+        </div>
       </div>
-    </div>
+    </aside>
   );
 };
 
-export default Sidebar;
+export default ManagerSidebar;

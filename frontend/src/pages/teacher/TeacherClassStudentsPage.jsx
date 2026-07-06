@@ -5,7 +5,7 @@ import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
-import Button from '../../components/common/Button';
+import { ArrowLeft, Users, LayoutList } from 'lucide-react';
 
 const TeacherClassStudentsPage = () => {
   const { classId } = useParams();
@@ -83,22 +83,30 @@ const TeacherClassStudentsPage = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Học viên</h1>
-          <p className="mt-1 text-sm text-gray-500">Học viên trong lớp học này.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Học viên</h1>
+          <p className="text-sm text-slate-500 mt-1">Danh sách học viên trong lớp học này.</p>
         </div>
-        <div className="space-x-3">
-          <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}`)}>
-            &larr; Chi tiết lớp học
-          </Button>
-          <Button variant="secondary" onClick={() => navigate('/teacher/classes')}>
-            Tất cả lớp học
-          </Button>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => navigate(`/teacher/classes/${classId}`)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors"
+          >
+            <ArrowLeft size={16} />
+            <span>Chi tiết lớp học</span>
+          </button>
+          <button 
+            onClick={() => navigate('/teacher/classes')}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium rounded-xl transition-colors"
+          >
+            <LayoutList size={16} />
+            <span>Tất cả lớp học</span>
+          </button>
         </div>
       </div>
-
-      <Card className="w-full">
+      
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {students.length === 0 ? (
           <EmptyState 
             title="Không tìm thấy học viên" 
@@ -106,30 +114,31 @@ const TeacherClassStudentsPage = () => {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên học viên</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số điện thoại</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tên học viên</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số điện thoại</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-100">
                 {students.map((item, index) => {
                   const info = getStudentInfo(item);
                   return (
-                    <tr key={item._id || item.id || index} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{info.name}</div>
+                    <tr key={item._id || item.id || index} className="hover:bg-blue-50/30 transition-colors group">
+                      <td className="p-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                            {info.name.charAt(0)}
+                          </div>
+                          <span className="text-sm font-semibold text-slate-800">{info.name}</span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{info.email}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{info.phone}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="p-4 text-sm text-slate-600">{info.email}</td>
+                      <td className="p-4 text-sm text-slate-600">{info.phone}</td>
+                      <td className="p-4 text-sm">
                         <Badge status={info.status} />
                       </td>
                     </tr>
@@ -139,7 +148,7 @@ const TeacherClassStudentsPage = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

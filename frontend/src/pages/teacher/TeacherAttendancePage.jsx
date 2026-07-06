@@ -4,35 +4,7 @@ import { teacherApi } from '../../api/teacherApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
-import Button from '../../components/common/Button';
-
-const normalizeAttendanceStatus = (status) => {
-  if (status === "PRESENT" || status === "ABSENT") {
-    return status;
-  }
-  return "";
-};
-
-const getStatusButtonClass = (currentStatus, buttonStatus) => {
-  const isActive = currentStatus === buttonStatus;
-
-  const baseClass =
-    "px-4 py-2 rounded-lg border text-sm transition font-medium";
-
-  if (buttonStatus === "PRESENT") {
-    return isActive
-      ? `${baseClass} bg-green-100 text-green-700 border-green-300 font-semibold opacity-100`
-      : `${baseClass} bg-gray-50 text-gray-400 border-gray-200 opacity-50 hover:opacity-80`;
-  }
-
-  if (buttonStatus === "ABSENT") {
-    return isActive
-      ? `${baseClass} bg-red-100 text-red-700 border-red-300 font-semibold opacity-100`
-      : `${baseClass} bg-gray-50 text-gray-400 border-gray-200 opacity-50 hover:opacity-80`;
-  }
-
-  return baseClass;
-};
+import { ArrowLeft, CheckSquare, Save, UserCheck, AlertCircle } from 'lucide-react';
 
 const TeacherAttendancePage = () => {
   const { classId, sessionId } = useParams();
@@ -86,7 +58,7 @@ const TeacherAttendancePage = () => {
         const sId = att.studentId?._id || att.studentId || att.student;
         if (sId) {
           attMap[sId] = {
-            status: normalizeAttendanceStatus(att.status),
+            status: att.status || 'PRESENT',
             note: att.note || ''
           };
         }
@@ -99,7 +71,7 @@ const TeacherAttendancePage = () => {
         if (sId) {
           const existing = attMap[sId];
           initialForm[sId] = {
-            status: existing && existing.status ? existing.status : '', // Default empty
+            status: existing ? existing.status : 'PRESENT', // Default PRESENT
             note: existing ? existing.note : ''
           };
         }
@@ -146,18 +118,11 @@ const TeacherAttendancePage = () => {
       setSuccessMessage('');
 
       // Build array of attendance objects for the API
-      const attendances = [];
-      for (const sId of Object.keys(attendanceForm)) {
-        const formRow = attendanceForm[sId];
-        if (!formRow.status) {
-          throw new Error("Vui lòng chọn trạng thái điểm danh cho tất cả học viên.");
-        }
-        attendances.push({
-          studentId: sId,
-          status: formRow.status,
-          note: formRow.note
-        });
-      }
+      const attendances = Object.keys(attendanceForm).map(sId => ({
+        studentId: sId,
+        status: attendanceForm[sId].status,
+        note: attendanceForm[sId].note
+      }));
 
       await teacherApi.takeAttendance(classId, sessionId, { attendances });
       
@@ -182,31 +147,45 @@ const TeacherAttendancePage = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Điểm danh</h1>
-          <p className="mt-1 text-sm text-gray-500">Thực hiện hoặc xem lại điểm danh cho buổi học này.</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Điểm danh</h1>
+          <p className="text-sm text-slate-500 mt-1">Thực hiện hoặc xem lại điểm danh cho buổi học này.</p>
         </div>
-        <Button variant="outline" onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}>
-          &larr; Quay lại danh sách buổi học
-        </Button>
+        <button 
+          onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors"
+        >
+          <ArrowLeft size={16} />
+          <span>Danh sách buổi học</span>
+        </button>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-          <p className="font-medium">Lỗi</p>
-          <p className="text-sm">{error}</p>
-          <button onClick={fetchData} className="mt-2 text-sm underline focus:outline-none">Thử lại</button>
+        <div className="mb-6 p-4 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 flex items-start gap-3">
+          <AlertCircle className="text-rose-500 mt-0.5" size={20} />
+          <div>
+            <p className="font-semibold text-sm">Lỗi</p>
+            <p className="text-sm mt-1">{error}</p>
+            <button onClick={fetchData} className="mt-2 text-sm font-medium text-rose-800 hover:underline focus:outline-none">Thử lại</button>
+          </div>
         </div>
       )}
 
       {successMessage && (
-        <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
-          <p className="font-medium">{successMessage}</p>
+        <div className="mb-6 p-4 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 flex items-center gap-3">
+          <UserCheck className="text-emerald-500" size={20} />
+          <p className="font-semibold text-sm">{successMessage}</p>
         </div>
       )}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 px-6 py-4 flex items-center gap-3">
+          <div className="p-2 bg-blue-600 text-white rounded-lg shadow-sm">
+            <CheckSquare size={18} />
+          </div>
+          <h2 className="text-lg font-bold text-slate-800">Danh sách học viên</h2>
+        </div>
 
-      <Card className="w-full">
         {students.length === 0 ? (
           <EmptyState 
             title="Không có học viên" 
@@ -215,56 +194,59 @@ const TeacherAttendancePage = () => {
         ) : (
           <div>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 mb-6">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên học viên</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ghi chú</th>
+              <table className="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-white">
+                    <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Học viên</th>
+                    <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
+                    <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
+                    <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-1/3">Ghi chú</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-100">
                   {students.map((item, index) => {
                     const info = getStudentInfo(item);
                     if (!info.id) return null;
                     
-                    const formRow = attendanceForm[info.id] || { status: '', note: '' };
+                    const formRow = attendanceForm[info.id] || { status: 'PRESENT', note: '' };
 
                     return (
-                      <tr key={info.id || index} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{info.name}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{info.email}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleStatusChange(info.id, "PRESENT")}
-                              className={getStatusButtonClass(formRow.status, "PRESENT")}
-                            >
-                              Present
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleStatusChange(info.id, "ABSENT")}
-                              className={getStatusButtonClass(formRow.status, "ABSENT")}
-                            >
-                              Absent
-                            </button>
+                      <tr key={info.id || index} className="hover:bg-blue-50/30 transition-colors group">
+                        <td className="p-4 whitespace-nowrap">
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">
+                              {info.name.charAt(0)}
+                            </div>
+                            <span className="text-sm font-semibold text-slate-800">{info.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="p-4 text-sm text-slate-600">
+                          {info.email}
+                        </td>
+                        <td className="p-4">
+                          <select
+                            value={formRow.status}
+                            onChange={(e) => handleStatusChange(info.id, e.target.value)}
+                            className={`text-sm font-medium border rounded-xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors cursor-pointer outline-none appearance-none ${
+                              formRow.status === 'PRESENT' ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' :
+                              formRow.status === 'ABSENT' ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100' :
+                              formRow.status === 'LATE' ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100' :
+                              'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+                            }`}
+                          >
+                            <option value="PRESENT">✅ Có mặt</option>
+                            <option value="ABSENT">❌ Vắng mặt</option>
+                            <option value="LATE">⏱️ Đi muộn</option>
+                            <option value="EXCUSED">📝 Có phép</option>
+                          </select>
+                        </td>
+                        <td className="p-4">
                           <input
                             type="text"
-                            placeholder="Ghi chú thêm (nếu có)..."
+                            placeholder="Nhập ghi chú thêm..."
                             value={formRow.note}
                             onChange={(e) => handleNoteChange(info.id, e.target.value)}
-                            className="w-full text-sm border border-gray-300 rounded-md py-1.5 px-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                            className="w-full text-sm border border-slate-300 rounded-xl py-2 px-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all placeholder:text-slate-400"
                           />
                         </td>
                       </tr>
@@ -274,19 +256,28 @@ const TeacherAttendancePage = () => {
               </table>
             </div>
             
-            <div className="flex justify-end pt-4 border-t border-gray-100">
-              <Button 
-                variant="primary" 
+            <div className="flex justify-end p-6 border-t border-slate-100 bg-slate-50/50">
+              <button 
                 onClick={handleSaveAttendance} 
-                loading={saving}
-                disabled={students.length === 0}
+                disabled={saving || students.length === 0}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm shadow-blue-600/20 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Lưu điểm danh
-              </Button>
+                {saving ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Đang lưu...
+                  </span>
+                ) : (
+                  <>
+                    <Save size={18} />
+                    <span>Lưu điểm danh</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

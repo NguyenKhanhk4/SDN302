@@ -1,53 +1,36 @@
 const mongoose = require('mongoose');
 
-const InvoiceSchema = new mongoose.Schema(
-  {
-    studentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    enrollmentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Enrollment',
-    },
-    amount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    discount: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-    totalAmount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    status: {
-      type: String,
-      enum: ['UNPAID', 'PARTIAL', 'PAID', 'CANCELLED'],
-      default: 'UNPAID',
-    },
-    dueDate: {
-      type: Date,
-      required: true,
-    },
-    notes: String,
+const invoiceSchema = new mongoose.Schema({
+  studentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'StudentProfile',
+    required: true
   },
-  {
-    timestamps: true,
+  classId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Class',
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  month: {
+    type: String, // e.g., '2023-10'
+    required: true
+  },
+  dueDate: {
+    type: Date,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['unpaid', 'paid', 'overdue'],
+    default: 'unpaid'
+  },
+  paidAt: {
+    type: Date
   }
-);
+}, { timestamps: true });
 
-// Calculate totalAmount before saving if not set
-InvoiceSchema.pre('save', function (next) {
-  if (this.isModified('amount') || this.isModified('discount')) {
-    this.totalAmount = this.amount - this.discount;
-  }
-  next();
-});
-
-module.exports = mongoose.model('Invoice', InvoiceSchema);
+module.exports = mongoose.model('Invoice', invoiceSchema);

@@ -5,7 +5,7 @@ import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
-import Button from '../../components/common/Button';
+import { Eye, Users, CalendarDays, BookOpen } from 'lucide-react';
 
 const TeacherClassesPage = () => {
   const navigate = useNavigate();
@@ -69,12 +69,16 @@ const TeacherClassesPage = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Lớp học của tôi</h1>
-        <p className="mt-1 text-sm text-gray-500">Xem các lớp học được phân công cho bạn.</p>
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Lớp học của tôi</h1>
+          <p className="text-sm text-slate-500 mt-1">Xem các lớp học được phân công cho bạn.</p>
+        </div>
+        <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shadow-inner">
+          <BookOpen size={24} />
+        </div>
       </div>
-
-      <Card className="w-full">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {classes.length === 0 ? (
           <EmptyState 
             title="Không tìm thấy lớp học" 
@@ -82,59 +86,51 @@ const TeacherClassesPage = () => {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên lớp học</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Môn học</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phòng học</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Học viên</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+            <table className="w-full text-left border-collapse whitespace-nowrap">
+              <thead>
+                <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tên lớp học</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Môn học</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Phòng học</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số học viên tối đa</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Hành động</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-100">
                 {classes.map((cls) => {
                   const id = cls._id || cls.id;
                   return (
-                    <tr key={id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{cls.name || cls.className || 'Không xác định'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{getSubjectName(cls)}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{cls.room || 'Không có'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">{cls.maxStudents || cls.capacity || 'Không có'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                    <tr key={id} className="hover:bg-blue-50/30 transition-colors group">
+                      <td className="p-4 text-sm font-semibold text-slate-800">{cls.name || cls.className || 'Không xác định'}</td>
+                      <td className="p-4 text-sm text-slate-600">{getSubjectName(cls)}</td>
+                      <td className="p-4 text-sm text-slate-600">{cls.room || 'Không có'}</td>
+                      <td className="p-4 text-sm text-slate-600">{cls.maxStudents || cls.capacity || 'Không có'}</td>
+                      <td className="p-4 text-sm">
                         <Badge status={cls.status || 'ACTIVE'} />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2 flex justify-end items-center">
-                        <Button 
-                          variant="outline" 
+                      <td className="p-4 text-sm text-right space-x-1.5 opacity-80 group-hover:opacity-100 transition-opacity flex justify-end">
+                        <button 
                           onClick={() => navigate(`/teacher/classes/${id}`)}
-                          className="!py-1.5 !px-3 !text-xs"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                          title="Xem chi tiết"
                         >
-                          Xem chi tiết
-                        </Button>
-                        <Button 
-                          variant="secondary" 
+                          <Eye size={16} />
+                        </button>
+                        <button 
                           onClick={() => navigate(`/teacher/classes/${id}/students`)}
-                          className="!py-1.5 !px-3 !text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                          title="Học viên"
                         >
-                          Học viên
-                        </Button>
-                        <Button 
-                          variant="secondary" 
+                          <Users size={16} />
+                        </button>
+                        <button 
                           onClick={() => navigate(`/teacher/classes/${id}/sessions`)}
-                          className="!py-1.5 !px-3 !text-xs text-green-600 hover:text-green-800 hover:bg-green-50"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                          title="Buổi học"
                         >
-                          Buổi học
-                        </Button>
+                          <CalendarDays size={16} />
+                        </button>
                       </td>
                     </tr>
                   );
@@ -143,7 +139,7 @@ const TeacherClassesPage = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };
