@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/authApi';
-import { saveAuth } from '../../utils/auth';
+import { saveAuth, getUser } from '../../utils/auth';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
@@ -12,6 +12,22 @@ const LoginPage = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState('');
+
+  // Nếu đã đăng nhập, redirect về dashboard đúng role
+  const existingUser = getUser();
+  if (existingUser && localStorage.getItem('token')) {
+    const roleDashboards = {
+      admin: '/admin/dashboard',
+      manager: '/manager/dashboard',
+      teacher: '/teacher/dashboard',
+      student: '/student/dashboard',
+      parent: '/parent/dashboard',
+      accountant: '/accountant/dashboard',
+    };
+    const target = roleDashboards[existingUser.role] || '/';
+    navigate(target, { replace: true });
+    return null;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,19 +61,11 @@ const LoginPage = () => {
         password: formData.password
       });
 
-      // Theo cấu trúc API chung, token và user thường nằm trong response, hoặc response.data
       const user = response.user;
       const token = response.token;
 
-      if (!user) {
+      if (!user || !token) {
         setGlobalError('Không tìm thấy thông tin tài khoản');
-        setLoading(false);
-        return;
-      }
-
-      const roleUpper = String(user.role).toUpperCase();
-      if (roleUpper !== 'TEACHER' && roleUpper !== 'STUDENT') {
-        setGlobalError('Chỉ tài khoản giảng viên hoặc học sinh mới có thể truy cập cổng thông tin này');
         setLoading(false);
         return;
       }
@@ -65,12 +73,19 @@ const LoginPage = () => {
       // Lưu token & user info
       saveAuth(token, user);
       
-      // Chuyển hướng tới Dashboard thích hợp
-      if (roleUpper === 'TEACHER') {
-        navigate('/teacher/dashboard', { replace: true });
-      } else {
-        navigate('/student/dashboard', { replace: true });
-      }
+      // Chuyển hướng tới Dashboard thích hợp theo role
+      const roleDashboards = {
+        admin: '/admin/dashboard',
+        manager: '/manager/dashboard',
+        teacher: '/teacher/dashboard',
+        student: '/student/dashboard',
+        parent: '/parent/dashboard',
+        accountant: '/accountant/dashboard',
+      };
+
+      const role = String(user.role).toLowerCase();
+      const target = roleDashboards[role] || '/login';
+      navigate(target, { replace: true });
 
     } catch (err) {
       setGlobalError(err.message || err.error || 'Email hoặc mật khẩu không hợp lệ');

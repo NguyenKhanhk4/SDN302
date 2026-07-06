@@ -21,7 +21,7 @@ axiosClient.interceptors.request.use(
   }
 );
 
-// Interceptor to handle responses globally (e.g. logouts on 401)
+// Interceptor to handle responses globally
 axiosClient.interceptors.response.use(
   (response) => {
     // Only return data to keep it clean
@@ -31,11 +31,17 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // We are bypassing login, so we don't redirect on 401
+    // Khi nhận 401 Unauthorized → clear auth và redirect về login
     if (error.response && error.response.status === 401) {
-      console.warn("401 Unauthorized - login bypassed");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Chỉ redirect nếu chưa ở trang login (tránh loop)
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
-    
+
     // Handle error formatting nicely
     throw error.response?.data || error;
   }
