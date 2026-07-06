@@ -57,10 +57,10 @@ const ManagerHeader = () => {
         {/* User Profile */}
         <div className="flex items-center gap-3 pl-3 border-l border-slate-200/60">
           <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-500/20 ring-2 ring-white">
-            {user?.fullName?.charAt(0) || 'M'}
+            {user?.name?.charAt(0) || 'M'}
           </div>
           <div className="text-left hidden md:block leading-tight">
-            <p className="text-sm font-bold text-slate-800">{user?.fullName || 'Người quản lý'}</p>
+            <p className="text-sm font-bold text-slate-800">{user?.name || 'Người quản lý'}</p>
             <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{user?.role || 'manager'}</p>
           </div>
         </div>
