@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { teacherApi } from '../../api/teacherApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
+import { BookOpen, Calendar, Users, ClipboardList, CheckCircle } from 'lucide-react';
 
 const TeacherDashboardPage = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -59,50 +60,47 @@ const TeacherDashboardPage = () => {
   const totalAttendance = data.totalAttendance;
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Bảng điều khiển</h1>
-        <p className="mt-1 text-sm text-gray-500">Tổng quan về hoạt động giảng dạy của bạn.</p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-blue-500/10 mb-8">
+        <div className="space-y-2">
+          <span className="text-[10px] font-bold tracking-widest text-slate-200 uppercase opacity-90">Bảng điều khiển</span>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Trang Tổng Quan Giáo Viên</h1>
+          <p className="text-xs md:text-sm text-indigo-50 max-w-2xl leading-relaxed mt-1">Tổng quan về hoạt động giảng dạy của bạn.</p>
+        </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <Card className="hover:shadow-md transition-shadow">
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tổng số lớp học</span>
-            <span className="mt-2 text-3xl font-bold text-primary">{totalClasses}</span>
-          </div>
-        </Card>
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-5 rounded-2xl border border-blue-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="absolute -right-2 -top-2 p-4 opacity-10 text-blue-600 group-hover:scale-110 transition-transform"><BookOpen size={64} /></div>
+          <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số lớp học</div>
+          <div className="text-3xl font-extrabold tracking-tight text-blue-700 relative z-10">{totalClasses}</div>
+        </div>
         
-        <Card className="hover:shadow-md transition-shadow">
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tổng số lịch dạy</span>
-            <span className="mt-2 text-3xl font-bold text-primary">{totalSchedules}</span>
-          </div>
-        </Card>
+        <div className="bg-gradient-to-br from-emerald-50 to-green-100 p-5 rounded-2xl border border-green-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="absolute -right-2 -top-2 p-4 opacity-10 text-green-600 group-hover:scale-110 transition-transform"><Calendar size={64} /></div>
+          <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số lịch dạy</div>
+          <div className="text-3xl font-extrabold tracking-tight text-green-700 relative z-10">{totalSchedules}</div>
+        </div>
         
-        <Card className="hover:shadow-md transition-shadow">
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tổng số học viên</span>
-            <span className="mt-2 text-3xl font-bold text-primary">{totalStudents}</span>
-          </div>
-        </Card>
+        <div className="bg-gradient-to-br from-purple-50 to-fuchsia-100 p-5 rounded-2xl border border-purple-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+          <div className="absolute -right-2 -top-2 p-4 opacity-10 text-purple-600 group-hover:scale-110 transition-transform"><Users size={64} /></div>
+          <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số học viên</div>
+          <div className="text-3xl font-extrabold tracking-tight text-purple-700 relative z-10">{totalStudents}</div>
+        </div>
 
         {totalSessions !== undefined && (
-          <Card className="hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tổng số buổi học</span>
-              <span className="mt-2 text-3xl font-bold text-primary">{totalSessions}</span>
-            </div>
-          </Card>
+          <div className="bg-gradient-to-br from-orange-50 to-amber-100 p-5 rounded-2xl border border-orange-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+            <div className="absolute -right-2 -top-2 p-4 opacity-10 text-orange-600 group-hover:scale-110 transition-transform"><ClipboardList size={64} /></div>
+            <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số buổi học</div>
+            <div className="text-3xl font-extrabold tracking-tight text-orange-700 relative z-10">{totalSessions}</div>
+          </div>
         )}
         
         {totalAttendance !== undefined && (
-          <Card className="hover:shadow-md transition-shadow">
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-gray-500 uppercase tracking-wider">Tỷ lệ điểm danh trung bình</span>
-              <span className="mt-2 text-3xl font-bold text-primary">{totalAttendance}</span>
-            </div>
-          </Card>
+          <div className="bg-gradient-to-br from-teal-50 to-emerald-100 p-5 rounded-2xl border border-teal-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+            <div className="absolute -right-2 -top-2 p-4 opacity-10 text-teal-600 group-hover:scale-110 transition-transform"><CheckCircle size={64} /></div>
+            <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tỷ lệ điểm danh trung bình</div>
+            <div className="text-3xl font-extrabold tracking-tight text-teal-700 relative z-10">{totalAttendance}</div>
+          </div>
         )}
       </div>
     </div>

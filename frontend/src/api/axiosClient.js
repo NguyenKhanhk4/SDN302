@@ -31,12 +31,9 @@ axiosClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Automatically logout on 401 Unauthorized
+    // We are bypassing login, so we don't redirect on 401
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Use window.location to force a full redirect and remount
-      window.location.href = '/login';
+      console.warn("401 Unauthorized - login bypassed");
     }
     
     // Handle error formatting nicely

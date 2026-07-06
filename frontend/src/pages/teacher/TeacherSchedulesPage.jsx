@@ -5,7 +5,7 @@ import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
-import Button from '../../components/common/Button';
+import { Calendar as CalendarIcon, Clock, MapPin, CalendarDays, BookOpen } from 'lucide-react';
 
 import SLOT_CONFIG from '../../utils/slotConfig';
 import { getCurrentYear, getWeekOptions, getWeekDates, getCurrentWeekNumber } from '../../utils/weekUtils';
@@ -139,23 +139,28 @@ const TeacherSchedulesPage = () => {
     }
 
     return (
-      <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-gray-200 p-2 align-top bg-white min-h-[100px]">
+      <td key={`${slot.slot}-${day.dayOfWeek}`} className="border border-slate-200 p-2 align-top bg-white min-h-[120px] transition-all hover:bg-slate-50/50">
         {cellSchedules.map((s, idx) => (
           <div 
             key={idx}
             onClick={() => handleClassClick(s, day.isoDate)}
-            className={`p-2 mb-2 rounded border bg-blue-50 border-blue-200 shadow-sm cursor-pointer hover:bg-blue-100 hover:shadow transition-all ${actionLoading ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`p-3 mb-2 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 shadow-sm hover:shadow-md cursor-pointer hover:-translate-y-0.5 transition-all group ${actionLoading ? 'opacity-50 pointer-events-none' : ''}`}
           >
-            <div className="font-semibold text-sm text-blue-900 mb-1">{getClassName(s)}</div>
-            <div className="text-xs text-gray-600 mb-1 flex items-center gap-1">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+            <div className="font-bold text-sm text-blue-900 mb-1.5 group-hover:text-blue-700 transition-colors">{getClassName(s)}</div>
+            <div className="text-[11px] font-medium text-slate-600 mb-1 flex items-center gap-1.5 bg-white/60 w-fit px-1.5 py-0.5 rounded-md">
+               <MapPin size={12} className="text-rose-500" />
                {s.room || s?.classId?.room || 'N/A'}
             </div>
-            <div className="text-xs text-gray-600 mb-2 flex items-center gap-1">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div className="text-[11px] font-medium text-slate-600 mb-2 flex items-center gap-1.5 bg-white/60 w-fit px-1.5 py-0.5 rounded-md">
+               <Clock size={12} className="text-amber-500" />
                {s.startTime || 'N/A'} - {s.endTime || 'N/A'}
             </div>
-            <Badge status="Not yet" className="text-[10px] px-1.5 py-0.5" />
+            <div className="flex justify-between items-center mt-2">
+              <Badge status="Not yet" className="!text-[9px] !px-1.5 !py-0.5" />
+              <div className="h-5 w-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <BookOpen size={10} />
+              </div>
+            </div>
           </div>
         ))}
       </td>
@@ -187,23 +192,28 @@ const TeacherSchedulesPage = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Lịch dạy của tôi</h1>
-        <p className="mt-1 text-sm text-gray-500">Lịch giảng dạy của bạn hiển thị theo tuần.</p>
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Lịch dạy của tôi</h1>
+          <p className="text-sm text-slate-500 mt-1">Lịch giảng dạy của bạn hiển thị theo tuần.</p>
+        </div>
+        <div className="h-12 w-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shadow-inner">
+          <CalendarDays size={24} />
+        </div>
       </div>
 
-      <Card className="w-full">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         {/* Bộ lọc Week/Year */}
-        <div className="flex flex-wrap items-center gap-4 mb-6 pb-4 border-b">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Năm:</label>
+        <div className="flex flex-wrap items-center gap-4 p-5 bg-slate-50/50 border-b border-slate-100">
+          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm">
+            <label className="text-sm font-medium text-slate-600">Năm:</label>
             <select 
               value={selectedYear} 
               onChange={(e) => {
                 setSelectedYear(Number(e.target.value));
-                setSelectedWeek(1); // Reset to week 1 when year changes
+                setSelectedWeek(1);
               }}
-              className="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="bg-transparent border-none text-sm font-semibold text-slate-800 focus:ring-0 cursor-pointer outline-none"
             >
               {[currentYear - 1, currentYear, currentYear + 1].map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -211,12 +221,12 @@ const TeacherSchedulesPage = () => {
             </select>
           </div>
           
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Tuần:</label>
+          <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm">
+            <label className="text-sm font-medium text-slate-600">Tuần:</label>
             <select 
               value={selectedWeek} 
               onChange={(e) => setSelectedWeek(Number(e.target.value))}
-              className="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-64"
+              className="bg-transparent border-none text-sm font-semibold text-slate-800 focus:ring-0 cursor-pointer outline-none w-56 truncate"
             >
               {weekOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -225,26 +235,18 @@ const TeacherSchedulesPage = () => {
           </div>
 
           <div className="ml-auto">
-            <Button 
-              variant="outline" 
-              className="!py-1.5 !text-sm"
+            <button 
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 hover:border-blue-300 text-slate-700 hover:text-blue-700 text-sm font-medium rounded-xl transition-all shadow-sm"
               onClick={() => {
                 setSelectedYear(currentYear);
                 setSelectedWeek(currentWeek);
               }}
             >
-              Tuần hiện tại
-            </Button>
+              <CalendarIcon size={16} />
+              <span>Tuần hiện tại</span>
+            </button>
           </div>
         </div>
-
-        {/* Action Loading Indicator */}
-        {actionLoading && (
-          <div className="mb-4 p-3 bg-blue-50 text-blue-800 rounded flex items-center justify-center gap-2 font-medium">
-            <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            Đang xử lý thông tin buổi học...
-          </div>
-        )}
 
         {/* Bảng Timetable */}
         {schedules.length === 0 ? (
@@ -253,25 +255,25 @@ const TeacherSchedulesPage = () => {
             description="Bạn chưa được phân công lịch giảng dạy nào đang hoạt động."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-200 text-sm">
+          <div className="overflow-x-auto p-5">
+            <table className="w-full border-collapse border border-slate-200 text-sm bg-white rounded-xl overflow-hidden shadow-sm">
               <thead>
                 <tr>
-                  <th className="bg-blue-50 border border-gray-200 p-2 text-center text-blue-800 w-20">Slot</th>
+                  <th className="bg-slate-50 border border-slate-200 p-3 text-center text-slate-500 font-semibold w-24">Slot</th>
                   {weekDates.map(day => (
-                    <th key={day.dayOfWeek} className="bg-blue-50 border border-gray-200 p-2 text-center w-[12%]">
-                      <div className="font-bold text-blue-900">{day.label}</div>
-                      <div className="text-xs text-blue-700 font-normal">{day.displayDate}</div>
+                    <th key={day.dayOfWeek} className="bg-slate-50 border border-slate-200 p-3 text-center w-[12%]">
+                      <div className="font-bold text-slate-800">{day.label}</div>
+                      <div className="text-xs text-slate-500 font-medium mt-0.5">{day.displayDate}</div>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {SLOT_CONFIG.map(slot => (
-                  <tr key={slot.slot}>
-                    <td className="border border-gray-200 p-2 text-center bg-gray-50">
-                      <div className="font-semibold text-gray-700">{slot.label}</div>
-                      <div className="text-xs text-gray-500">{slot.startTime}</div>
+                  <tr key={slot.slot} className="group">
+                    <td className="border border-slate-200 p-3 text-center bg-slate-50/50 group-hover:bg-slate-50 transition-colors">
+                      <div className="font-bold text-slate-700">{slot.label}</div>
+                      <div className="text-[11px] text-slate-500 font-medium mt-1">{slot.startTime}</div>
                     </td>
                     {weekDates.map(day => renderScheduleCell(slot, day))}
                   </tr>
@@ -280,7 +282,7 @@ const TeacherSchedulesPage = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

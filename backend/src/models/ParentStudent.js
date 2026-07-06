@@ -1,33 +1,24 @@
 const mongoose = require('mongoose');
 
-const ParentStudentSchema = new mongoose.Schema(
-  {
-    parentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ParentProfile',
-      required: true,
-    },
-    studentId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'StudentProfile',
-      required: true,
-    },
-    relationship: {
-      type: String,
-      enum: ['Father', 'Mother', 'Guardian', 'Other'],
-      default: 'Guardian',
-    },
-    status: {
-      type: String,
-      enum: ['active', 'inactive'],
-      default: 'active',
-    },
+const parentStudentSchema = new mongoose.Schema({
+  parentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ParentProfile',
+    required: true
   },
-  {
-    timestamps: true,
+  studentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'StudentProfile',
+    required: true
+  },
+  relationship: {
+    type: String,
+    enum: ['father', 'mother', 'guardian', 'other'],
+    default: 'other'
   }
-);
+}, { timestamps: true });
 
-ParentStudentSchema.index({ parentId: 1, studentId: 1 }, { unique: true });
+// Prevent duplicate parent-student links
+parentStudentSchema.index({ parentId: 1, studentId: 1 }, { unique: true });
 
-module.exports = mongoose.model('ParentStudent', ParentStudentSchema);
+module.exports = mongoose.model('ParentStudent', parentStudentSchema);

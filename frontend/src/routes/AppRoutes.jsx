@@ -1,12 +1,30 @@
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import AuthLayout from '../components/layout/AuthLayout';
+import ManagerLayout from '../components/layout/ManagerLayout';
 import TeacherLayout from '../components/layout/TeacherLayout';
-import StudentLayout from '../components/layout/StudentLayout';
-import AdminLayout from '../components/layout/AdminLayout';
-import ProtectedRoute from './ProtectedRoute';
 
-import LoginPage from '../pages/auth/LoginPage';
+import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
+import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
+import ManagerParentsPage from '../pages/manager/ManagerParentsPage';
+
+import ManagerTeachersPage from '../pages/manager/ManagerTeachersPage';
+import ManagerCreateTeacherPage from '../pages/manager/ManagerCreateTeacherPage';
+import ManagerEditTeacherPage from '../pages/manager/ManagerEditTeacherPage';
+
+import ManagerSubjectsPage from '../pages/manager/ManagerSubjectsPage';
+import ManagerEditSubjectPage from '../pages/manager/ManagerEditSubjectPage';
+
+import ManagerClassesPage from '../pages/manager/ManagerClassesPage';
+import ManagerEditClassPage from '../pages/manager/ManagerEditClassPage';
+
+import ManagerSchedulesPage from '../pages/manager/ManagerSchedulesPage';
+import ManagerEditSchedulePage from '../pages/manager/ManagerEditSchedulePage';
+
+import ManagerInvoicesPage from '../pages/manager/ManagerInvoicesPage';
+import ManagerCreateInvoicePage from '../pages/manager/ManagerCreateInvoicePage';
+import ManagerEditInvoicePage from '../pages/manager/ManagerEditInvoicePage';
+
 import TeacherDashboardPage from '../pages/teacher/TeacherDashboardPage';
 import TeacherClassesPage from '../pages/teacher/TeacherClassesPage';
 import TeacherClassDetailPage from '../pages/teacher/TeacherClassDetailPage';
@@ -15,135 +33,50 @@ import TeacherSchedulesPage from '../pages/teacher/TeacherSchedulesPage';
 import TeacherSessionsPage from '../pages/teacher/TeacherSessionsPage';
 import TeacherAttendancePage from '../pages/teacher/TeacherAttendancePage';
 
-import StudentDashboardPage from '../pages/student/StudentDashboardPage';
-import StudentProfilePage from '../pages/student/StudentProfilePage';
-import StudentClassesPage from '../pages/student/StudentClassesPage';
-import StudentSchedulesPage from '../pages/student/StudentSchedulesPage';
-import StudentSessionsPage from '../pages/student/StudentSessionsPage';
-import StudentInvoicesPage from '../pages/student/StudentInvoicesPage';
-import StudentSupportPage from '../pages/student/StudentSupportPage';
-
-import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
-import AdminUsersPage from '../pages/admin/AdminUsersPage';
-import AdminCreateUserPage from '../pages/admin/AdminCreateUserPage';
-import AdminUserDetailPage from '../pages/admin/AdminUserDetailPage';
-import AdminEditUserPage from '../pages/admin/AdminEditUserPage';
-import AdminClassesPage from '../pages/admin/AdminClassesPage';
-import AdminCreateClassPage from '../pages/admin/AdminCreateClassPage';
-import AdminClassDetailPage from '../pages/admin/AdminClassDetailPage';
-import AdminClassStudentsPage from '../pages/admin/AdminClassStudentsPage';
-import AdminSchedulesPage from '../pages/admin/AdminSchedulesPage';
-import AdminCreateSchedulePage from '../pages/admin/AdminCreateSchedulePage';
-import AdminLoginPage from '../pages/admin/AdminLoginPage';
-import AdminEnrollmentsPage from '../pages/admin/AdminEnrollmentsPage';
-import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
-import AdminFinancePage from '../pages/admin/AdminFinancePage';
-import AdminReportsPage from '../pages/admin/AdminReportsPage';
-
-const RootRedirect = () => {
-  const token = localStorage.getItem('token');
-  const userStr = localStorage.getItem('user');
-  
-  let redirectTo;
-  
-  if (token && userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      const role = String(user.role).toUpperCase();
-      if (role === 'ADMIN') {
-        redirectTo = "/admin/dashboard";
-      } else if (role === 'STUDENT') {
-        redirectTo = "/student/dashboard";
-      } else if (role === 'TEACHER') {
-        redirectTo = "/teacher/dashboard";
-      } else {
-        redirectTo = "/login";
-      }
-    } catch (e) {
-      console.error(e);
-      redirectTo = "/login";
-    }
-  } else {
-    redirectTo = "/login";
-  }
-
-  return <Navigate to={redirectTo} replace />;
-};
-
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Root Route redirect based on auth status and role */}
-      <Route path="/" element={<RootRedirect />} />
+      <Route path="/" element={<Navigate to="/manager/dashboard" replace />} />
+      <Route path="/login" element={<Navigate to="/manager/dashboard" replace />} />
 
-      {/* Auth Routes */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={
-          localStorage.getItem('token') ? <RootRedirect /> : <LoginPage />
-        } />
-        <Route path="/admin/login" element={
-          localStorage.getItem('token') ? <RootRedirect /> : <AdminLoginPage />
-        } />
+      <Route path="/manager" element={<ManagerLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<ManagerDashboardPage />} />
+        
+        <Route path="students" element={<ManagerStudentsPage />} />
+        <Route path="parents" element={<ManagerParentsPage />} />
+        
+        <Route path="teachers" element={<ManagerTeachersPage />} />
+        <Route path="teachers/create" element={<ManagerCreateTeacherPage />} />
+        <Route path="teachers/edit/:teacherId" element={<ManagerEditTeacherPage />} />
+        
+        <Route path="subjects" element={<ManagerSubjectsPage />} />
+        <Route path="subjects/edit/:subjectId" element={<ManagerEditSubjectPage />} />
+        
+        <Route path="classes" element={<ManagerClassesPage />} />
+        <Route path="classes/edit/:classId" element={<ManagerEditClassPage />} />
+        
+        <Route path="schedules" element={<ManagerSchedulesPage />} />
+        <Route path="schedules/edit/:scheduleId" element={<ManagerEditSchedulePage />} />
+        
+        <Route path="invoices" element={<ManagerInvoicesPage />} />
+        <Route path="invoices/create" element={<ManagerCreateInvoicePage />} />
+        <Route path="invoices/edit/:invoiceId" element={<ManagerEditInvoicePage />} />
       </Route>
 
-      {/* Teacher Routes */}
-      <Route path="/teacher" element={
-        <ProtectedRoute requiredRole="TEACHER">
-          <TeacherLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Navigate to="/teacher/dashboard" replace />} />
+      <Route path="/teacher" element={<TeacherLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<TeacherDashboardPage />} />
         <Route path="classes" element={<TeacherClassesPage />} />
         <Route path="classes/:classId" element={<TeacherClassDetailPage />} />
         <Route path="classes/:classId/students" element={<TeacherClassStudentsPage />} />
-        <Route path="classes/:classId/sessions" element={<TeacherSessionsPage />} />
-        <Route path="classes/:classId/sessions/:sessionId/attendance" element={<TeacherAttendancePage />} />
         <Route path="schedules" element={<TeacherSchedulesPage />} />
+        <Route path="sessions" element={<TeacherSessionsPage />} />
+        <Route path="attendance" element={<TeacherAttendancePage />} />
       </Route>
 
-      {/* Student Routes */}
-      <Route path="/student" element={
-        <ProtectedRoute requiredRole="STUDENT">
-          <StudentLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Navigate to="/student/dashboard" replace />} />
-        <Route path="dashboard" element={<StudentDashboardPage />} />
-        <Route path="profile" element={<StudentProfilePage />} />
-        <Route path="classes" element={<StudentClassesPage />} />
-        <Route path="schedules" element={<StudentSchedulesPage />} />
-        <Route path="sessions" element={<StudentSessionsPage />} />
-        <Route path="invoices" element={<StudentInvoicesPage />} />
-        <Route path="support" element={<StudentSupportPage />} />
-      </Route>
-
-      {/* Admin Routes */}
-      <Route path="/admin" element={
-        <ProtectedRoute requiredRole="ADMIN">
-          <AdminLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboardPage />} />
-        <Route path="users" element={<AdminUsersPage />} />
-        <Route path="users/create" element={<AdminCreateUserPage />} />
-        <Route path="users/:userId" element={<AdminUserDetailPage />} />
-        <Route path="users/:userId/edit" element={<AdminEditUserPage />} />
-        <Route path="classes" element={<AdminClassesPage />} />
-        <Route path="classes/create" element={<AdminCreateClassPage />} />
-        <Route path="classes/:classId" element={<AdminClassDetailPage />} />
-        <Route path="classes/:classId/students" element={<AdminClassStudentsPage />} />
-        <Route path="schedules" element={<AdminSchedulesPage />} />
-        <Route path="schedules/create" element={<AdminCreateSchedulePage />} />
-        <Route path="enrollments" element={<AdminEnrollmentsPage />} />
-        <Route path="subjects" element={<AdminSubjectsPage />} />
-        <Route path="finance" element={<AdminFinancePage />} />
-        <Route path="reports" element={<AdminReportsPage />} />
-      </Route>
-
-      {/* Catch-all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Catch all */}
+      <Route path="*" element={<Navigate to="/manager/dashboard" replace />} />
     </Routes>
   );
 };
