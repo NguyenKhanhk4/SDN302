@@ -18,12 +18,12 @@ const TIME_SLOTS = [
 const AdminCreateSchedulePage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    class: 'Lop Toan 10A',
-    teacher: 'Nguyen Van Teacher',
-    dayOfWeek: '1', // Monday
+    class: '',
+    teacher: '',
+    dayOfWeek: '1',
     startTime: '',
     endTime: '',
-    room: 'Phong B201',
+    room: '',
     status: 'ACTIVE'
   });
   const [errors, setErrors] = useState({});
@@ -49,17 +49,10 @@ const AdminCreateSchedulePage = () => {
         
         if (resClasses.success && resClasses.data) {
           setClassList(resClasses.data);
-          // Set default value if formData is empty and we have data
-          if (resClasses.data.length > 0) {
-            setFormData(prev => ({ ...prev, class: resClasses.data[0].name }));
-          }
         }
 
         if (resUsers.success && resUsers.data) {
           setTeacherList(resUsers.data);
-          if (resUsers.data.length > 0) {
-            setFormData(prev => ({ ...prev, teacher: resUsers.data[0].fullName }));
-          }
         }
       } catch (err) {
         console.error('Failed to fetch data', err);
@@ -74,6 +67,34 @@ const AdminCreateSchedulePage = () => {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'class':
+        if (!value) error = 'Vui lòng chọn lớp học';
+        break;
+      case 'teacher':
+        if (!value) error = 'Vui lòng chọn giáo viên';
+        break;
+      case 'room':
+        if (!value) error = 'Vui lòng chọn phòng học';
+        break;
+      case 'startTime':
+      case 'endTime':
+        if (!formData.startTime || !formData.endTime) error = 'Vui lòng chọn khung giờ';
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const isSlotTaken = (start, end) => {
@@ -95,13 +116,19 @@ const AdminCreateSchedulePage = () => {
   };
 
   const validate = () => {
-    const newErrors = {};
-    if (!formData.class.trim()) newErrors.class = 'Tên lớp học là bắt buộc';
-    if (!formData.teacher.trim()) newErrors.teacher = 'Tên giáo viên là bắt buộc';
-    if (!formData.startTime.trim() || !formData.endTime.trim()) {
+    const newErrors = {
+      class: validateField('class', formData.class),
+      teacher: validateField('teacher', formData.teacher),
+      room: validateField('room', formData.room),
+    };
+    
+    if (!formData.startTime || !formData.endTime) {
       newErrors.startTime = 'Vui lòng chọn khung giờ';
     }
-    if (!formData.room.trim()) newErrors.room = 'Phòng học là bắt buộc';
+
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -161,35 +188,39 @@ const AdminCreateSchedulePage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <label htmlFor="class" className="mb-1 text-sm font-medium text-gray-700">Lớp học</label>
+              <label htmlFor="class" className="mb-1 text-sm font-medium text-gray-700">Lớp học <span className="text-red-500">*</span></label>
               <select
                 id="class"
                 name="class"
                 value={formData.class}
                 onChange={handleChange}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
+                onBlur={handleBlur}
+                className={`px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm bg-white transition-colors ${errors.class ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary'}`}
               >
-                {classList.length === 0 && <option value="">Đang tải lớp học...</option>}
+                <option value="">-- Chọn lớp học --</option>
                 {classList.map((cls) => (
                   <option key={cls._id} value={cls.name}>{cls.name}</option>
                 ))}
               </select>
+              {errors.class && <span className="mt-1 text-xs text-red-500">{errors.class}</span>}
             </div>
 
             <div className="flex flex-col">
-              <label htmlFor="teacher" className="mb-1 text-sm font-medium text-gray-700">Giáo viên</label>
+              <label htmlFor="teacher" className="mb-1 text-sm font-medium text-gray-700">Giáo viên <span className="text-red-500">*</span></label>
               <select
                 id="teacher"
                 name="teacher"
                 value={formData.teacher}
                 onChange={handleChange}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
+                onBlur={handleBlur}
+                className={`px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm bg-white transition-colors ${errors.teacher ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary'}`}
               >
-                {teacherList.length === 0 && <option value="">Đang tải giáo viên...</option>}
+                <option value="">-- Chọn giáo viên --</option>
                 {teacherList.map((teach) => (
                   <option key={teach._id} value={teach.fullName}>{teach.fullName}</option>
                 ))}
               </select>
+              {errors.teacher && <span className="mt-1 text-xs text-red-500">{errors.teacher}</span>}
             </div>
           </div>
 
@@ -209,14 +240,25 @@ const AdminCreateSchedulePage = () => {
               </select>
             </div>
 
-            <Input
-              label="Phòng học (Nhập để kiểm tra trùng lịch)"
-              name="room"
-              placeholder="Ví dụ: Phong B201"
-              value={formData.room}
-              onChange={handleChange}
-              error={errors.room}
-            />
+            <div className="flex flex-col">
+              <label htmlFor="room" className="mb-1 text-sm font-medium text-gray-700">Phòng học <span className="text-red-500">*</span></label>
+              <select
+                id="room"
+                name="room"
+                value={formData.room}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm bg-white transition-colors ${errors.room ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-primary'}`}
+              >
+                <option value="">-- Chọn phòng học --</option>
+                <option value="Phong A101">Phòng A101</option>
+                <option value="Phong A102">Phòng A102</option>
+                <option value="Phong B201">Phòng B201</option>
+                <option value="Phong B202">Phòng B202</option>
+                <option value="Phong C301">Phòng C301</option>
+              </select>
+              {errors.room && <span className="mt-1 text-xs text-red-500">{errors.room}</span>}
+            </div>
           </div>
 
           {/* Time Slots Grid */}

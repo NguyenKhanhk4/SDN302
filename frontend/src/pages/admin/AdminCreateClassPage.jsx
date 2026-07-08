@@ -10,10 +10,9 @@ const AdminCreateClassPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    subject: 'Toan Nang Cao',
-    teacher: 'Nguyen Van Teacher',
-    room: 'Phong B201',
-    maxStudents: '15',
+    subject: '',
+    teacher: '',
+    maxStudents: '',
     startDate: '',
     endDate: '',
     status: 'UPCOMING'
@@ -34,16 +33,10 @@ const AdminCreateClassPage = () => {
 
         if (resSubjects.success && resSubjects.data) {
           setSubjectList(resSubjects.data);
-          if (resSubjects.data.length > 0) {
-            setFormData(prev => ({ ...prev, subject: resSubjects.data[0].name }));
-          }
         }
 
         if (resUsers.success && resUsers.data) {
           setTeacherList(resUsers.data);
-          if (resUsers.data.length > 0) {
-            setFormData(prev => ({ ...prev, teacher: resUsers.data[0].fullName }));
-          }
         }
       } catch (err) {
         console.error('Failed to fetch data for create class form', err);
@@ -54,24 +47,75 @@ const AdminCreateClassPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData(prev => {
+      const newData = { ...prev, [name]: value };
+      
+      // Clear error immediately when typing
+      if (errors[name]) {
+        setErrors(errs => ({ ...errs, [name]: '' }));
+      }
+      
+      // If changing start date and there's an end date error, clear it so onBlur can re-evaluate
+      if (name === 'startDate' && errors.endDate) {
+         setErrors(errs => ({ ...errs, endDate: '' }));
+      }
+      
+      return newData;
+    });
+  };
+
+  const validateField = (name, value, currentFormData = formData) => {
+    let error = '';
+    switch (name) {
+      case 'name':
+        if (!value.trim()) error = 'Tên lớp học là bắt buộc';
+        else if (value.trim().length > 100) error = 'Tên không quá 100 ký tự';
+        break;
+      case 'subject':
+        if (!value) error = 'Vui lòng chọn môn học';
+        break;
+      case 'teacher':
+        if (!value) error = 'Vui lòng chọn giáo viên';
+        break;
+      case 'maxStudents':
+        const maxSt = parseInt(value, 10);
+        if (!value) error = 'Số lượng học viên tối đa là bắt buộc';
+        else if (isNaN(maxSt) || maxSt <= 0 || maxSt > 200) error = 'Sĩ số phải từ 1 đến 200';
+        break;
+      case 'startDate':
+        if (!value) error = 'Ngày bắt đầu là bắt buộc';
+        break;
+      case 'endDate':
+        if (!value) error = 'Ngày kết thúc là bắt buộc';
+        else if (currentFormData.startDate && new Date(value) < new Date(currentFormData.startDate)) {
+          error = 'Ngày kết thúc không được nhỏ hơn ngày bắt đầu';
+        }
+        break;
+      default:
+        break;
     }
+    return error;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
   };
 
   const validate = () => {
-    const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Tên lớp học là bắt buộc';
-    if (!formData.subject.trim()) newErrors.subject = 'Môn học là bắt buộc';
-    if (!formData.teacher.trim()) newErrors.teacher = 'Giáo viên là bắt buộc';
+    const newErrors = {
+      name: validateField('name', formData.name),
+      subject: validateField('subject', formData.subject),
+      teacher: validateField('teacher', formData.teacher),
+      maxStudents: validateField('maxStudents', formData.maxStudents),
+      startDate: validateField('startDate', formData.startDate),
+      endDate: validateField('endDate', formData.endDate),
+    };
     
-    const maxSt = parseInt(formData.maxStudents);
-    if (!formData.maxStudents) {
-      newErrors.maxStudents = 'Số lượng học viên tối đa là bắt buộc';
-    } else if (isNaN(maxSt) || maxSt <= 0) {
-      newErrors.maxStudents = 'Số lượng học viên tối đa phải lớn hơn 0';
-    }
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -80,7 +124,7 @@ const AdminCreateClassPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
-      toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+      toast.error('Vui lòng kiểm tra lại các thông tin không hợp lệ');
       return;
     }
 
@@ -120,85 +164,84 @@ const AdminCreateClassPage = () => {
       <Card>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Tên lớp học"
+            label={<span>Tên lớp học <span className="text-red-500">*</span></span>}
             name="name"
             placeholder="Ví dụ: Lop Toan 10A"
             value={formData.name}
             onChange={handleChange}
+            onBlur={handleBlur}
             error={errors.name}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <label htmlFor="subject" className="mb-1 text-sm font-medium text-gray-700">Môn học</label>
+              <label htmlFor="subject" className="mb-1 text-sm font-medium text-gray-700">Môn học <span className="text-red-500">*</span></label>
               <select
                 id="subject"
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
+                onBlur={handleBlur}
+                className={`px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white transition-colors ${errors.subject ? 'border-red-500 focus:border-red-500' : 'border-gray-200'}`}
               >
-                {subjectList.length === 0 && <option value="">Đang tải môn học...</option>}
+                <option value="">-- Chọn môn học --</option>
                 {subjectList.map((sub) => (
                   <option key={sub._id} value={sub.name}>{sub.name}</option>
                 ))}
               </select>
+              {errors.subject && <span className="mt-1 text-xs text-red-500">{errors.subject}</span>}
             </div>
 
             <div className="flex flex-col">
-              <label htmlFor="teacher" className="mb-1 text-sm font-medium text-gray-700">Giáo viên</label>
+              <label htmlFor="teacher" className="mb-1 text-sm font-medium text-gray-700">Giáo viên <span className="text-red-500">*</span></label>
               <select
                 id="teacher"
                 name="teacher"
                 value={formData.teacher}
                 onChange={handleChange}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white"
+                onBlur={handleBlur}
+                className={`px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm bg-white transition-colors ${errors.teacher ? 'border-red-500 focus:border-red-500' : 'border-gray-200'}`}
               >
-                {teacherList.length === 0 && <option value="">Đang tải giáo viên...</option>}
+                <option value="">-- Chọn giáo viên --</option>
                 {teacherList.map((teach) => (
                   <option key={teach._id} value={teach.fullName}>{teach.fullName}</option>
                 ))}
               </select>
+              {errors.teacher && <span className="mt-1 text-xs text-red-500">{errors.teacher}</span>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Phòng học"
-              name="room"
-              placeholder="Ví dụ: Phong B201"
-              value={formData.room}
-              onChange={handleChange}
-              error={errors.room}
-            />
-
-            <Input
-              label="Số học viên tối đa"
+              label={<span>Số học viên tối đa <span className="text-red-500">*</span></span>}
               name="maxStudents"
               type="number"
               placeholder="Ví dụ: 15"
               value={formData.maxStudents}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.maxStudents}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Ngày bắt đầu"
+              label={<span>Ngày bắt đầu <span className="text-red-500">*</span></span>}
               name="startDate"
               type="date"
               value={formData.startDate}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.startDate}
             />
 
             <Input
-              label="Ngày kết thúc"
+              label={<span>Ngày kết thúc <span className="text-red-500">*</span></span>}
               name="endDate"
               type="date"
               value={formData.endDate}
               onChange={handleChange}
+              onBlur={handleBlur}
               error={errors.endDate}
             />
           </div>
