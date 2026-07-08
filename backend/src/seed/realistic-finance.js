@@ -68,24 +68,40 @@ const run = async () => {
         const endDate = new Date();
         const enrollDate = getRandomDate(startDate, endDate);
 
+        // Randomize enrollment status
+        const randStatus = Math.random();
+        let enStatus = 'APPROVED';
+        let invStatus = 'UNPAID';
+        
+        if (randStatus < 0.7) {
+          enStatus = 'APPROVED';
+          invStatus = Math.random() < 0.85 ? 'PAID' : 'UNPAID';
+        } else if (randStatus < 0.9) {
+          enStatus = 'PENDING';
+          invStatus = 'UNPAID';
+        } else {
+          enStatus = 'CANCELLED';
+          invStatus = 'CANCELLED';
+        }
+
         const enrollment = await Enrollment.create({
           studentId: sp.userId, // User ID of student
           classId: cls._id,
-          status: 'APPROVED',
+          status: enStatus,
           enrollmentDate: enrollDate
         });
         enrollmentCount++;
 
         // Invoice logic
         const tuitionFee = cls.subjectId?.defaultTuitionFee || 1000000;
-        const isPaid = Math.random() < 0.85; // 85% paid
         
         await Invoice.create({
           studentId: sp.userId,
+          classId: cls._id,
           enrollmentId: enrollment._id,
           amount: tuitionFee,
           totalAmount: tuitionFee,
-          status: isPaid ? 'PAID' : 'UNPAID',
+          status: invStatus,
           createdAt: enrollDate, // Đồng bộ thời gian
           dueDate: new Date(enrollDate.getTime() + 7 * 24 * 60 * 60 * 1000)
         });
@@ -190,6 +206,7 @@ const run = async () => {
             teacherId: tp._id, // TeacherProfile ID
             month: month,
             year: currentYear,
+            totalSessions: sessions.length,
             totalAmount: totalAmount,
             status: 'PAID'
           });

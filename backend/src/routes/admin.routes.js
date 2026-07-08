@@ -14,7 +14,8 @@ const {
   createClass,
   getClassStudents,
   getSchedules,
-  createSchedule
+  createSchedule,
+  updateUserPassword
 } = require('../controllers/admin.controller');
 
 const { protect } = require('../middlewares/auth.middleware');
@@ -31,6 +32,7 @@ router.get('/users', getUsers);
 router.post('/users', createUser);
 router.get('/users/:userId', getUserDetail);
 router.patch('/users/:userId/status', updateUserStatus);
+router.patch('/users/:userId/password', updateUserPassword);
 router.patch('/users/:userId', updateUser);
 router.delete('/users/:userId', deleteUser);
 

@@ -2,11 +2,30 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import AuthLayout from '../components/layout/AuthLayout';
+import AdminLayout from '../components/layout/AdminLayout';
 import ManagerLayout from '../components/layout/ManagerLayout';
 import TeacherLayout from '../components/layout/TeacherLayout';
+import StudentLayout from '../components/layout/StudentLayout';
 import ProtectedRoute from './ProtectedRoute';
 
 import LoginPage from '../pages/auth/LoginPage';
+import AdminLoginPage from '../pages/admin/AdminLoginPage';
+
+import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminEnrollmentsPage from '../pages/admin/AdminEnrollmentsPage';
+import AdminUsersPage from '../pages/admin/AdminUsersPage';
+import AdminCreateUserPage from '../pages/admin/AdminCreateUserPage';
+import AdminEditUserPage from '../pages/admin/AdminEditUserPage';
+import AdminUserDetailPage from '../pages/admin/AdminUserDetailPage';
+import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
+import AdminClassesPage from '../pages/admin/AdminClassesPage';
+import AdminCreateClassPage from '../pages/admin/AdminCreateClassPage';
+import AdminClassDetailPage from '../pages/admin/AdminClassDetailPage';
+import AdminClassStudentsPage from '../pages/admin/AdminClassStudentsPage';
+import AdminSchedulesPage from '../pages/admin/AdminSchedulesPage';
+import AdminCreateSchedulePage from '../pages/admin/AdminCreateSchedulePage';
+import AdminFinancePage from '../pages/admin/AdminFinancePage';
+import AdminReportsPage from '../pages/admin/AdminReportsPage';
 
 import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
 import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
@@ -37,6 +56,14 @@ import TeacherSchedulesPage from '../pages/teacher/TeacherSchedulesPage';
 import TeacherSessionsPage from '../pages/teacher/TeacherSessionsPage';
 import TeacherAttendancePage from '../pages/teacher/TeacherAttendancePage';
 
+import StudentDashboardPage from '../pages/student/StudentDashboardPage';
+import StudentProfilePage from '../pages/student/StudentProfilePage';
+import StudentClassesPage from '../pages/student/StudentClassesPage';
+import StudentSchedulesPage from '../pages/student/StudentSchedulesPage';
+import StudentSessionsPage from '../pages/student/StudentSessionsPage';
+import StudentInvoicesPage from '../pages/student/StudentInvoicesPage';
+import StudentSupportPage from '../pages/student/StudentSupportPage';
+
 import { getUser, getToken } from '../utils/auth';
 
 /**
@@ -60,7 +87,9 @@ const RootRedirect = () => {
     accountant: '/accountant/dashboard',
   };
 
-  const target = roleDashboards[user.role] || '/login';
+  const role = user.role ? String(user.role).trim().toLowerCase() : '';
+  const target = roleDashboards[role] || '/login';
+  console.log('RootRedirect: role is', role, 'navigating to', target);
   return <Navigate to={target} replace />;
 };
 
@@ -73,6 +102,30 @@ const AppRoutes = () => {
       {/* Auth routes — Login */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        
+      </Route>
+
+      {/* Admin routes — Protected */}
+      <Route element={<ProtectedRoute requiredRole="admin" />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboardPage />} />
+          <Route path="enrollments" element={<AdminEnrollmentsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="users/create" element={<AdminCreateUserPage />} />
+          <Route path="users/edit/:userId" element={<AdminEditUserPage />} />
+          <Route path="users/:userId" element={<AdminUserDetailPage />} />
+          <Route path="subjects" element={<AdminSubjectsPage />} />
+          <Route path="classes" element={<AdminClassesPage />} />
+          <Route path="classes/create" element={<AdminCreateClassPage />} />
+          <Route path="classes/:classId" element={<AdminClassDetailPage />} />
+          <Route path="classes/:classId/students" element={<AdminClassStudentsPage />} />
+          <Route path="schedules" element={<AdminSchedulesPage />} />
+          <Route path="schedules/create" element={<AdminCreateSchedulePage />} />
+          <Route path="finance" element={<AdminFinancePage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+        </Route>
       </Route>
 
       {/* Manager routes — Protected */}
@@ -80,23 +133,23 @@ const AppRoutes = () => {
         <Route path="/manager" element={<ManagerLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<ManagerDashboardPage />} />
-          
+
           <Route path="students" element={<ManagerStudentsPage />} />
           <Route path="parents" element={<ManagerParentsPage />} />
-          
+
           <Route path="teachers" element={<ManagerTeachersPage />} />
           <Route path="teachers/create" element={<ManagerCreateTeacherPage />} />
           <Route path="teachers/edit/:teacherId" element={<ManagerEditTeacherPage />} />
-          
+
           <Route path="subjects" element={<ManagerSubjectsPage />} />
           <Route path="subjects/edit/:subjectId" element={<ManagerEditSubjectPage />} />
-          
+
           <Route path="classes" element={<ManagerClassesPage />} />
           <Route path="classes/edit/:classId" element={<ManagerEditClassPage />} />
-          
+
           <Route path="schedules" element={<ManagerSchedulesPage />} />
           <Route path="schedules/edit/:scheduleId" element={<ManagerEditSchedulePage />} />
-          
+
           <Route path="invoices" element={<ManagerInvoicesPage />} />
           <Route path="invoices/create" element={<ManagerCreateInvoicePage />} />
           <Route path="invoices/edit/:invoiceId" element={<ManagerEditInvoicePage />} />
@@ -114,6 +167,20 @@ const AppRoutes = () => {
           <Route path="schedules" element={<TeacherSchedulesPage />} />
           <Route path="sessions" element={<TeacherSessionsPage />} />
           <Route path="attendance" element={<TeacherAttendancePage />} />
+        </Route>
+      </Route>
+
+      {/* Student Routes */}
+      <Route element={<ProtectedRoute requiredRole="student" />}>
+        <Route path="/student" element={<StudentLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<StudentDashboardPage />} />
+          <Route path="profile" element={<StudentProfilePage />} />
+          <Route path="classes" element={<StudentClassesPage />} />
+          <Route path="schedules" element={<StudentSchedulesPage />} />
+          <Route path="sessions" element={<StudentSessionsPage />} />
+          <Route path="invoices" element={<StudentInvoicesPage />} />
+          <Route path="support" element={<StudentSupportPage />} />
         </Route>
       </Route>
 

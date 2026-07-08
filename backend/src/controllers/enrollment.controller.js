@@ -33,6 +33,7 @@ exports.registerClass = async (req, res, next) => {
     const tuitionFee = classExists.subjectId.defaultTuitionFee || 0;
     await Invoice.create({
       studentId,
+      classId: classExists._id,
       enrollmentId: enrollment._id,
       amount: tuitionFee,
       totalAmount: tuitionFee,
@@ -183,6 +184,15 @@ exports.updateEnrollmentStatus = async (req, res, next) => {
 
     enrollment.status = status;
     await enrollment.save();
+
+    // Liên kết Enrollment ↔ Invoice: cập nhật Invoice khi enrollment thay đổi
+    if (status === 'CANCELLED') {
+      // Cancel invoice tương ứng (chỉ cancel nếu chưa PAID)
+      await Invoice.updateMany(
+        { enrollmentId: id, status: { $in: ['UNPAID', 'PARTIAL'] } },
+        { status: 'CANCELLED' }
+      );
+    }
 
     res.status(200).json({
       success: true,

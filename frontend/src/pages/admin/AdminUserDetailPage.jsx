@@ -47,6 +47,9 @@ const AdminUserDetailPage = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [activeTab, setActiveTab] = useState('general');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   useEffect(() => {
     fetchUserDetail();
@@ -108,6 +111,32 @@ const AdminUserDetailPage = () => {
       setError(err.message || 'Đã xảy ra lỗi khi xóa người dùng');
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!newPassword || newPassword.length < 6) {
+      setError('Mật khẩu mới phải có ít nhất 6 ký tự');
+      return;
+    }
+    
+    try {
+      setIsChangingPassword(true);
+      setError('');
+      setSuccessMsg('');
+      const response = await adminApi.updateUserPassword(userId, newPassword);
+      if (response.success) {
+        setSuccessMsg('Đổi mật khẩu thành công!');
+        setShowPasswordModal(false);
+        setNewPassword('');
+      } else {
+        setError(response.message || 'Đổi mật khẩu thất bại');
+      }
+    } catch (err) {
+      setError(err.message || 'Đã xảy ra lỗi khi đổi mật khẩu');
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -285,31 +314,71 @@ const AdminUserDetailPage = () => {
             {/* Tabs Content */}
             <div className="p-6">
               {activeTab === 'general' && (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-primary pl-3">Thông tin Nhân khẩu học</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Họ và tên đầy đủ</p>
-                      <p className="text-base text-gray-900 font-medium">{user.fullName}</p>
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  {/* Account Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-primary pl-3">Thông tin Tài khoản</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 p-5 bg-gray-50 rounded-xl border border-gray-100">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">ID Người dùng</p>
+                        <p className="text-sm text-gray-900 font-mono bg-white px-2 py-1 border border-gray-200 rounded-md inline-block">{user._id}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Email đăng nhập</p>
+                        <p className="text-base text-gray-900 font-medium">{user.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Mật khẩu</p>
+                        <div className="flex items-center gap-3">
+                          <p className="text-base tracking-widest text-gray-900 font-medium mt-1">••••••••</p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="!py-1 !text-xs !bg-white"
+                            onClick={() => setShowPasswordModal(true)}
+                          >
+                            Đổi mật khẩu
+                          </Button>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Trạng thái hoạt động</p>
+                        <div className="mt-1">
+                          {getStatusBadge(user.status)}
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Giới tính</p>
-                      <p className="text-base text-gray-900">
-                        {user.gender === 'MALE' ? 'Nam' : user.gender === 'FEMALE' ? 'Nữ' : user.gender === 'OTHER' ? 'Khác' : 'Chưa cập nhật'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Ngày sinh</p>
-                      <p className="text-base text-gray-900">
-                        {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-1">Địa chỉ cư trú</p>
-                      <p className="text-base text-gray-900 flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400 mt-1 shrink-0" />
-                        {user.address || 'Chưa cập nhật địa chỉ'}
-                      </p>
+                  </div>
+
+                  <hr className="border-gray-100" />
+
+                  {/* Demographic Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-primary pl-3">Thông tin Nhân khẩu học</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Họ và tên đầy đủ</p>
+                        <p className="text-base text-gray-900 font-medium">{user.fullName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Giới tính</p>
+                        <p className="text-base text-gray-900">
+                          {user.gender === 'MALE' ? 'Nam' : user.gender === 'FEMALE' ? 'Nữ' : user.gender === 'OTHER' ? 'Khác' : 'Chưa cập nhật'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Ngày sinh</p>
+                        <p className="text-base text-gray-900">
+                          {user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500 mb-1">Địa chỉ cư trú</p>
+                        <p className="text-base text-gray-900 flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-gray-400 mt-1 shrink-0" />
+                          {user.address || 'Chưa cập nhật địa chỉ'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -397,7 +466,17 @@ const AdminUserDetailPage = () => {
 
               {activeTab === 'profile' && user.role === 'PARENT' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-amber-500 pl-3">Danh sách Học viên (Con cái)</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-amber-500 pl-3">Thông tin Phụ huynh</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 mb-6">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500 mb-1">Nghề nghiệp</p>
+                      <p className="text-base text-gray-900 font-semibold">{profile.occupation || 'Chưa cập nhật'}</p>
+                    </div>
+                  </div>
+
+                  <hr className="border-gray-100" />
+
+                  <h3 className="text-lg font-bold text-gray-900 mb-4 border-l-4 border-amber-500 pl-3 mt-6">Danh sách Học viên (Con cái)</h3>
                   
                   {user.linkedStudents && user.linkedStudents.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -440,6 +519,51 @@ const AdminUserDetailPage = () => {
           </Card>
         </div>
       </div>
+
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <Card className="w-full max-w-md animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Thay đổi Mật khẩu</h3>
+            <form onSubmit={handleChangePassword}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu mới</label>
+                  <input
+                    type="password"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                    placeholder="Nhập ít nhất 6 ký tự"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    minLength={6}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setNewPassword('');
+                  }}
+                  disabled={isChangingPassword}
+                >
+                  Hủy
+                </Button>
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  disabled={isChangingPassword}
+                >
+                  {isChangingPassword ? 'Đang lưu...' : 'Lưu mật khẩu'}
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

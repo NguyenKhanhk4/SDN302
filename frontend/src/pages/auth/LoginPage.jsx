@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { authApi } from '../../api/authApi';
 import { saveAuth, getUser } from '../../utils/auth';
 import Input from '../../components/common/Input';
@@ -24,9 +24,10 @@ const LoginPage = () => {
       parent: '/parent/dashboard',
       accountant: '/accountant/dashboard',
     };
-    const target = roleDashboards[existingUser.role] || '/';
-    navigate(target, { replace: true });
-    return null;
+    const role = existingUser.role ? String(existingUser.role).trim().toLowerCase() : '';
+    const target = roleDashboards[role] || '/';
+    console.log('LoginPage: user already logged in with role', role, 'navigating to', target);
+    return <Navigate to={target} replace />;
   }
 
   const handleChange = (e) => {
