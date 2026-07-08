@@ -22,9 +22,84 @@ const AdminSubjectsPage = () => {
     name: '',
     description: '',
     gradeLevel: '',
-    defaultTuitionFee: 0
+    defaultTuitionFee: 0,
+    status: 'active'
   });
+  const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const [displayTuition, setDisplayTuition] = useState('');
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'name':
+        if (!value || !value.trim()) error = 'Tên môn học là bắt buộc';
+        else if (value.trim().length > 100) error = 'Tên môn học không được vượt quá 100 ký tự';
+        break;
+      case 'gradeLevel':
+        if (!value) error = 'Vui lòng chọn cấp độ';
+        break;
+      case 'defaultTuitionFee':
+        const num = Number(value);
+        if (value === '' || isNaN(num) || num < 0) error = 'Học phí phải là số dương hợp lệ';
+        else if (num > 1000000000) error = 'Học phí không hợp lệ (quá lớn)';
+        break;
+      case 'description':
+        if (value && value.length > 1000) error = 'Mô tả không được vượt quá 1000 ký tự';
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    let valToValidate = value;
+    if (name === 'displayTuition') {
+       valToValidate = value.replace(/\D/g, '');
+       setErrors(prev => ({ ...prev, defaultTuitionFee: validateField('defaultTuitionFee', valToValidate) }));
+       return;
+    }
+    setErrors(prev => ({ ...prev, [name]: validateField(name, valToValidate) }));
+  };
+
+  const validate = () => {
+    const newErrors = {
+      name: validateField('name', formData.name),
+      gradeLevel: validateField('gradeLevel', formData.gradeLevel),
+      defaultTuitionFee: validateField('defaultTuitionFee', formData.defaultTuitionFee),
+      description: validateField('description', formData.description)
+    };
+    
+    // Remove empty errors
+    Object.keys(newErrors).forEach(key => {
+      if (!newErrors[key]) delete newErrors[key];
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleTuitionChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Keep only numbers
+    
+    if (!rawValue) {
+      setFormData(prev => ({ ...prev, defaultTuitionFee: 0 }));
+      setDisplayTuition('');
+      if (errors.defaultTuitionFee) setErrors(prev => ({ ...prev, defaultTuitionFee: '' }));
+      return;
+    }
+
+    const numValue = parseInt(rawValue, 10);
+    
+    setFormData(prev => ({ ...prev, defaultTuitionFee: numValue }));
+    setDisplayTuition(numValue.toLocaleString('en-US'));
+    
+    if (errors.defaultTuitionFee) {
+      setErrors(prev => ({ ...prev, defaultTuitionFee: '' }));
+    }
+  };
 
   // Files state
   const [syllabusFile, setSyllabusFile] = useState(null);
@@ -69,7 +144,9 @@ const AdminSubjectsPage = () => {
 
   const handleOpenCreate = () => {
     setSelectedSubject(null);
-    setFormData({ name: '', description: '', gradeLevel: '', defaultTuitionFee: 0 });
+    setFormData({ name: '', description: '', gradeLevel: '', defaultTuitionFee: 0, status: 'active' });
+    setDisplayTuition('');
+    setErrors({});
     setIsFormModalOpen(true);
   };
 
@@ -79,25 +156,34 @@ const AdminSubjectsPage = () => {
       name: subject.name || '',
       description: subject.description || '',
       gradeLevel: subject.gradeLevel || '',
-      defaultTuitionFee: subject.defaultTuitionFee || 0
+      defaultTuitionFee: subject.defaultTuitionFee || 0,
+      status: subject.status || 'active'
     });
+    setDisplayTuition((subject.defaultTuitionFee || 0).toLocaleString('en-US'));
+    setErrors({});
     setIsFormModalOpen(true);
   };
 
   const handleSaveSubject = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim()) {
-      toast.error('Vui lòng nhập tên môn học');
+    if (!validate()) {
+      toast.error('Vui lòng kiểm tra lại các thông tin không hợp lệ');
       return;
     }
+    
+    const payload = {
+      ...formData,
+      name: formData.name.trim(),
+      description: formData.description.trim()
+    };
     
     try {
       setSaving(true);
       let res;
       if (selectedSubject) {
-        res = await adminApi.updateSubject(selectedSubject._id, formData);
+        res = await adminApi.updateSubject(selectedSubject._id, payload);
       } else {
-        res = await adminApi.createSubject(formData);
+        res = await adminApi.createSubject(payload);
       }
 
       if (res.success) {
@@ -345,36 +431,81 @@ const AdminSubjectsPage = () => {
                     <label className="block text-sm font-bold text-slate-700 mb-1">Tên môn học <span className="text-red-500">*</span></label>
                     <input 
                       type="text" required
-                      value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      name="name"
+                      value={formData.name} 
+                      onChange={(e) => {
+                        setFormData({...formData, name: e.target.value});
+                        if (errors.name) setErrors({...errors, name: ''});
+                      }}
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-colors ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-indigo-500'}`}
                     />
+                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Cấp độ (Grade Level) <span className="text-red-500">*</span></label>
+                      <select 
+                        name="gradeLevel"
+                        value={formData.gradeLevel} 
+                        onChange={(e) => {
+                          setFormData({...formData, gradeLevel: e.target.value});
+                          if (errors.gradeLevel) setErrors({...errors, gradeLevel: ''});
+                        }}
+                        onBlur={handleBlur}
+                        className={`w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-colors bg-white ${errors.gradeLevel ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-indigo-500'}`}
+                      >
+                        <option value="">-- Chọn cấp độ --</option>
+                        <option value="Khối 10">Khối 10</option>
+                        <option value="Khối 11">Khối 11</option>
+                        <option value="Khối 12">Khối 12</option>
+                      </select>
+                      {errors.gradeLevel && <p className="text-xs text-red-500 mt-1">{errors.gradeLevel}</p>}
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-bold text-slate-700 mb-1">Trạng thái</label>
+                      <select 
+                        name="status"
+                        value={formData.status} 
+                        onChange={(e) => setFormData({...formData, status: e.target.value})}
+                        className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-white"
+                      >
+                        <option value="active">Hoạt động</option>
+                        <option value="inactive">Ngừng hoạt động</option>
+                      </select>
+                    </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1">Cấp độ (Grade Level)</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-1">Học phí mặc định (VNĐ) <span className="text-red-500">*</span></label>
                     <input 
-                      type="text"
-                      value={formData.gradeLevel} onChange={(e) => setFormData({...formData, gradeLevel: e.target.value})}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      type="text" 
+                      name="displayTuition"
+                      value={displayTuition} 
+                      onChange={handleTuitionChange}
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-colors ${errors.defaultTuitionFee ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-indigo-500'}`}
+                      placeholder="VD: 1,000,000"
                     />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1">Học phí mặc định (VNĐ)</label>
-                    <input 
-                      type="number" min="0"
-                      value={formData.defaultTuitionFee} onChange={(e) => setFormData({...formData, defaultTuitionFee: e.target.value === '' ? '' : Number(e.target.value)})}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                    />
+                    {errors.defaultTuitionFee && <p className="text-xs text-red-500 mt-1">{errors.defaultTuitionFee}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-1">Mô tả</label>
                     <textarea 
                       rows={3}
-                      value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 resize-none"
+                      name="description"
+                      value={formData.description} 
+                      onChange={(e) => {
+                        setFormData({...formData, description: e.target.value});
+                        if (errors.description) setErrors({...errors, description: ''});
+                      }}
+                      onBlur={handleBlur}
+                      className={`w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none transition-colors ${errors.description ? 'border-red-500 focus:border-red-500' : 'border-slate-200 focus:border-indigo-500'}`}
                     />
+                    {errors.description && <p className="text-xs text-red-500 mt-1">{errors.description}</p>}
                   </div>
 
                   <div className="pt-4">
