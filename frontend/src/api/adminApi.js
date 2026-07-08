@@ -23,6 +23,10 @@ export const adminApi = {
     return axiosClient.patch(`/admin/users/${userId}/status`, { status });
   },
 
+  updateUserPassword: (userId, password) => {
+    return axiosClient.patch(`/admin/users/${userId}/password`, { password });
+  },
+
   updateUser: (userId, userData) => {
     return axiosClient.patch(`/admin/users/${userId}`, userData);
   },

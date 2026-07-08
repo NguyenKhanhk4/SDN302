@@ -280,7 +280,7 @@ const getUserDetail = async (req, res) => {
 // ============================================================
 const createUser = async (req, res) => {
   try {
-    const { fullName, email, phone, password, role, status } = req.body;
+    const { fullName, email, phone, password, role, status, dateOfBirth, gender } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -292,7 +292,9 @@ const createUser = async (req, res) => {
       email,
       password,
       role: role.toLowerCase(),
-      isActive: status === 'ACTIVE'
+      isActive: status === 'ACTIVE',
+      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
+      gender: gender || 'MALE'
     });
 
     // Tu dong tao profile tuong ung
@@ -343,13 +345,43 @@ const updateUserStatus = async (req, res) => {
     const feUser = await mapUserToFE(user);
     return res.status(200).json({
       success: true,
-      message: "User status updated successfully",
+      message: "Cập nhật trạng thái thành công",
       data: feUser
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ============================================================
+// @desc    Cap nhat mat khau User
+// @route   PATCH /api/admin/users/:userId/password
+// @access  Private (Admin)
+// ============================================================
+const updateUserPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password || password.length < 6) {
+      return res.status(400).json({ success: false, message: "Mật khẩu phải có ít nhất 6 ký tự" });
+    }
+    
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.password = password;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Cập nhật mật khẩu thành công"
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 // ============================================================
 // @desc    Lay danh sach lop hoc
@@ -828,5 +860,6 @@ module.exports = {
   createClass,
   getClassStudents,
   getSchedules,
-  createSchedule
+  createSchedule,
+  updateUserPassword
 };

@@ -17,7 +17,8 @@ const ProtectedRoute = ({ requiredRole, children }) => {
   }
 
   // Kiểm tra role nếu có yêu cầu
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && String(user.role).trim().toLowerCase() !== String(requiredRole).trim().toLowerCase()) {
+    console.log('ProtectedRoute: Role mismatch!', user.role, 'vs required:', requiredRole);
     // Redirect về dashboard đúng role của user
     const roleDashboards = {
       admin: '/admin/dashboard',
@@ -27,7 +28,9 @@ const ProtectedRoute = ({ requiredRole, children }) => {
       parent: '/parent/dashboard',
       accountant: '/accountant/dashboard',
     };
-    const target = roleDashboards[user.role] || '/login';
+    const role = user.role ? String(user.role).trim().toLowerCase() : '';
+    const target = roleDashboards[role] || '/login';
+    console.log('ProtectedRoute: Redirecting to', target);
     return <Navigate to={target} replace />;
   }
 
