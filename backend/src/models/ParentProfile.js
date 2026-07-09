@@ -1,18 +1,41 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const parentProfileSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true
+const ParentProfileSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
+
+    address: {
+      type: String,
+      trim: true,
+    },
+
+    occupation: {
+      type: String,
+      trim: true,
+    },
+
+    phoneNumber: {
+      type: String,
+      trim: true,
+    },
+
+    children: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
-  address: {
-    type: String
-  },
-  occupation: {
-    type: String
+  {
+    timestamps: true,
   }
-}, { timestamps: true });
+);
 
-module.exports = mongoose.model('ParentProfile', parentProfileSchema);
+module.exports =
+  mongoose.models.ParentProfile ||
+  mongoose.model("ParentProfile", ParentProfileSchema);

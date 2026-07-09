@@ -51,7 +51,9 @@ const tryConnect = (uri) => {
 const connectDB = async () => {
   const ATLAS_URI = process.env.MONGO_URI_ATLAS;
   const LOCAL_URI =
-    process.env.MONGO_URI_LOCAL || 'mongodb://localhost:27017/sdn302_db';
+    process.env.MONGO_URI ||
+    process.env.MONGO_URI_LOCAL ||
+    "mongodb://127.0.0.1:27017/sdn302_db";
 
   const DIVIDER = '=========================================';
 

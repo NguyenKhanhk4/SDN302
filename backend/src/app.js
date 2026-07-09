@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/admin.routes');
 const profileRoutes = require('./routes/profile.routes');
 const studentRoutes = require('./routes/student.routes');
 const managerRoutes = require('./routes/manager.routes');
+const parentRoutes = require('./routes/parent.routes');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/api/report', reportRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/manager', managerRoutes);
+app.use('/api/parent', parentRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

@@ -6,6 +6,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import ManagerLayout from '../components/layout/ManagerLayout';
 import TeacherLayout from '../components/layout/TeacherLayout';
 import StudentLayout from '../components/layout/StudentLayout';
+import ParentLayout from '../components/layout/ParentLayout';
 import ProtectedRoute from './ProtectedRoute';
 
 import LoginPage from '../pages/auth/LoginPage';
@@ -63,6 +64,9 @@ import StudentSchedulesPage from '../pages/student/StudentSchedulesPage';
 import StudentSessionsPage from '../pages/student/StudentSessionsPage';
 import StudentInvoicesPage from '../pages/student/StudentInvoicesPage';
 import StudentSupportPage from '../pages/student/StudentSupportPage';
+
+import ParentDashboardPage from '../pages/parent/ParentDashboardPage';
+import ParentProfilePage from '../pages/parent/ParentProfilePage';
 
 import { getUser, getToken } from '../utils/auth';
 
@@ -181,6 +185,15 @@ const AppRoutes = () => {
           <Route path="sessions" element={<StudentSessionsPage />} />
           <Route path="invoices" element={<StudentInvoicesPage />} />
           <Route path="support" element={<StudentSupportPage />} />
+        </Route>
+      </Route>
+
+      {/* Parent Routes */}
+      <Route element={<ProtectedRoute requiredRole="parent" />}>
+        <Route path="/parent" element={<ParentLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<ParentDashboardPage />} />
+          <Route path="profile" element={<ParentProfilePage />} />
         </Route>
       </Route>
 

@@ -16,9 +16,28 @@ const Header = () => {
     console.error("Failed to parse user info");
   }
 
-  const name = user?.fullName || user?.name || 'Giảng viên';
-  const role = user?.role || 'TEACHER';
-  const roleDisplay = role.toUpperCase() === 'TEACHER' ? 'Giảng viên' : role;
+  const name = user?.fullName || user?.name || 'Người dùng';
+  const role = user?.role || 'STUDENT';
+  
+  const roleDisplayMap = {
+    ADMIN: 'Quản trị viên',
+    MANAGER: 'Quản lý',
+    TEACHER: 'Giảng viên',
+    STUDENT: 'Học sinh',
+    PARENT: 'Phụ huynh',
+  };
+  const roleDisplay = roleDisplayMap[role.toUpperCase()] || role;
+
+  const getPortalTitle = (userRole) => {
+    switch (String(userRole).toUpperCase()) {
+      case 'ADMIN': return 'Cổng quản trị viên';
+      case 'MANAGER': return 'Cổng quản lý';
+      case 'TEACHER': return 'Cổng giảng viên';
+      case 'STUDENT': return 'Cổng học sinh';
+      case 'PARENT': return 'Cổng phụ huynh';
+      default: return 'Cổng thông tin';
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -31,7 +50,7 @@ const Header = () => {
       {/* Left side: Page Title / Badge */}
       <div className="flex items-center gap-4">
         <span className="px-3 py-1 bg-blue-50/80 text-blue-700 text-xs font-bold tracking-wide rounded-full border border-blue-100/50 shadow-sm shadow-blue-500/5">
-          Cổng thông tin Giảng viên
+          {getPortalTitle(role)}
         </span>
       </div>
 
