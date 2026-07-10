@@ -35,6 +35,34 @@ export const adminApi = {
     return axiosClient.delete(`/admin/users/${userId}`);
   },
 
+  deleteReport: (reportId) => {
+    return axiosClient.delete(`/admin/reports/${reportId}`);
+  },
+
+  // 6. Subject Management
+  getSubjects: (params) => {
+    return axiosClient.get('/subject', { params });
+  },
+  createSubject: (data) => {
+    return axiosClient.post('/subject', data);
+  },
+  updateSubject: (id, data) => {
+    return axiosClient.put(`/subject/${id}`, data);
+  },
+  deleteSubject: (id) => {
+    return axiosClient.delete(`/subject/${id}`);
+  },
+  deleteSubjectFile: (id, fileData) => {
+    return axiosClient.delete(`/subject/${id}/file`, { data: fileData });
+  },
+  uploadSubjectMaterials: (id, formData) => {
+    return axiosClient.post(`/subject/${id}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
   // 3. Class Management
   getClasses: (params) => {
     return axiosClient.get('/admin/classes', { params });

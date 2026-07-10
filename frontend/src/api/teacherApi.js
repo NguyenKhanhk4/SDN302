@@ -37,27 +37,21 @@ export const teacherApi = {
     return axiosClient.post(`/teacher/classes/${classId}/sessions/${sessionId}/attendance`, data);
   },
 
-  // Subjects Management
-  getSubjects: (params) => {
-    return axiosClient.get('/subject', { params });
-  },
-  createSubject: (data) => {
-    return axiosClient.post('/subject', data);
-  },
-  updateSubject: (id, data) => {
-    return axiosClient.put(`/subject/${id}`, data);
-  },
-  deleteSubject: (id) => {
-    return axiosClient.delete(`/subject/${id}`);
-  },
-  deleteSubjectFile: (id, fileData) => {
-    return axiosClient.delete(`/subject/${id}/file`, { data: fileData });
-  },
-  uploadSubjectMaterials: (id, formData) => {
-    return axiosClient.post(`/subject/${id}/upload`, formData, {
+  uploadSessionMaterials: (classId, sessionId, formData) => {
+    return axiosClient.post(`/teacher/classes/${classId}/sessions/${sessionId}/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
-  }
+  },
+
+  deleteSessionMaterial: (classId, sessionId, fileUrl) => {
+    return axiosClient.delete(`/teacher/classes/${classId}/sessions/${sessionId}/file`, { data: { fileUrl } });
+  },
+
+  // Subjects Management
+  getMySubjects: (params) => {
+    return axiosClient.get('/teacher/subjects', { params });
+  },
+
 };

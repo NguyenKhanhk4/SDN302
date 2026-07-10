@@ -14,7 +14,6 @@ const Sidebar = () => {
   };
   const menuItems = [
     { name: 'Lịch dạy', path: '/teacher/schedules', icon: CalendarDays },
-    { name: 'Giáo trình', path: '/teacher/subjects', icon: BookOpen },
     { name: 'Lớp học của tôi', path: '/teacher/classes', icon: GraduationCap },
   ];
 
@@ -36,7 +35,7 @@ const Sidebar = () => {
           <GraduationCap className="h-4 w-4" />
         </div>
         {!isCollapsed && (
-          <div onClick={() => navigate('/teacher/classes')} className="cursor-pointer overflow-hidden whitespace-nowrap">
+          <div onClick={() => navigate('/teacher/schedules')} className="cursor-pointer overflow-hidden whitespace-nowrap">
             <h1 className="text-sm font-bold text-white tracking-wide">Ánh Sáng Center</h1>
             <p className="text-[10px] text-blue-400 font-medium">Teacher Portal</p>
           </div>

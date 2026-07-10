@@ -11,7 +11,29 @@ const {
   createSession,
   getAttendanceBySession,
   takeAttendance,
+  getMySubjects,
+  uploadSessionMaterials,
+  deleteSessionMaterial,
 } = require('./teacher.controller');
+
+const multer = require('multer');
+const fs = require('fs');
+
+// Setup multer storage for sessions
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = 'uploads/sessions/';
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
 
 const { protect } = require('../../middlewares/auth.middleware');
 const { authorize } = require('../../middlewares/role.middleware');
@@ -21,6 +43,9 @@ router.use(protect, authorize('teacher'));
 
 // GET /api/teacher/dashboard
 router.get('/dashboard', getTeacherDashboard);
+
+// GET /api/teacher/subjects
+router.get('/subjects', getMySubjects);
 
 // GET /api/teacher/classes
 router.get('/classes', getMyClasses);
@@ -45,6 +70,16 @@ router.get('/classes/:classId/sessions/:sessionId/attendance', getAttendanceBySe
 
 // POST /api/teacher/classes/:classId/sessions/:sessionId/attendance
 router.post('/classes/:classId/sessions/:sessionId/attendance', takeAttendance);
+
+// Upload files for a specific session
+router.post(
+  '/classes/:classId/sessions/:sessionId/upload',
+  upload.array('materials', 10),
+  uploadSessionMaterials
+);
+
+// Delete file from a specific session
+router.delete('/classes/:classId/sessions/:sessionId/file', deleteSessionMaterial);
 
 module.exports = router;
 

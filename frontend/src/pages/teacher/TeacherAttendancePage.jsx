@@ -4,7 +4,29 @@ import { teacherApi } from '../../api/teacherApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import EmptyState from '../../components/common/EmptyState';
-import { ArrowLeft, CheckSquare, Save, UserCheck, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CheckSquare, Save, UserCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { downloadFile, getFileUrl } from '../../utils/fileUtils';
+
+// Toast nổi góc phải màn hình
+const SuccessToast = ({ message, onDone }) => {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3000);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div className="fixed top-6 right-6 z-[200] animate-in slide-in-from-top-4 fade-in duration-300">
+      <div className="flex items-center gap-3 bg-emerald-600 text-white px-5 py-3.5 rounded-2xl shadow-xl shadow-emerald-600/30 min-w-[280px]">
+        <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+          <CheckCircle2 className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="font-bold text-sm">Thành công!</p>
+          <p className="text-emerald-100 text-xs mt-0.5">{message}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TeacherAttendancePage = () => {
   const { classId, sessionId } = useParams();
@@ -15,7 +37,17 @@ const TeacherAttendancePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null); // { message: string }
   const [successMessage, setSuccessMessage] = useState('');
+  
+  // Thông tin lớp & buổi học để hiển thị Header
+  const [classInfo, setClassInfo] = useState(null);
+  const [sessionInfo, setSessionInfo] = useState(null);
+
+  // Materials state
+  const [materialFiles, setMaterialFiles] = useState([]);
+  const [uploadingMaterials, setUploadingMaterials] = useState(false);
+  const materialInputRef = React.useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -27,15 +59,27 @@ const TeacherAttendancePage = () => {
       setError(null);
       setSuccessMessage('');
 
-      // Fetch students and existing attendance in parallel
-      const [studentsData, attendanceData] = await Promise.all([
+      // Fetch students, existing attendance, class info, and sessions in parallel
+      const [studentsData, attendanceData, classRes, sessionsRes] = await Promise.all([
         teacherApi.getStudentsInClass(classId),
         teacherApi.getAttendanceBySession(classId, sessionId).catch(err => {
-          // If 404 or no attendance yet, gracefully handle it
           console.warn("No existing attendance found or handled expected error:", err);
           return { attendances: [] };
-        })
+        }),
+        teacherApi.getClassDetail(classId).catch(() => null),
+        teacherApi.getSessionsByClass(classId).catch(() => null)
       ]);
+
+      if (classRes) {
+        setClassInfo(classRes.data || classRes);
+      }
+
+      if (sessionsRes) {
+        const sessionList = Array.isArray(sessionsRes) ? sessionsRes 
+          : (sessionsRes.sessions || sessionsRes.data || []);
+        const currentSession = sessionList.find(s => (s._id || s.id) === sessionId);
+        if (currentSession) setSessionInfo(currentSession);
+      }
 
       // Normalize students array
       let studentList = [];
@@ -71,7 +115,7 @@ const TeacherAttendancePage = () => {
         if (sId) {
           const existing = attMap[sId];
           initialForm[sId] = {
-            status: existing ? existing.status : 'PRESENT', // Default PRESENT
+            status: existing ? existing.status : null, // Mặc định là null (chưa chọn)
             note: existing ? existing.note : ''
           };
         }
@@ -96,10 +140,14 @@ const TeacherAttendancePage = () => {
   };
 
   const handleStatusChange = (studentId, status) => {
-    setAttendanceForm(prev => ({
-      ...prev,
-      [studentId]: { ...prev[studentId], status }
-    }));
+    setAttendanceForm(prev => {
+      const currentStatus = prev[studentId]?.status;
+      const newStatus = currentStatus === status ? null : status; // Click 2 lần sẽ hủy chọn (null)
+      return {
+        ...prev,
+        [studentId]: { ...prev[studentId], status: newStatus }
+      };
+    });
     if (successMessage) setSuccessMessage('');
   };
 
@@ -116,6 +164,7 @@ const TeacherAttendancePage = () => {
       setSaving(true);
       setError(null);
       setSuccessMessage('');
+      setToast(null);
 
       // Build array of attendance objects for the API
       const attendances = Object.keys(attendanceForm).map(sId => ({
@@ -126,15 +175,64 @@ const TeacherAttendancePage = () => {
 
       await teacherApi.takeAttendance(classId, sessionId, { attendances });
       
+      const presentCount = attendances.filter(a => a.status === 'PRESENT').length;
+      setToast({ message: `Đã lưu điểm danh: ${presentCount}/${attendances.length} học sinh có mặt` });
       setSuccessMessage('Lưu thông tin điểm danh thành công!');
       
-      // Reload data to ensure synchronization
+      // Reload data then navigate back after a short delay
       await fetchData();
+      setTimeout(() => {
+        navigate(`/teacher/classes/${classId}/sessions`);
+      }, 1500);
     } catch (err) {
       setError(err.message || err.error || 'Không thể lưu điểm danh. Vui lòng kiểm tra lại dữ liệu.');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleUploadMaterials = async (e) => {
+    e.preventDefault();
+    if (materialFiles.length === 0) return;
+
+    try {
+      setUploadingMaterials(true);
+      const formData = new FormData();
+      materialFiles.forEach(file => {
+        formData.append('materials', file);
+      });
+
+      const res = await teacherApi.uploadSessionMaterials(classId, sessionId, formData);
+      if (res.success) {
+        setToast({ message: 'Đã tải lên tài liệu buổi học' });
+        setMaterialFiles([]);
+        if (materialInputRef.current) materialInputRef.current.value = '';
+        fetchData(); // Reload session info
+      }
+    } catch (err) {
+      setError('Lỗi khi tải lên tài liệu: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setUploadingMaterials(false);
+    }
+  };
+
+  const handleDeleteMaterial = async (fileUrl) => {
+    if (!window.confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
+    try {
+      const res = await teacherApi.deleteSessionMaterial(classId, sessionId, fileUrl);
+      if (res.success) {
+        setToast({ message: 'Đã xóa tài liệu' });
+        fetchData();
+      }
+    } catch (err) {
+      setError('Lỗi khi xóa tài liệu: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  const getFileName = (pathStr) => {
+    if (!pathStr) return '';
+    const parts = pathStr.split(/[\/\\]/);
+    return parts[parts.length - 1];
   };
 
   if (loading) {
@@ -147,18 +245,108 @@ const TeacherAttendancePage = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Điểm danh</h1>
-          <p className="text-sm text-slate-500 mt-1">Thực hiện hoặc xem lại điểm danh cho buổi học này.</p>
+      {/* Toast thông báo nổi */}
+      {toast && (
+        <SuccessToast
+          message={toast.message}
+          onDone={() => setToast(null)}
+        />
+      )}
+      <div className="flex flex-col gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+        {/* Breadcrumb nhỏ và nút quay lại */}
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+            <span className="cursor-pointer hover:text-blue-500 transition-colors" onClick={() => navigate('/teacher/classes')}>Lớp học</span>
+            <span>›</span>
+            <span className="cursor-pointer hover:text-blue-500 transition-colors" onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}>
+              {classInfo?.name || 'Chi tiết lớp'}
+            </span>
+            <span>›</span>
+            <span className="text-blue-600 font-semibold">Điểm danh</span>
+          </p>
+
+          <button 
+            onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition-colors"
+          >
+            <ArrowLeft size={14} />
+            <span>Quay lại</span>
+          </button>
         </div>
-        <button 
-          onClick={() => navigate(`/teacher/classes/${classId}/sessions`)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-colors"
-        >
-          <ArrowLeft size={16} />
-          <span>Danh sách buổi học</span>
-        </button>
+
+        {/* Tiêu đề chính */}
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            Điểm danh <span className="text-slate-300">|</span> 
+            <span className="text-blue-600">{classInfo?.name || '...'}</span>
+          </h1>
+          {sessionInfo && (
+            <div className="mt-2 text-sm text-slate-600 font-medium">
+              <p>Chủ đề: <span className="text-slate-800">{sessionInfo.topic || 'Chưa có chủ đề'}</span></p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Ngày: {new Date(sessionInfo.sessionDate || sessionInfo.date).toLocaleDateString('vi-VN')}
+                {sessionInfo.room && ` - Phòng: ${sessionInfo.room}`}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Materials Section */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
+        <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+          Tài liệu buổi học
+        </h2>
+        
+        {sessionInfo?.materials && sessionInfo.materials.length > 0 ? (
+          <div className="space-y-2 mb-4">
+            {sessionInfo.materials.map((mat, idx) => (
+              <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg shrink-0">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                  </div>
+                  <p className="text-sm font-medium text-slate-700 truncate">{getFileName(mat)}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => downloadFile(getFileUrl(mat), getFileName(mat))}
+                    className="px-3 py-1.5 text-xs font-bold bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 transition-colors shrink-0"
+                  >
+                    Tải về
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteMaterial(mat)}
+                    className="px-3 py-1.5 text-xs font-bold bg-rose-100 text-rose-600 rounded-lg hover:bg-rose-200 transition-colors shrink-0"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500 italic mb-4">Chưa có tài liệu nào cho buổi học này.</p>
+        )}
+
+        {/* Upload Form */}
+        <form onSubmit={handleUploadMaterials} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
+          <input 
+            type="file" 
+            ref={materialInputRef}
+            multiple 
+            onChange={(e) => setMaterialFiles(Array.from(e.target.files))}
+            className="text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200 cursor-pointer"
+          />
+          <button 
+            type="submit"
+            disabled={uploadingMaterials || materialFiles.length === 0}
+            className="px-5 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-all shrink-0"
+          >
+            {uploadingMaterials ? 'Đang tải lên...' : 'Tải lên tài liệu'}
+          </button>
+        </form>
       </div>
 
       {error && (
@@ -230,7 +418,7 @@ const TeacherAttendancePage = () => {
                               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
                                 formRow.status === 'ABSENT' 
                                   ? 'bg-rose-500 text-white border-rose-500 shadow-sm opacity-100' 
-                                  : 'bg-white text-rose-500 border-rose-200 hover:bg-rose-50 opacity-50'
+                                  : 'bg-white text-slate-400 border-slate-200 hover:text-rose-400 hover:border-rose-200 opacity-60'
                               }`}
                             >
                               ABSENT
@@ -240,7 +428,7 @@ const TeacherAttendancePage = () => {
                               className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
                                 formRow.status === 'PRESENT' 
                                   ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm opacity-100' 
-                                  : 'bg-white text-emerald-500 border-emerald-200 hover:bg-emerald-50 opacity-50'
+                                  : 'bg-white text-slate-400 border-slate-200 hover:text-emerald-400 hover:border-emerald-200 opacity-60'
                               }`}
                             >
                               PRESENT

@@ -27,6 +27,7 @@ import AdminSchedulesPage from '../pages/admin/AdminSchedulesPage';
 import AdminCreateSchedulePage from '../pages/admin/AdminCreateSchedulePage';
 import AdminFinancePage from '../pages/admin/AdminFinancePage';
 import AdminReportsPage from '../pages/admin/AdminReportsPage';
+import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 
 import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
 import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
@@ -128,6 +129,7 @@ const AppRoutes = () => {
           <Route path="schedules/create" element={<AdminCreateSchedulePage />} />
           <Route path="finance" element={<AdminFinancePage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="subjects" element={<AdminSubjectsPage />} />
         </Route>
       </Route>
 
