@@ -19,7 +19,7 @@ const LoginPage = () => {
     const roleDashboards = {
       admin: '/admin/dashboard',
       manager: '/manager/dashboard',
-      teacher: '/teacher/dashboard',
+      teacher: '/teacher/schedules',
       student: '/student/dashboard',
       parent: '/parent/dashboard',
       accountant: '/accountant/dashboard',
@@ -78,15 +78,16 @@ const LoginPage = () => {
       const roleDashboards = {
         admin: '/admin/dashboard',
         manager: '/manager/dashboard',
-        teacher: '/teacher/dashboard',
+        teacher: '/teacher/schedules',
         student: '/student/dashboard',
         parent: '/parent/dashboard',
         accountant: '/accountant/dashboard',
       };
 
       const role = String(user.role).toLowerCase();
-      const target = roleDashboards[role] || '/login';
-      navigate(target, { replace: true });
+      const target = roleDashboards[role] || '/';
+      // Force a full page reload to clear any stale state or transition bugs
+      window.location.href = target;
 
     } catch (err) {
       setGlobalError(err.message || err.error || 'Email hoặc mật khẩu không hợp lệ');
@@ -111,7 +112,7 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Địa chỉ Email"
+            label="Email"
             name="email"
             type="email"
             placeholder="tai-khoan@gmail.com"

@@ -124,7 +124,7 @@ const AdminEditUserPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
-              label="Địa chỉ Email"
+              label=""
               name="email"
               type="email"
               placeholder="example@gmail.com"

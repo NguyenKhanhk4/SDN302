@@ -47,7 +47,13 @@ const ensureSessionsForClass = async (classId, teacherId) => {
 
   const schedulesByDay = {};
   schedules.forEach(sch => {
-    const dayIndex = dayMap[sch.dayOfWeek];
+    let dayIndex;
+    if (dayMap[sch.dayOfWeek] !== undefined) {
+      dayIndex = dayMap[sch.dayOfWeek];
+    } else if (!isNaN(sch.dayOfWeek)) {
+      dayIndex = Number(sch.dayOfWeek);
+    }
+    
     if (dayIndex !== undefined) {
       if (!schedulesByDay[dayIndex]) schedulesByDay[dayIndex] = [];
       schedulesByDay[dayIndex].push(sch);
@@ -86,12 +92,27 @@ const ensureSessionsForClass = async (classId, teacherId) => {
           generatedOrFoundCount++;
         } else {
           try {
+            const startStr = schedule.startTime || '00:00';
+            const endStr = schedule.endTime || '00:00';
+            const [sH, sM] = startStr.split(':').map(Number);
+            const [eH, eM] = endStr.split(':').map(Number);
+            
+            const startDateTime = new Date(sessionDate);
+            startDateTime.setUTCHours(sH, sM, 0, 0);
+
+            const endDateTime = new Date(sessionDate);
+            endDateTime.setUTCHours(eH, eM, 0, 0);
+
             await Session.create({
               classId,
               scheduleId: schedule._id,
               sessionDate,
               topic: `Buổi học ngày ${d}/${m}/${y}`,
-              status: 'SCHEDULED'
+              status: 'SCHEDULED',
+              teacherId: teacherId,
+              room: schedule.room || 'Chưa xếp',
+              startTime: startDateTime,
+              endTime: endDateTime
             });
             createdCount++;
             generatedOrFoundCount++;

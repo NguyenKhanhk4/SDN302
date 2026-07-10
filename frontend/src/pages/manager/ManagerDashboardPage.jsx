@@ -77,7 +77,7 @@ const ManagerDashboardPage = () => {
           <div>
             <div className="text-[10px] font-bold text-slate-200 tracking-wider uppercase">Doanh thu tháng này</div>
             <div className="text-lg md:text-xl font-black text-white mt-0.5 tracking-tight">
-              {stats.finance.monthlyRevenue.toLocaleString()} VND
+              {stats?.finance?.monthlyRevenue?.toLocaleString() || '0'} VND
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@ const ManagerDashboardPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <StatCard 
             title="Tổng số học viên" 
-            value={stats.students.total} 
+            value={stats?.students?.total || 0} 
             icon={Users} 
             iconColor="text-blue-600" 
             colorClass="text-blue-700"
@@ -100,7 +100,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Học viên đang học" 
-            value={stats.students.active} 
+            value={stats?.students?.active || 0} 
             icon={UserCheck} 
             iconColor="text-green-600" 
             colorClass="text-green-700"
@@ -108,7 +108,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Học viên dừng học" 
-            value={stats.students.inactive} 
+            value={stats?.students?.inactive || 0} 
             icon={UserX} 
             iconColor="text-red-600" 
             colorClass="text-red-700"
@@ -126,7 +126,7 @@ const ManagerDashboardPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <StatCard 
             title="Tổng số giáo viên" 
-            value={stats.teachers.total} 
+            value={stats?.teachers?.total || 0} 
             icon={GraduationCap} 
             iconColor="text-purple-600" 
             colorClass="text-purple-700"
@@ -134,7 +134,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Giáo viên đang dạy" 
-            value={stats.teachers.active} 
+            value={stats?.teachers?.active || 0} 
             icon={UserCheck} 
             iconColor="text-green-600" 
             colorClass="text-green-700"
@@ -152,7 +152,7 @@ const ManagerDashboardPage = () => {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard 
             title="Tổng số lớp học" 
-            value={stats.classes.total} 
+            value={stats?.classes?.total || 0} 
             icon={BookOpen} 
             iconColor="text-blue-600" 
             colorClass="text-blue-700"
@@ -160,7 +160,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Lớp đang diễn ra" 
-            value={stats.classes.active} 
+            value={stats?.classes?.active || 0} 
             icon={CircleDot} 
             iconColor="text-green-600" 
             colorClass="text-green-700"
@@ -168,7 +168,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Lớp sắp mở" 
-            value={stats.classes.upcoming} 
+            value={stats?.classes?.upcoming || 0} 
             icon={Calendar} 
             iconColor="text-orange-600" 
             colorClass="text-orange-700"
@@ -176,7 +176,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Lớp đã bế giảng" 
-            value={stats.classes.finished} 
+            value={stats?.classes?.finished || 0} 
             icon={CheckCircle2} 
             iconColor="text-blue-600" 
             colorClass="text-blue-700"
@@ -184,7 +184,7 @@ const ManagerDashboardPage = () => {
           />
           <StatCard 
             title="Lớp đã hủy" 
-            value={stats.classes.cancelled} 
+            value={stats?.classes?.cancelled || 0} 
             icon={XCircle} 
             iconColor="text-red-600" 
             colorClass="text-red-700"
@@ -204,7 +204,7 @@ const ManagerDashboardPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <StatCard 
               title="Tổng số lịch dạy" 
-              value={stats.schedules.total} 
+              value={stats?.schedules?.total || 0} 
               icon={Calendar} 
               iconColor="text-blue-600" 
               colorClass="text-blue-700"
@@ -212,7 +212,7 @@ const ManagerDashboardPage = () => {
             />
             <StatCard 
               title="Lịch dạy đang áp dụng" 
-              value={stats.schedules.active} 
+              value={stats?.schedules?.active || 0} 
               icon={CheckCircle2} 
               iconColor="text-green-600" 
               colorClass="text-green-700"
@@ -230,7 +230,7 @@ const ManagerDashboardPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <StatCard 
               title="Tổng số hóa đơn" 
-              value={stats.finance.totalInvoices} 
+              value={stats?.finance?.totalInvoices || 0} 
               icon={Receipt} 
               iconColor="text-indigo-600" 
               colorClass="text-indigo-700"
@@ -238,7 +238,7 @@ const ManagerDashboardPage = () => {
             />
             <StatCard 
               title="Doanh thu tháng này" 
-              value={stats.finance.monthlyRevenue.toLocaleString()} 
+              value={stats?.finance?.monthlyRevenue?.toLocaleString() || '0'} 
               unit="VND"
               icon={Wallet} 
               iconColor="text-green-600" 
@@ -247,7 +247,7 @@ const ManagerDashboardPage = () => {
             />
             <StatCard 
               title="Hóa đơn đã đóng" 
-              value={stats.finance.paidInvoices} 
+              value={stats?.finance?.paidInvoices || 0} 
               icon={CheckCircle2} 
               iconColor="text-teal-600" 
               colorClass="text-teal-700"
@@ -255,7 +255,7 @@ const ManagerDashboardPage = () => {
             />
             <StatCard 
               title="Hóa đơn chưa đóng" 
-              value={stats.finance.unpaidInvoices} 
+              value={stats?.finance?.unpaidInvoices || 0} 
               icon={AlertCircle} 
               iconColor="text-red-600" 
               colorClass="text-red-700"

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { adminApi } from '../../api/adminApi';
+import { teacherApi } from '../../api/teacherApi';
 import Loading from '../../components/common/Loading';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Upload, File, FileText, X, Search, Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const AdminSubjectsPage = () => {
+const TeacherSubjectsPage = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -129,7 +129,7 @@ const AdminSubjectsPage = () => {
   const fetchSubjects = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.getSubjects({ search });
+      const res = await teacherApi.getSubjects({ search });
       if (res.success) {
         setSubjects(res.data);
       }
@@ -181,9 +181,9 @@ const AdminSubjectsPage = () => {
       setSaving(true);
       let res;
       if (selectedSubject) {
-        res = await adminApi.updateSubject(selectedSubject._id, payload);
+        res = await teacherApi.updateSubject(selectedSubject._id, payload);
       } else {
-        res = await adminApi.createSubject(payload);
+        res = await teacherApi.createSubject(payload);
       }
 
       if (res.success) {
@@ -201,7 +201,7 @@ const AdminSubjectsPage = () => {
   const handleDeleteSubject = async (subject) => {
     if (!window.confirm(`Bạn có chắc muốn xóa môn học: ${subject.name}?`)) return;
     try {
-      const res = await adminApi.deleteSubject(subject._id);
+      const res = await teacherApi.deleteSubject(subject._id);
       if (res.success) {
         toast.success('Đã xóa môn học');
         fetchSubjects();
@@ -223,7 +223,7 @@ const AdminSubjectsPage = () => {
   const handleDeleteFile = async (fileUrl, fileType) => {
     if (!window.confirm('Bạn có chắc muốn xóa file này?')) return;
     try {
-      const res = await adminApi.deleteSubjectFile(selectedSubject._id, { fileUrl, fileType });
+      const res = await teacherApi.deleteSubjectFile(selectedSubject._id, { fileUrl, fileType });
       if (res.success) {
         toast.success('Đã xóa file');
         // Update selected subject local state to re-render modal immediately
@@ -250,7 +250,7 @@ const AdminSubjectsPage = () => {
         formDataUpload.append('materials', materialFiles[i]);
       }
 
-      const res = await adminApi.uploadSubjectMaterials(selectedSubject._id, formDataUpload);
+      const res = await teacherApi.uploadSubjectMaterials(selectedSubject._id, formDataUpload);
       if (res.success) {
         toast.success('Tải tài liệu lên thành công!');
         fetchSubjects();
@@ -657,4 +657,4 @@ const AdminSubjectsPage = () => {
   );
 };
 
-export default AdminSubjectsPage;
+export default TeacherSubjectsPage;

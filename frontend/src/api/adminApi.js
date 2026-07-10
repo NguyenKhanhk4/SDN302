@@ -72,29 +72,7 @@ export const adminApi = {
     return axiosClient.put(`/enrollment/${id}/status`, { status });
   },
 
-  // 6. Subjects (Phase 1)
-  getSubjects: (params) => {
-    return axiosClient.get('/subject', { params });
-  },
-  createSubject: (data) => {
-    return axiosClient.post('/subject', data);
-  },
-  updateSubject: (id, data) => {
-    return axiosClient.put(`/subject/${id}`, data);
-  },
-  deleteSubject: (id) => {
-    return axiosClient.delete(`/subject/${id}`);
-  },
-  deleteSubjectFile: (id, fileData) => {
-    return axiosClient.delete(`/subject/${id}/file`, { data: fileData });
-  },
-  uploadSubjectMaterials: (id, formData) => {
-    return axiosClient.post(`/subject/${id}/upload`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  },
+  // 6. Subjects (Phase 1) - MOVED TO TEACHER
 
   // 7. Finance & Payroll (Phase 3)
   getInvoices: () => {

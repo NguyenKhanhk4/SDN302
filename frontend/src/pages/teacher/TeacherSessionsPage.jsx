@@ -17,7 +17,7 @@ const TeacherSessionsPage = () => {
   const [error, setError] = useState(null);
   
   // Form state
-  const [formData, setFormData] = useState({ sessionDate: '', topic: '' });
+  const [formData, setFormData] = useState({ sessionDate: '', topic: '', room: '', startTime: '', endTime: '' });
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -58,7 +58,19 @@ const TeacherSessionsPage = () => {
       setFormError('Ngày học là bắt buộc.');
       return;
     }
-    if (!formData.topic.trim()) {
+    if (!formData.room?.trim()) {
+      setFormError('Phòng học là bắt buộc.');
+      return;
+    }
+    if (!formData.startTime) {
+      setFormError('Giờ bắt đầu là bắt buộc.');
+      return;
+    }
+    if (!formData.endTime) {
+      setFormError('Giờ kết thúc là bắt buộc.');
+      return;
+    }
+    if (!formData.topic?.trim()) {
       setFormError('Chủ đề là bắt buộc.');
       return;
     }
@@ -68,13 +80,23 @@ const TeacherSessionsPage = () => {
       setFormError('');
       setSuccessMessage('');
       
+      // Need to parse times into dates for the backend
+      const startDateTime = new Date(`${formData.sessionDate}T${formData.startTime}:00`).toISOString();
+      const endDateTime = new Date(`${formData.sessionDate}T${formData.endTime}:00`).toISOString();
+      
+      const user = JSON.parse(localStorage.getItem('user'));
+      
       await teacherApi.createSession(classId, {
         sessionDate: formData.sessionDate,
-        topic: formData.topic
+        topic: formData.topic,
+        teacherId: user?.profileId || user?._id || user?.id,
+        room: formData.room,
+        startTime: startDateTime,
+        endTime: endDateTime
       });
       
       setSuccessMessage('Tạo buổi học thành công!');
-      setFormData({ sessionDate: '', topic: '' });
+      setFormData({ sessionDate: '', topic: '', room: '', startTime: '', endTime: '' });
       fetchSessions(); // Reload list directly after success
       
     } catch (err) {
@@ -140,22 +162,54 @@ const TeacherSessionsPage = () => {
               </div>
             )}
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Ngày học"
-                name="sessionDate"
-                type="date"
-                value={formData.sessionDate}
-                onChange={handleFormChange}
-              />
-              <Input
-                label="Chủ đề / Nội dung bài học"
-                name="topic"
-                type="text"
-                value={formData.topic}
-                onChange={handleFormChange}
-                placeholder="Nhập nội dung giảng dạy..."
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="lg:col-span-1">
+                <Input
+                  label="Ngày học"
+                  name="sessionDate"
+                  type="date"
+                  value={formData.sessionDate}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div className="lg:col-span-1">
+                <Input
+                  label="Phòng học"
+                  name="room"
+                  type="text"
+                  value={formData.room || ''}
+                  onChange={handleFormChange}
+                  placeholder="VD: P.101"
+                />
+              </div>
+              <div className="lg:col-span-1">
+                <Input
+                  label="Giờ bắt đầu"
+                  name="startTime"
+                  type="time"
+                  value={formData.startTime || ''}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div className="lg:col-span-1">
+                <Input
+                  label="Giờ kết thúc"
+                  name="endTime"
+                  type="time"
+                  value={formData.endTime || ''}
+                  onChange={handleFormChange}
+                />
+              </div>
+              <div className="lg:col-span-5 md:col-span-2">
+                <Input
+                  label="Chủ đề / Nội dung bài học"
+                  name="topic"
+                  type="text"
+                  value={formData.topic}
+                  onChange={handleFormChange}
+                  placeholder="Nhập nội dung giảng dạy..."
+                />
+              </div>
             </div>
             <div className="pt-4">
               <button 

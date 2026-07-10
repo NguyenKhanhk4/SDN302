@@ -49,7 +49,6 @@ const tryConnect = (uri) => {
  * mongoose ignores duplicate connect() calls when already connected.
  */
 const connectDB = async () => {
-  const ATLAS_URI = process.env.MONGO_URI_ATLAS;
   const LOCAL_URI =
     process.env.MONGO_URI ||
     process.env.MONGO_URI_LOCAL ||
@@ -58,32 +57,6 @@ const connectDB = async () => {
   const DIVIDER = '=========================================';
 
   console.log(DIVIDER);
-
-  // ── Step 1: Try Atlas ──────────────────────────────────────────────────────
-  console.log('Trying MongoDB Atlas...');
-
-  if (ATLAS_URI) {
-    try {
-      const conn = await tryConnect(ATLAS_URI);
-      console.log(`✓ Connected to MongoDB Atlas (${conn.connection.host})`);
-      console.log(DIVIDER);
-      return; // Success — stop here
-    } catch (atlasErr) {
-      console.log(`✗ Atlas unavailable — ${atlasErr.message}`);
-
-      // Disconnect any partial/failed connection before retrying
-      try {
-        await mongoose.disconnect();
-      } catch (_) {
-        // Ignore disconnect errors
-      }
-    }
-  } else {
-    console.log('✗ MONGO_URI_ATLAS not set — skipping Atlas');
-  }
-
-  // ── Step 2: Try Local ──────────────────────────────────────────────────────
-  console.log('');
   console.log('Trying Local MongoDB...');
 
   try {
@@ -93,13 +66,11 @@ const connectDB = async () => {
     return; // Success — stop here
   } catch (localErr) {
     console.log(`✗ Local MongoDB unavailable — ${localErr.message}`);
+    console.log('');
+    console.log('Application terminated.');
+    console.log(DIVIDER);
+    process.exit(1);
   }
-
-  // ── Step 3: Both failed — terminate ───────────────────────────────────────
-  console.log('');
-  console.log('Application terminated.');
-  console.log(DIVIDER);
-  process.exit(1);
 };
 
 module.exports = connectDB;

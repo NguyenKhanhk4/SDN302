@@ -224,21 +224,28 @@ const TeacherAttendancePage = () => {
                           {info.email}
                         </td>
                         <td className="p-4">
-                          <select
-                            value={formRow.status}
-                            onChange={(e) => handleStatusChange(info.id, e.target.value)}
-                            className={`text-sm font-medium border rounded-xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors cursor-pointer outline-none appearance-none ${
-                              formRow.status === 'PRESENT' ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' :
-                              formRow.status === 'ABSENT' ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100' :
-                              formRow.status === 'LATE' ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100' :
-                              'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
-                            }`}
-                          >
-                            <option value="PRESENT">✅ Có mặt</option>
-                            <option value="ABSENT">❌ Vắng mặt</option>
-                            <option value="LATE">⏱️ Đi muộn</option>
-                            <option value="EXCUSED">📝 Có phép</option>
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleStatusChange(info.id, 'ABSENT')}
+                              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                                formRow.status === 'ABSENT' 
+                                  ? 'bg-rose-500 text-white border-rose-500 shadow-sm opacity-100' 
+                                  : 'bg-white text-rose-500 border-rose-200 hover:bg-rose-50 opacity-50'
+                              }`}
+                            >
+                              ABSENT
+                            </button>
+                            <button
+                              onClick={() => handleStatusChange(info.id, 'PRESENT')}
+                              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                                formRow.status === 'PRESENT' 
+                                  ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm opacity-100' 
+                                  : 'bg-white text-emerald-500 border-emerald-200 hover:bg-emerald-50 opacity-50'
+                              }`}
+                            >
+                              PRESENT
+                            </button>
+                          </div>
                         </td>
                         <td className="p-4">
                           <input

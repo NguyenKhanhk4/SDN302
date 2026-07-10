@@ -3,12 +3,17 @@ import { Link } from 'react-router-dom';
 import {
   BookOpen, Users, Calendar, CheckCircle, Star, Phone, Mail, MapPin,
   ChevronRight, ArrowRight, Book, Activity, Beaker, Globe, PenTool, Hash,
-  Award, TrendingUp, Clock, MonitorPlay, MessageCircle
+  Award, TrendingUp, Clock, MonitorPlay, MessageCircle, X
 } from 'lucide-react';
+import { getUser } from '../utils/auth';
+import LoginPage from './auth/LoginPage';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState('Lớp 12');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const navigate = useNavigate();
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -23,10 +28,33 @@ const HomePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    const user = getUser();
+    if (user && localStorage.getItem('token')) {
+      const roleDashboards = {
+        admin: '/admin/dashboard',
+        manager: '/manager/dashboard',
+        teacher: '/teacher/schedules',
+        student: '/student/dashboard',
+        parent: '/parent/dashboard',
+        accountant: '/accountant/dashboard',
+      };
+      const role = String(user.role).toLowerCase();
+      const target = roleDashboards[role] || '/';
+      navigate(target);
+    } else {
+      setShowLogin(true);
+    }
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     alert('Đăng ký thành công! Trung tâm sẽ liên hệ với bạn trong thời gian sớm nhất.');
   };
+
+  const user = getUser();
+  const isLoggedIn = user && localStorage.getItem('token');
 
   return (
     <div className="min-h-screen bg-[#F8FAFF] font-sans text-slate-800">
@@ -50,9 +78,9 @@ const HomePage = () => {
             </div>
 
             <div className="hidden sm:flex items-center space-x-4">
-              <Link to="/login" className="px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
-                Đăng Nhập
-              </Link>
+              <button onClick={handleLoginClick} className="px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập'}
+              </button>
               <a href="#dang-ky" className="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-900 font-bold hover:bg-amber-400 hover:scale-105 transition-all shadow-lg shadow-amber-500/30">
                 Đăng Ký Học
               </a>
@@ -501,9 +529,9 @@ const HomePage = () => {
                 <li className="flex items-start gap-3"><CheckCircle className="text-blue-400 shrink-0 mt-0.5" /> <span className="text-slate-300">Xem lịch học chi tiết của con trong tuần</span></li>
               </ul>
 
-              <Link to="/login" className="inline-block px-6 py-3 rounded-xl border border-blue-500 text-blue-400 font-bold hover:bg-blue-500 hover:text-white transition-colors">
-                Đăng Nhập Cho Phụ Huynh
-              </Link>
+              <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-blue-500 text-blue-400 font-bold hover:bg-blue-500 hover:text-white transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Phụ Huynh'}
+              </button>
             </div>
 
             {/* Student Portal */}
@@ -522,9 +550,9 @@ const HomePage = () => {
                 <li className="flex items-start gap-3"><CheckCircle className="text-amber-400 shrink-0 mt-0.5" /> <span className="text-slate-300">Theo dõi tiến độ và nhận thông báo từ GV</span></li>
               </ul>
 
-              <Link to="/login" className="inline-block px-6 py-3 rounded-xl border border-amber-500 text-amber-400 font-bold hover:bg-amber-500 hover:text-slate-900 transition-colors">
-                Đăng Nhập Cho Học Viên
-              </Link>
+              <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-amber-500 text-amber-400 font-bold hover:bg-amber-500 hover:text-slate-900 transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Học Viên'}
+              </button>
             </div>
           </div>
 
@@ -766,6 +794,21 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Login Modal Overlay */}
+      {showLogin && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setShowLogin(false)}
+              className="absolute -top-12 right-0 text-white hover:text-amber-400 transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full"
+            >
+              <X size={24} />
+            </button>
+            <LoginPage />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

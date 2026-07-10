@@ -261,7 +261,7 @@ const getSessionsByClass = async (req, res) => {
 const createSession = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { sessionDate, topic, scheduleId } = req.body;
+    const { sessionDate, topic, scheduleId, teacherId, room, startTime, endTime } = req.body;
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
@@ -299,6 +299,10 @@ const createSession = async (req, res) => {
       sessionDate: new Date(sessionDate),
       topic: topic || '',
       status: 'SCHEDULED',
+      teacherId: teacherId || teacherProfile._id,
+      room: room || 'Chưa xếp',
+      startTime: startTime || new Date(sessionDate),
+      endTime: endTime || new Date(sessionDate)
     });
 
     return res.status(201).json({
