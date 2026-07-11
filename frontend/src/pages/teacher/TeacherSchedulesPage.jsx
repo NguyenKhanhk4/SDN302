@@ -90,10 +90,22 @@ const TeacherSchedulesPage = () => {
         navigate(`/teacher/classes/${classId}/sessions/${existingSession._id || existingSession.id}/attendance`);
       } else {
         const [year, month, day] = dayDateStr.split('-');
+        
+        // Ensure teacherId is an ID string if it's populated
+        const teacherId = typeof schedule.teacherId === 'object' ? schedule.teacherId._id : schedule.teacherId;
+        
+        // Parse startTime and endTime into proper ISO dates by combining with sessionDate
+        const startDateTime = new Date(`${dayDateStr}T${schedule.startTime || '00:00'}:00`).toISOString();
+        const endDateTime = new Date(`${dayDateStr}T${schedule.endTime || '00:00'}:00`).toISOString();
+        
         const createRes = await teacherApi.createSession(classId, {
           scheduleId: scheduleId,
           sessionDate: dayDateStr,
-          topic: `Buổi học ngày ${day}/${month}/${year}`
+          topic: `Buổi học ngày ${day}/${month}/${year}`,
+          teacherId: teacherId,
+          room: schedule.room,
+          startTime: startDateTime,
+          endTime: endDateTime
         });
 
         const newSessionId = createRes?.data?._id || createRes?._id || createRes?.data?.session?._id;
@@ -120,6 +132,7 @@ const TeacherSchedulesPage = () => {
 
   const normalizeDayOfWeek = (day) => {
     if (typeof day === 'number') return day;
+    if (day && !isNaN(day)) return parseInt(day, 10);
     const map = {
       'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4,
       'friday': 5, 'saturday': 6, 'sunday': 0
@@ -127,11 +140,24 @@ const TeacherSchedulesPage = () => {
     return map[day.toLowerCase()] !== undefined ? map[day.toLowerCase()] : -1;
   };
 
+  const parseTime = (t) => {
+    if (!t) return 0;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+
   const renderScheduleCell = (slot, day) => {
     const cellSchedules = schedules.filter(s => {
       const sDay = normalizeDayOfWeek(s.dayOfWeek);
       if (sDay !== day.dayOfWeek) return false;
-      return s.startTime === slot.startTime || s.startTime?.startsWith(slot.startTime.substring(0, 2));
+      
+      if (!s.startTime) return false;
+      const sStart = parseTime(s.startTime);
+      const slotStart = parseTime(slot.startTime);
+      const slotEnd = parseTime(slot.endTime);
+      
+      // Map schedule to the slot where its start time falls in.
+      return sStart >= slotStart && sStart < slotEnd;
     });
 
     if (cellSchedules.length === 0) {

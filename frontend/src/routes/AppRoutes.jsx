@@ -9,6 +9,7 @@ import StudentLayout from '../components/layout/StudentLayout';
 import ParentLayout from '../components/layout/ParentLayout';
 import ProtectedRoute from './ProtectedRoute';
 
+import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/auth/LoginPage';
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
 
@@ -18,7 +19,6 @@ import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminCreateUserPage from '../pages/admin/AdminCreateUserPage';
 import AdminEditUserPage from '../pages/admin/AdminEditUserPage';
 import AdminUserDetailPage from '../pages/admin/AdminUserDetailPage';
-import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 import AdminClassesPage from '../pages/admin/AdminClassesPage';
 import AdminCreateClassPage from '../pages/admin/AdminCreateClassPage';
 import AdminClassDetailPage from '../pages/admin/AdminClassDetailPage';
@@ -27,6 +27,7 @@ import AdminSchedulesPage from '../pages/admin/AdminSchedulesPage';
 import AdminCreateSchedulePage from '../pages/admin/AdminCreateSchedulePage';
 import AdminFinancePage from '../pages/admin/AdminFinancePage';
 import AdminReportsPage from '../pages/admin/AdminReportsPage';
+import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 
 import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
 import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
@@ -49,7 +50,7 @@ import ManagerInvoicesPage from '../pages/manager/ManagerInvoicesPage';
 import ManagerCreateInvoicePage from '../pages/manager/ManagerCreateInvoicePage';
 import ManagerEditInvoicePage from '../pages/manager/ManagerEditInvoicePage';
 
-import TeacherDashboardPage from '../pages/teacher/TeacherDashboardPage';
+import TeacherSubjectsPage from '../pages/teacher/TeacherSubjectsPage';
 import TeacherClassesPage from '../pages/teacher/TeacherClassesPage';
 import TeacherClassDetailPage from '../pages/teacher/TeacherClassDetailPage';
 import TeacherClassStudentsPage from '../pages/teacher/TeacherClassStudentsPage';
@@ -85,7 +86,7 @@ const RootRedirect = () => {
   const roleDashboards = {
     admin: '/admin/dashboard',
     manager: '/manager/dashboard',
-    teacher: '/teacher/dashboard',
+    teacher: '/teacher/schedules',
     student: '/student/dashboard',
     parent: '/parent/dashboard',
     accountant: '/accountant/dashboard',
@@ -100,8 +101,8 @@ const RootRedirect = () => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Root redirect */}
-      <Route path="/" element={<RootRedirect />} />
+      {/* Homepage */}
+      <Route path="/" element={<HomePage />} />
 
       {/* Auth routes — Login */}
       <Route element={<AuthLayout />}>
@@ -120,7 +121,6 @@ const AppRoutes = () => {
           <Route path="users/create" element={<AdminCreateUserPage />} />
           <Route path="users/edit/:userId" element={<AdminEditUserPage />} />
           <Route path="users/:userId" element={<AdminUserDetailPage />} />
-          <Route path="subjects" element={<AdminSubjectsPage />} />
           <Route path="classes" element={<AdminClassesPage />} />
           <Route path="classes/create" element={<AdminCreateClassPage />} />
           <Route path="classes/:classId" element={<AdminClassDetailPage />} />
@@ -129,6 +129,7 @@ const AppRoutes = () => {
           <Route path="schedules/create" element={<AdminCreateSchedulePage />} />
           <Route path="finance" element={<AdminFinancePage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="subjects" element={<AdminSubjectsPage />} />
         </Route>
       </Route>
 
@@ -163,14 +164,14 @@ const AppRoutes = () => {
       {/* Teacher routes — Protected */}
       <Route element={<ProtectedRoute requiredRole="teacher" />}>
         <Route path="/teacher" element={<TeacherLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<TeacherDashboardPage />} />
+          <Route index element={<Navigate to="schedules" replace />} />
+          <Route path="subjects" element={<TeacherSubjectsPage />} />
           <Route path="classes" element={<TeacherClassesPage />} />
           <Route path="classes/:classId" element={<TeacherClassDetailPage />} />
           <Route path="classes/:classId/students" element={<TeacherClassStudentsPage />} />
           <Route path="schedules" element={<TeacherSchedulesPage />} />
-          <Route path="sessions" element={<TeacherSessionsPage />} />
-          <Route path="attendance" element={<TeacherAttendancePage />} />
+          <Route path="classes/:classId/sessions" element={<TeacherSessionsPage />} />
+          <Route path="classes/:classId/sessions/:sessionId/attendance" element={<TeacherAttendancePage />} />
         </Route>
       </Route>
 
@@ -197,8 +198,8 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
-      {/* Catch all — redirect to login */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      {/* Catch all — redirect to homepage */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

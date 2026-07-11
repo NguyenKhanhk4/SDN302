@@ -3,7 +3,7 @@ import { teacherApi } from '../../api/teacherApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
 import { BookOpen, Calendar, Users, ClipboardList, CheckCircle } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 const TeacherDashboardPage = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -69,38 +69,38 @@ const TeacherDashboardPage = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-5 rounded-2xl border border-blue-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+        <Link to="/teacher/classes" className="bg-gradient-to-br from-blue-50 to-indigo-100 p-5 rounded-2xl border border-blue-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300 block cursor-pointer">
           <div className="absolute -right-2 -top-2 p-4 opacity-10 text-blue-600 group-hover:scale-110 transition-transform"><BookOpen size={64} /></div>
           <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số lớp học</div>
           <div className="text-3xl font-extrabold tracking-tight text-blue-700 relative z-10">{totalClasses}</div>
-        </div>
+        </Link>
         
-        <div className="bg-gradient-to-br from-emerald-50 to-green-100 p-5 rounded-2xl border border-green-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+        <Link to="/teacher/schedules" className="bg-gradient-to-br from-emerald-50 to-green-100 p-5 rounded-2xl border border-green-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300 block cursor-pointer">
           <div className="absolute -right-2 -top-2 p-4 opacity-10 text-green-600 group-hover:scale-110 transition-transform"><Calendar size={64} /></div>
           <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số lịch dạy</div>
           <div className="text-3xl font-extrabold tracking-tight text-green-700 relative z-10">{totalSchedules}</div>
-        </div>
+        </Link>
         
-        <div className="bg-gradient-to-br from-purple-50 to-fuchsia-100 p-5 rounded-2xl border border-purple-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+        <Link to="/teacher/classes" className="bg-gradient-to-br from-purple-50 to-fuchsia-100 p-5 rounded-2xl border border-purple-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300 block cursor-pointer">
           <div className="absolute -right-2 -top-2 p-4 opacity-10 text-purple-600 group-hover:scale-110 transition-transform"><Users size={64} /></div>
           <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số học viên</div>
           <div className="text-3xl font-extrabold tracking-tight text-purple-700 relative z-10">{totalStudents}</div>
-        </div>
+        </Link>
 
         {totalSessions !== undefined && (
-          <div className="bg-gradient-to-br from-orange-50 to-amber-100 p-5 rounded-2xl border border-orange-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+          <Link to="/teacher/sessions" className="bg-gradient-to-br from-orange-50 to-amber-100 p-5 rounded-2xl border border-orange-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300 block cursor-pointer">
             <div className="absolute -right-2 -top-2 p-4 opacity-10 text-orange-600 group-hover:scale-110 transition-transform"><ClipboardList size={64} /></div>
             <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tổng số buổi học</div>
             <div className="text-3xl font-extrabold tracking-tight text-orange-700 relative z-10">{totalSessions}</div>
-          </div>
+          </Link>
         )}
         
         {totalAttendance !== undefined && (
-          <div className="bg-gradient-to-br from-teal-50 to-emerald-100 p-5 rounded-2xl border border-teal-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300">
+          <Link to="/teacher/attendance" className="bg-gradient-to-br from-teal-50 to-emerald-100 p-5 rounded-2xl border border-teal-200 shadow-sm relative overflow-hidden group hover:-translate-y-0.5 transition-transform duration-300 block cursor-pointer">
             <div className="absolute -right-2 -top-2 p-4 opacity-10 text-teal-600 group-hover:scale-110 transition-transform"><CheckCircle size={64} /></div>
             <div className="text-sm font-medium text-slate-500 mb-1 relative z-10">Tỷ lệ điểm danh trung bình</div>
             <div className="text-3xl font-extrabold tracking-tight text-teal-700 relative z-10">{totalAttendance}</div>
-          </div>
+          </Link>
         )}
       </div>
     </div>

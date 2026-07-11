@@ -3,10 +3,12 @@ const Schedule = require('../../models/Schedule');
 const ClassStudent = require('../../models/ClassStudent');
 const Session = require('../../models/Session');
 const Attendance = require('../../models/Attendance');
+const fs = require('fs');
+const path = require('path');
 
 // Phai require cac model duoc dung trong populate()
 // de Mongoose dang ky schema truoc khi query
-require('../../models/Subject');
+const Subject = require('../../models/Subject');
 require('../../models/TeacherProfile');
 require('../../models/StudentProfile');
 
@@ -193,10 +195,15 @@ const getSessionsByClass = async (req, res) => {
     const sessions = await Session.find({ classId })
       .populate('scheduleId')
       .populate('classId')
-      .sort({ sessionDate: 1 }); // Xep tang dan theo thoi gian
+      .sort({ sessionDate: 1 });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // Lay danh sach studentId dang enrolled trong lop (nguon chuan)
+    const enrolledStudents = await ClassStudent.find({ classId, status: 'enrolled' }).select('studentId');
+    const enrolledStudentIds = enrolledStudents.map(cs => cs.studentId.toString());
+    const totalEnrolled = enrolledStudentIds.length;
 
     const dataWithStatus = await Promise.all(
       sessions.map(async (session) => {
@@ -215,10 +222,14 @@ const getSessionsByClass = async (req, res) => {
           attendanceStatus = 'NOT_YET';
         }
 
-        // Kiem tra du lieu diem danh thuc te
-        const attendances = await Attendance.find({ sessionId: session._id });
-        const total = attendances.length;
-        if (total > 0) {
+        // Chi lay attendance cua cac hoc vien DANG enrolled trong lop
+        const attendances = await Attendance.find({
+          sessionId: session._id,
+          studentId: { $in: enrolledStudents.map(cs => cs.studentId) }
+        });
+
+        const recorded = attendances.length;
+        if (recorded > 0) {
           attendanceStatus = 'COMPLETED';
         }
 
@@ -229,7 +240,8 @@ const getSessionsByClass = async (req, res) => {
           ...session.toObject(),
           attendanceStatus,
           attendanceSummary: {
-            total,
+            total: totalEnrolled,  // Tong so hoc vien dang enrolled
+            recorded,              // So hoc vien DA duoc ghi diem danh (chi tinh enrolled)
             present,
             absent,
           },
@@ -261,7 +273,7 @@ const getSessionsByClass = async (req, res) => {
 const createSession = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { sessionDate, topic, scheduleId } = req.body;
+    const { sessionDate, topic, scheduleId, teacherId, room, startTime, endTime } = req.body;
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
@@ -299,6 +311,10 @@ const createSession = async (req, res) => {
       sessionDate: new Date(sessionDate),
       topic: topic || '',
       status: 'SCHEDULED',
+      teacherId: teacherId || teacherProfile._id,
+      room: room || 'Chưa xếp',
+      startTime: startTime || new Date(sessionDate),
+      endTime: endTime || new Date(sessionDate)
     });
 
     return res.status(201).json({
@@ -398,15 +414,21 @@ const takeAttendance = async (req, res) => {
       });
     }
 
-    // Upsert tung ban ghi attendance
+    // Upsert or delete tung ban ghi attendance
     const results = [];
     for (const att of attendances) {
+      if (!att.status) {
+        // Neu status bi huy chon (null), xoa ban ghi diem danh neu co
+        await Attendance.findOneAndDelete({ sessionId, studentId: att.studentId });
+        continue;
+      }
+
       const result = await Attendance.findOneAndUpdate(
         { sessionId, studentId: att.studentId },
         {
           sessionId,
           studentId: att.studentId,
-          status: att.status || 'PRESENT',
+          status: att.status,
           note: att.note || '',
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -434,6 +456,130 @@ const takeAttendance = async (req, res) => {
   }
 };
 
+// ============================================================
+// @desc    Lay danh sach mon hoc (Subject) ma teacher dang day
+// @route   GET /api/teacher/subjects
+// @access  Private (Teacher)
+// ============================================================
+const getMySubjects = async (req, res) => {
+  try {
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    // Lay cac lop ma giao vien dang day
+    const myClasses = await Class.find({
+      teacherId: teacherProfile._id,
+      status: { $in: ['upcoming', 'in_progress'] },
+    });
+
+    const subjectIds = myClasses.map(c => c.subjectId);
+
+    // Tim cac mon hoc duy nhat
+    const { search } = req.query;
+    let query = { _id: { $in: subjectIds } };
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+
+    const subjects = await Subject.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      total: subjects.length,
+      data: subjects,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Upload documents/materials for a specific session
+// @route   POST /api/teacher/classes/:classId/sessions/:sessionId/upload
+// @access  Private (Teacher)
+// ============================================================
+const uploadSessionMaterials = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found in this class' });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
+
+    // Luu file paths vao materials array
+    const filePaths = req.files.map(file => file.path);
+    session.materials = [...(session.materials || []), ...filePaths];
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Upload materials successfully',
+      data: session
+    });
+  } catch (error) {
+    // Xoa file da upload neu bi loi DB
+    if (req.files) {
+      req.files.forEach(file => {
+        fs.unlink(file.path, (err) => {
+          if (err) console.error("Error deleting file:", file.path, err);
+        });
+      });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Delete a material from a specific session
+// @route   DELETE /api/teacher/classes/:classId/sessions/:sessionId/file
+// @access  Private (Teacher)
+// ============================================================
+const deleteSessionMaterial = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const { fileUrl } = req.body;
+    
+    if (!fileUrl) {
+      return res.status(400).json({ success: false, message: 'fileUrl is required' });
+    }
+
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found in this class' });
+    }
+
+    // Xoa url khoi DB
+    session.materials = session.materials.filter(m => m !== fileUrl);
+    await session.save();
+
+    // Xoa file vat ly
+    const filePath = path.resolve(process.cwd(), fileUrl);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Loi khi xoa file:", filePath, err);
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Deleted material successfully',
+      data: session
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getTeacherDashboard,
   getMyClasses,
@@ -444,4 +590,7 @@ module.exports = {
   createSession,
   getAttendanceBySession,
   takeAttendance,
+  getMySubjects,
+  uploadSessionMaterials,
+  deleteSessionMaterial,
 };

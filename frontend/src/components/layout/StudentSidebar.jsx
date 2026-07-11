@@ -8,7 +8,7 @@ const StudentSidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   const menuItems = [
@@ -27,8 +27,8 @@ const StudentSidebar = () => {
 
   return (
     <div className="w-64 bg-sidebar text-white flex flex-col h-full border-r border-gray-800">
-      <div className="h-16 flex items-center px-6 border-b border-gray-800">
-        <h1 className="text-xl font-bold tracking-wider text-white">Cổng Học Sinh</h1>
+      <div onClick={() => window.location.href = '/student/dashboard'} className="h-16 flex items-center px-6 border-b border-gray-800 cursor-pointer">
+        <h1 className="text-xl font-bold tracking-wider text-white">Ánh Sáng Center</h1>
       </div>
       
       <div className="flex-1 py-6 px-3 space-y-1">

@@ -1,2 +1,20 @@
 node_modules/
 .env
+
+# Root level
+docs/
+package.json
+package-lock.json
+
+# Seed scripts (chỉ dùng khi phát triển local)
+seed_session_topics.js
+backend/seed_session_topics.js
+
+# Backend scripts & docs
+backend/docs/
+backend/test_*.js
+backend/fix*.js
+backend/uploads/
+
+# Frontend docs
+frontend/docs/

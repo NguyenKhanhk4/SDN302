@@ -19,12 +19,12 @@ const ManagerSidebar = () => {
       <div className="absolute top-0 left-0 right-0 h-40 bg-blue-600/10 blur-[50px] pointer-events-none"></div>
 
       {/* Logo Header */}
-      <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10">
+      <div onClick={() => window.location.href = '/manager/dashboard'} className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10 cursor-pointer">
         <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
           <GraduationCap className="h-4 w-4" />
         </div>
         <div>
-          <h1 className="text-sm font-bold text-white tracking-wide">Tutor Center</h1>
+          <h1 className="text-sm font-bold text-white tracking-wide">Ánh Sáng Center</h1>
           <p className="text-[10px] text-blue-400 font-medium">Manager Portal</p>
         </div>
       </div>
@@ -69,7 +69,7 @@ const ManagerSidebar = () => {
           </p>
         </div>
         <div className="text-[10px] text-slate-500 text-center font-medium tracking-wide">
-          &copy; 2026 Tutor Center
+          &copy; 2026 Ánh Sáng Center
         </div>
       </div>
     </aside>

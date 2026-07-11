@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, User, LogOut, Heart } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, Users } from 'lucide-react';
 
 const ParentSidebar = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const ParentSidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   const menuItems = [
@@ -27,13 +27,13 @@ const ParentSidebar = () => {
       {/* Decorative blurred background layer */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-indigo-600/10 blur-[50px] pointer-events-none"></div>
 
-      <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10">
-        <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-          <Heart className="h-4 w-4" />
+      <div onClick={() => window.location.href = '/parent/dashboard'} className="h-16 flex items-center gap-3 px-6 border-b border-slate-800 relative z-10 cursor-pointer">
+        <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+          <Users className="h-4 w-4" />
         </div>
         <div>
-          <h1 className="text-sm font-bold text-white tracking-wide">Tutor Center</h1>
-          <p className="text-[10px] text-indigo-400 font-medium">Cổng Phụ Huynh</p>
+          <h1 className="text-sm font-bold text-white tracking-wide">Ánh Sáng Center</h1>
+          <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wider">Parent Portal</p>
         </div>
       </div>
       

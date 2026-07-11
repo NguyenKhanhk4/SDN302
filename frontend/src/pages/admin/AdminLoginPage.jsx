@@ -70,7 +70,7 @@ const AdminLoginPage = () => {
     <Card className="w-full">
       <div className="p-2">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-900">Tutor Center Admin</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Ánh Sáng Center Admin</h2>
           <p className="mt-2 text-sm text-gray-600">Đăng nhập vào cổng quản trị viên</p>
         </div>
 
@@ -82,7 +82,7 @@ const AdminLoginPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Địa chỉ Email Admin"
+            label="Email"
             name="email"
             type="email"
             placeholder="admin@gmail.com"

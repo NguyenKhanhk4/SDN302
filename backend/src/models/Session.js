@@ -45,6 +45,9 @@ const SessionSchema = new mongoose.Schema(
       enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED'],
       default: 'SCHEDULED',
     },
+    materials: [{
+      type: String,
+    }],
   },
   {
     timestamps: true,
