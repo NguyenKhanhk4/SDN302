@@ -159,7 +159,7 @@ const AdminFinancePage = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <Banknote className="w-6 h-6 text-indigo-500" />
-            Tài Chính & Kế Toán
+            Quản Lý Tài Chính
           </h1>
           <p className="text-sm text-slate-500 mt-1">Quản lý hóa đơn thu học phí và lương giảng viên</p>
         </div>

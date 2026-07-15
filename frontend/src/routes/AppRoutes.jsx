@@ -89,7 +89,6 @@ const RootRedirect = () => {
     teacher: '/teacher/schedules',
     student: '/student/dashboard',
     parent: '/parent/dashboard',
-    accountant: '/accountant/dashboard',
   };
 
   const role = user.role ? String(user.role).trim().toLowerCase() : '';

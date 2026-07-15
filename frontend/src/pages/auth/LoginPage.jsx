@@ -22,7 +22,6 @@ const LoginPage = ({ onSwitchToRegister }) => {
       teacher: '/teacher/schedules',
       student: '/student/dashboard',
       parent: '/parent/dashboard',
-      accountant: '/accountant/dashboard',
     };
     const role = existingUser.role ? String(existingUser.role).trim().toLowerCase() : '';
     const target = roleDashboards[role] || '/';
@@ -81,7 +80,6 @@ const LoginPage = ({ onSwitchToRegister }) => {
         teacher: '/teacher/schedules',
         student: '/student/dashboard',
         parent: '/parent/dashboard',
-        accountant: '/accountant/dashboard',
       };
 
       const role = String(user.role).toLowerCase();

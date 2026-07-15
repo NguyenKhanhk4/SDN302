@@ -222,7 +222,7 @@ const AdminDashboardPage = () => {
             </div>
             <h3 className="text-xl font-bold mb-2">Báo Cáo Nhanh</h3>
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Xuất tệp Excel tổng hợp doanh thu theo từng tháng để phục vụ công tác kế toán và kiểm toán.
+              Xuất tệp Excel tổng hợp doanh thu theo từng tháng để phục vụ công tác tài chính và kiểm toán.
             </p>
           </div>
 

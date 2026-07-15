@@ -13,7 +13,6 @@ const AdminLayout = () => {
       
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1 overflow-hidden md:pl-64 transition-all duration-300">
-        {/* Header */}
         <AdminHeader onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
         
         {/* Scrollable Main Area */}
