@@ -177,6 +177,7 @@ const runLargeSeed = async () => {
         teacherId: teacherProfiles[c.teacherIdx]._id,
         room: c.room,
         maxStudents: 15,
+        totalSessions: 30,
         startDate: new Date('2026-09-01'),
         endDate: new Date('2027-05-31'),
         status: c.status

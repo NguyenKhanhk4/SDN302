@@ -1,13 +1,10 @@
 const Class = require('../../models/Class');
 const Schedule = require('../../models/Schedule');
 const Session = require('../../models/Session');
+const Attendance = require('../../models/Attendance');
 
-/**
- * Tu dong sinh cac buoi hoc cho lop dua tren startDate, endDate va lich hoc (schedules)
- * @param {String} classId - ID cua lop hoc
- * @param {String} teacherId - ID cua giao vien
- * @returns {Object} - { createdCount, existingCount }
- */
+const STANDARD_TOTAL_SESSIONS = 30;
+
 const ensureSessionsForClass = async (classId, teacherId) => {
   const cls = await Class.findById(classId);
   if (!cls) return { createdCount: 0, existingCount: 0 };
@@ -16,8 +13,27 @@ const ensureSessionsForClass = async (classId, teacherId) => {
     return { createdCount: 0, existingCount: 0 };
   }
 
-  if (!cls.startDate || !cls.endDate) {
+  if (!cls.startDate) {
     return { createdCount: 0, existingCount: 0 };
+  }
+
+  const classStartDate = new Date(cls.startDate);
+  classStartDate.setUTCHours(0, 0, 0, 0);
+  const sessionsBeforeStart = await Session.find({
+    classId,
+    sessionDate: { $lt: classStartDate },
+  }).select('_id');
+
+  if (sessionsBeforeStart.length > 0) {
+    const sessionIds = sessionsBeforeStart.map((session) => session._id);
+    await Attendance.deleteMany({ sessionId: { $in: sessionIds } });
+    await Session.deleteMany({ _id: { $in: sessionIds } });
+  }
+
+  const targetTotal = STANDARD_TOTAL_SESSIONS;
+  if (cls.totalSessions !== targetTotal) {
+    cls.totalSessions = targetTotal;
+    await cls.save();
   }
 
   const schedules = await Schedule.find({
@@ -29,11 +45,9 @@ const ensureSessionsForClass = async (classId, teacherId) => {
   if (schedules.length === 0) {
     return { createdCount: 0, existingCount: 0 };
   }
-
-  const targetTotal = cls.totalSessions || 24;
   let createdCount = 0;
-  let existingCount = 0;
-  let generatedOrFoundCount = 0;
+  let generatedOrFoundCount = await Session.countDocuments({ classId });
+  let existingCount = generatedOrFoundCount;
 
   const dayMap = {
     'Sunday': 0,
@@ -60,10 +74,10 @@ const ensureSessionsForClass = async (classId, teacherId) => {
     }
   });
 
-  const current = new Date(cls.startDate);
+  const current = new Date(classStartDate);
   current.setUTCHours(0, 0, 0, 0);
 
-  const maxLoops = 365 * 2; // Prevent infinite loop
+  const maxLoops = 365 * 2;
   let loops = 0;
 
   while (generatedOrFoundCount < targetTotal && loops < maxLoops) {
@@ -88,8 +102,7 @@ const ensureSessionsForClass = async (classId, teacherId) => {
         });
 
         if (existingSession) {
-          existingCount++;
-          generatedOrFoundCount++;
+          continue;
         } else {
           try {
             const startStr = schedule.startTime || '00:00';
@@ -132,7 +145,31 @@ const ensureSessionsForClass = async (classId, teacherId) => {
     loops++;
   }
 
-  return { createdCount, existingCount };
+  const allSessions = await Session.find({ classId }).sort({ sessionDate: 1, createdAt: 1 });
+  const excessSessions = allSessions.slice(targetTotal);
+
+  if (excessSessions.length > 0) {
+    const excessSessionIds = excessSessions.map((session) => session._id);
+    await Attendance.deleteMany({ sessionId: { $in: excessSessionIds } });
+    await Session.deleteMany({ _id: { $in: excessSessionIds } });
+  }
+
+  const generatedSessions = allSessions.slice(0, targetTotal);
+  const firstSession = generatedSessions[0];
+  const lastSession = generatedSessions[generatedSessions.length - 1];
+
+  if (firstSession && lastSession) {
+    const startChanged = !cls.startDate || cls.startDate.getTime() !== firstSession.sessionDate.getTime();
+    const endChanged = !cls.endDate || cls.endDate.getTime() !== lastSession.sessionDate.getTime();
+
+    if (startChanged) cls.startDate = firstSession.sessionDate;
+    if (endChanged) cls.endDate = lastSession.sessionDate;
+    if (startChanged || endChanged) {
+      await cls.save();
+    }
+  }
+
+  return { createdCount, existingCount, endDate: cls.endDate };
 };
 
 module.exports = {

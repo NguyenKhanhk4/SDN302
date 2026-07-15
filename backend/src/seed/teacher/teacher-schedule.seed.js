@@ -1,8 +1,3 @@
-/**
- * Seed script: Clean old data and recreate schedules for teacher test
- * Chạy lệnh: npm run seed:teacher-schedule
- */
-
 require('dotenv').config({ path: '../../.env' });
 const mongoose = require('mongoose');
 
@@ -20,28 +15,23 @@ const run = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
 
-    // 1. Tìm teacher test
     const teacherUser = await User.findOne({ email: 'teacher@gmail.com' });
     if (!teacherUser) {
       throw new Error("Không tìm thấy User teacher@gmail.com. Vui lòng chạy seed:teacher-basic trước.");
     }
 
-    // 2. Tìm TeacherProfile
     const teacherProfile = await TeacherProfile.findOne({ userId: teacherUser._id });
     if (!teacherProfile) {
       throw new Error("Không tìm thấy TeacherProfile của teacher@gmail.com.");
     }
 
-    // 3. Tìm class test hiện có của teacher
     const classroom = await Class.findOne({ teacherId: teacherProfile._id });
     if (!classroom) {
       throw new Error("No class found for teacher. Please run teacher-basic seed first.");
     }
 
-    // 4. Xóa data cũ có liên quan đến class
     console.log(`Đang dọn dẹp dữ liệu cũ cho lớp: ${classroom.name}...`);
 
-    // Lấy tất cả session của class này để xóa attendance
     const sessions = await Session.find({ classId: classroom._id });
     const sessionIds = sessions.map(s => s._id);
 
@@ -54,14 +44,13 @@ const run = async () => {
     const deletedSchedules = await Schedule.deleteMany({ classId: classroom._id, teacherId: teacherProfile._id });
     console.log(`- Đã xóa ${deletedSchedules.deletedCount} bản ghi Schedule cũ.`);
 
-    // 5. Tạo lịch mới đúng 5 ca học
     console.log(`Đang tạo lịch mới theo 5 ca học cho lớp ${classroom.name}...`);
 
     const newSchedulesData = [
       {
         classId: classroom._id,
         teacherId: teacherProfile._id,
-        dayOfWeek: 'Monday', // Tương ứng Thứ 2
+        dayOfWeek: 'Monday',
         startTime: '07:30',
         endTime: '09:30',
         room: 'Phòng B201',
@@ -70,7 +59,7 @@ const run = async () => {
       {
         classId: classroom._id,
         teacherId: teacherProfile._id,
-        dayOfWeek: 'Wednesday', // Tương ứng Thứ 4
+        dayOfWeek: 'Wednesday',
         startTime: '14:00',
         endTime: '16:00',
         room: 'Phòng B201',
@@ -79,7 +68,7 @@ const run = async () => {
       {
         classId: classroom._id,
         teacherId: teacherProfile._id,
-        dayOfWeek: 'Friday', // Tương ứng Thứ 6
+        dayOfWeek: 'Friday',
         startTime: '18:00',
         endTime: '20:00',
         room: 'Phòng B201',

@@ -11,7 +11,6 @@ const TeacherSubjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   
-  // Files state
   const [isViewFilesModalOpen, setIsViewFilesModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -49,7 +48,6 @@ const TeacherSubjectsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
@@ -60,7 +58,6 @@ const TeacherSubjectsPage = () => {
         </div>
       </div>
 
-      {/* Filters Area */}
       <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex gap-4">
         <div className="flex-1 max-w-md relative">
           <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -134,7 +131,6 @@ const TeacherSubjectsPage = () => {
         </div>
       )}
 
-      {/* View Files Modal */}
       <AnimatePresence>
         {isViewFilesModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -163,11 +159,9 @@ const TeacherSubjectsPage = () => {
                   </div>
                 </div>
 
-                {/* Existing Files */}
                 <div className="mb-8 space-y-4">
                   <h3 className="font-bold text-slate-700 text-sm uppercase tracking-wider border-b border-slate-100 pb-2">Tệp tài liệu</h3>
                   
-                  {/* Syllabus */}
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg shrink-0">
@@ -190,7 +184,6 @@ const TeacherSubjectsPage = () => {
                     )}
                   </div>
 
-                  {/* Materials */}
                   <div className="space-y-2">
                     <p className="text-sm font-bold text-slate-700 px-1">Tài liệu tham khảo ({selectedSubject?.materials?.length || 0})</p>
                     {selectedSubject?.materials?.map((mat, idx) => (

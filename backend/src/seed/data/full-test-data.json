@@ -2796,9 +2796,10 @@
       "teacherProfileKey": "teacher_profile_main",
       "room": "Phòng B201",
       "maxStudents": 20,
+      "totalSessions": 30,
       "status": "ACTIVE",
       "startDate": "2026-06-15",
-      "endDate": "2026-09-15"
+      "endDate": "2026-09-23"
     },
     {
       "key": "class_ly_11a",
@@ -2807,9 +2808,10 @@
       "teacherProfileKey": "teacher_profile_main",
       "room": "Phòng B202",
       "maxStudents": 20,
+      "totalSessions": 30,
       "status": "ACTIVE",
       "startDate": "2026-06-15",
-      "endDate": "2026-09-15"
+      "endDate": "2026-09-24"
     },
     {
       "key": "class_anh_9a",
@@ -2818,9 +2820,10 @@
       "teacherProfileKey": "teacher_profile_second",
       "room": "Phòng B203",
       "maxStudents": 20,
+      "totalSessions": 30,
       "status": "UPCOMING",
       "startDate": "2026-10-01",
-      "endDate": "2026-12-30"
+      "endDate": "2027-01-11"
     },
     {
       "key": "class_hoa_12a",
@@ -2829,9 +2832,10 @@
       "teacherProfileKey": "teacher_profile_second",
       "room": "Phòng B204",
       "maxStudents": 20,
+      "totalSessions": 30,
       "status": "FINISHED",
       "startDate": "2025-09-01",
-      "endDate": "2025-12-30"
+      "endDate": "2025-12-11"
     },
     {
       "key": "class_toan_9a",
@@ -2840,9 +2844,10 @@
       "teacherProfileKey": "teacher_profile_main",
       "room": "Phòng B205",
       "maxStudents": 20,
+      "totalSessions": 30,
       "status": "CANCELLED",
       "startDate": "2026-06-15",
-      "endDate": "2026-09-15"
+      "endDate": "2026-09-27"
     }
   ],
   "classStudents": [
@@ -3470,7 +3475,7 @@
       "key": "session_001",
       "classKey": "class_toan_10a",
       "scheduleKey": "schedule_001",
-      "sessionDate": "2026-06-011",
+      "sessionDate": "2026-06-15",
       "topic": "Toán Đại Số phần 1",
       "status": "COMPLETED"
     },
@@ -3478,7 +3483,7 @@
       "key": "session_002",
       "classKey": "class_ly_11a",
       "scheduleKey": "schedule_003",
-      "sessionDate": "2026-06-012",
+      "sessionDate": "2026-06-16",
       "topic": "Động Lực Học phần 1",
       "status": "COMPLETED"
     },
@@ -3486,7 +3491,7 @@
       "key": "session_003",
       "classKey": "class_anh_9a",
       "scheduleKey": "schedule_005",
-      "sessionDate": "2026-06-013",
+      "sessionDate": "2026-10-05",
       "topic": "Reading Practice 1",
       "status": "COMPLETED"
     },
@@ -3494,7 +3499,7 @@
       "key": "session_004",
       "classKey": "class_toan_10a",
       "scheduleKey": "schedule_001",
-      "sessionDate": "2026-06-012",
+      "sessionDate": "2026-06-22",
       "topic": "Toán Đại Số phần 2",
       "status": "COMPLETED"
     },
@@ -3502,7 +3507,7 @@
       "key": "session_005",
       "classKey": "class_ly_11a",
       "scheduleKey": "schedule_003",
-      "sessionDate": "2026-06-013",
+      "sessionDate": "2026-06-23",
       "topic": "Động Lực Học phần 2",
       "status": "COMPLETED"
     },
@@ -3510,7 +3515,7 @@
       "key": "session_006",
       "classKey": "class_anh_9a",
       "scheduleKey": "schedule_005",
-      "sessionDate": "2026-06-014",
+      "sessionDate": "2026-10-12",
       "topic": "Reading Practice 2",
       "status": "COMPLETED"
     },
@@ -3518,7 +3523,7 @@
       "key": "session_007",
       "classKey": "class_toan_10a",
       "scheduleKey": "schedule_001",
-      "sessionDate": "2026-06-013",
+      "sessionDate": "2026-06-29",
       "topic": "Toán Đại Số phần 3",
       "status": "COMPLETED"
     },
@@ -3526,7 +3531,7 @@
       "key": "session_008",
       "classKey": "class_ly_11a",
       "scheduleKey": "schedule_003",
-      "sessionDate": "2026-06-014",
+      "sessionDate": "2026-06-30",
       "topic": "Động Lực Học phần 3",
       "status": "COMPLETED"
     },
@@ -3534,7 +3539,7 @@
       "key": "session_009",
       "classKey": "class_anh_9a",
       "scheduleKey": "schedule_005",
-      "sessionDate": "2026-06-015",
+      "sessionDate": "2026-10-19",
       "topic": "Reading Practice 3",
       "status": "SCHEDULED"
     },
@@ -3542,7 +3547,7 @@
       "key": "session_010",
       "classKey": "class_toan_10a",
       "scheduleKey": "schedule_001",
-      "sessionDate": "2026-06-014",
+      "sessionDate": "2026-07-06",
       "topic": "Toán Đại Số phần 4",
       "status": "COMPLETED"
     },
@@ -3550,7 +3555,7 @@
       "key": "session_011",
       "classKey": "class_ly_11a",
       "scheduleKey": "schedule_003",
-      "sessionDate": "2026-06-015",
+      "sessionDate": "2026-07-07",
       "topic": "Động Lực Học phần 4",
       "status": "SCHEDULED"
     },
@@ -3558,7 +3563,7 @@
       "key": "session_012",
       "classKey": "class_anh_9a",
       "scheduleKey": "schedule_005",
-      "sessionDate": "2026-06-016",
+      "sessionDate": "2026-10-26",
       "topic": "Reading Practice 4",
       "status": "SCHEDULED"
     },
@@ -3566,7 +3571,7 @@
       "key": "session_013",
       "classKey": "class_toan_10a",
       "scheduleKey": "schedule_001",
-      "sessionDate": "2026-06-015",
+      "sessionDate": "2026-07-13",
       "topic": "Toán Đại Số phần 5",
       "status": "COMPLETED"
     },
@@ -3574,7 +3579,7 @@
       "key": "session_014",
       "classKey": "class_ly_11a",
       "scheduleKey": "schedule_003",
-      "sessionDate": "2026-06-016",
+      "sessionDate": "2026-07-14",
       "topic": "Động Lực Học phần 5",
       "status": "SCHEDULED"
     },
@@ -3582,7 +3587,7 @@
       "key": "session_015",
       "classKey": "class_anh_9a",
       "scheduleKey": "schedule_005",
-      "sessionDate": "2026-06-017",
+      "sessionDate": "2026-11-02",
       "topic": "Reading Practice 5",
       "status": "SCHEDULED"
     }

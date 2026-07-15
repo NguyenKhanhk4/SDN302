@@ -19,12 +19,30 @@ const cleanupExcessSessions = async () => {
     console.log(`Found ${classes.length} total classes. Checking for excess sessions...`);
 
     let totalDeleted = 0;
-    let totalKept = 0;
+    let totalAttendanceDeleted = 0;
 
     for (const cls of classes) {
-      const targetTotal = cls.totalSessions || 24;
+      const targetTotal = 30;
       
-      const sessions = await Session.find({ classId: cls._id }).sort({ sessionDate: 1 });
+      let sessions = await Session.find({ classId: cls._id }).sort({ sessionDate: 1 });
+      const classStartDate = cls.startDate ? new Date(cls.startDate) : null;
+
+      if (classStartDate) {
+        const sessionsBeforeStart = sessions.filter((session) => session.sessionDate < classStartDate);
+        if (sessionsBeforeStart.length > 0) {
+          const beforeStartIds = sessionsBeforeStart.map((session) => session._id);
+          await Attendance.deleteMany({ sessionId: { $in: beforeStartIds } });
+          await Session.deleteMany({ _id: { $in: beforeStartIds } });
+          sessions = sessions.filter((session) => session.sessionDate >= classStartDate);
+        }
+      }
+
+      cls.totalSessions = targetTotal;
+      if (sessions.length > 0) cls.startDate = sessions[0].sessionDate;
+      if (sessions.length >= targetTotal) {
+        cls.endDate = sessions[targetTotal - 1].sessionDate;
+      }
+      await cls.save();
       
       if (sessions.length > targetTotal) {
         console.log(`Class ${cls.name} (${cls._id}) has ${sessions.length} sessions (target: ${targetTotal}). Excess: ${sessions.length - targetTotal}`);
@@ -32,17 +50,10 @@ const cleanupExcessSessions = async () => {
         const excessSessions = sessions.slice(targetTotal);
         
         for (const session of excessSessions) {
-        
-          const attendanceCount = await Attendance.countDocuments({ sessionId: session._id });
-          
-          if (attendanceCount > 0) {
-            console.log(`  -> Keeping session ${session._id} (${session.sessionDate}) because it has ${attendanceCount} attendance records.`);
-            totalKept++;
-          } else {
-            console.log(`  -> Deleting excess session ${session._id} (${session.sessionDate}) (no attendance).`);
-            await Session.findByIdAndDelete(session._id);
-            totalDeleted++;
-          }
+          const attendanceResult = await Attendance.deleteMany({ sessionId: session._id });
+          await Session.findByIdAndDelete(session._id);
+          totalDeleted++;
+          totalAttendanceDeleted += attendanceResult.deletedCount;
         }
       }
     }
@@ -50,7 +61,7 @@ const cleanupExcessSessions = async () => {
     console.log('\n=============================================');
     console.log('Cleanup excess sessions completed.');
     console.log(`Total excess sessions deleted: ${totalDeleted}`);
-    console.log(`Total excess sessions kept (due to existing attendance): ${totalKept}`);
+    console.log(`Attendance records removed with excess sessions: ${totalAttendanceDeleted}`);
     console.log('=============================================\n');
     process.exit(0);
   } catch (error) {

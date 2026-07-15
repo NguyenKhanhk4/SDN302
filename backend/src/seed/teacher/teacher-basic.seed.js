@@ -1,14 +1,7 @@
-/**
- * Seed script: Tao du lieu toi thieu de test Teacher basic features
- *
- * Chay lenh: npm run seed:teacher-basic
- */
-
 require('dotenv').config({ path: '../../.env' });
 
 const mongoose = require('mongoose');
 
-// Models
 const User = require('../../models/User');
 const TeacherProfile = require('../../models/TeacherProfile');
 const StudentProfile = require('../../models/StudentProfile');
@@ -25,12 +18,8 @@ const run = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected successfully');
 
-    // -------------------------------------------------------
-    // 1. Tao User TEACHER
-    // -------------------------------------------------------
     let teacherUser = await User.findOne({ email: 'teacher@gmail.com' });
     if (!teacherUser) {
-      // Truyen plain text — model se tu hash qua pre('save') hook
       teacherUser = await User.create({
         name: 'Nguyen Van Teacher',
         email: 'teacher@gmail.com',
@@ -42,9 +31,6 @@ const run = async () => {
       console.log('User TEACHER da ton tai:', teacherUser.email);
     }
 
-    // -------------------------------------------------------
-    // 2. Tao TeacherProfile
-    // -------------------------------------------------------
     let teacherProfile = await TeacherProfile.findOne({ userId: teacherUser._id });
     if (!teacherProfile) {
       teacherProfile = await TeacherProfile.create({
@@ -59,12 +45,8 @@ const run = async () => {
       console.log('TeacherProfile da ton tai');
     }
 
-    // -------------------------------------------------------
-    // 3. Tao User STUDENT
-    // -------------------------------------------------------
     let studentUser = await User.findOne({ email: 'student@gmail.com' });
     if (!studentUser) {
-      // Truyen plain text — model se tu hash qua pre('save') hook
       studentUser = await User.create({
         name: 'Tran Thi Student',
         email: 'student@gmail.com',
@@ -76,9 +58,6 @@ const run = async () => {
       console.log('User STUDENT da ton tai:', studentUser.email);
     }
 
-    // -------------------------------------------------------
-    // 4. Tao StudentProfile
-    // -------------------------------------------------------
     let studentProfile = await StudentProfile.findOne({ userId: studentUser._id });
     if (!studentProfile) {
       studentProfile = await StudentProfile.create({
@@ -93,9 +72,6 @@ const run = async () => {
       console.log('StudentProfile da ton tai');
     }
 
-    // -------------------------------------------------------
-    // 5. Tao Subject
-    // -------------------------------------------------------
     let subject = await Subject.findOne({ name: 'Toan Nang Cao' });
     if (!subject) {
       subject = await Subject.create({
@@ -110,9 +86,6 @@ const run = async () => {
       console.log('Subject da ton tai:', subject.name);
     }
 
-    // -------------------------------------------------------
-    // 6. Tao Class
-    // -------------------------------------------------------
     let classroom = await Class.findOne({
       name: 'Lop Toan 10A',
       teacherId: teacherProfile._id,
@@ -124,6 +97,7 @@ const run = async () => {
         teacherId: teacherProfile._id,
         room: 'Phong B201',
         maxStudents: 15,
+        totalSessions: 30,
         startDate: new Date('2024-09-01'),
         endDate: new Date('2025-05-31'),
         status: 'ongoing',
@@ -133,9 +107,6 @@ const run = async () => {
       console.log('Class da ton tai:', classroom.name);
     }
 
-    // -------------------------------------------------------
-    // 7. Tao ClassStudent (lien ket student voi class)
-    // -------------------------------------------------------
     let classStudent = await ClassStudent.findOne({
       classId: classroom._id,
       studentId: studentProfile._id,
@@ -151,9 +122,6 @@ const run = async () => {
       console.log('ClassStudent da ton tai');
     }
 
-    // -------------------------------------------------------
-    // 8. Tao Schedule
-    // -------------------------------------------------------
     let schedule = await Schedule.findOne({
       classId: classroom._id,
       teacherId: teacherProfile._id,
@@ -174,7 +142,6 @@ const run = async () => {
       console.log('Schedule da ton tai');
     }
 
-    // Tao them 1 Schedule vao Thu 4
     let schedule2 = await Schedule.findOne({
       classId: classroom._id,
       teacherId: teacherProfile._id,

@@ -24,7 +24,7 @@ const ClassSchema = new mongoose.Schema(
     },
     totalSessions: {
       type: Number,
-      default: 24,
+      default: 30,
     },
     startDate: Date,
     endDate: Date,

@@ -25,7 +25,6 @@ const TeacherClassStudentsPage = () => {
       setError(null);
       const data = await teacherApi.getStudentsInClass(classId);
       
-      // Handle array or object wrapper depending on backend standard
       let studentList = [];
       if (Array.isArray(data)) studentList = data;
       else if (data && Array.isArray(data.students)) studentList = data.students;
@@ -40,8 +39,6 @@ const TeacherClassStudentsPage = () => {
   };
 
   const getStudentInfo = (item) => {
-    // Navigate safely through nested structure: item.studentId.userId
-    // Also include fallbacks in case backend flattens the response
     const user = item?.studentId?.userId || item?.studentId || item?.userId || item?.student || item;
     const profile = item?.studentId || item;
     
@@ -124,6 +121,7 @@ const TeacherClassStudentsPage = () => {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-16">STT</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tên học viên</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số điện thoại</th>
@@ -139,6 +137,7 @@ const TeacherClassStudentsPage = () => {
                       onClick={() => setSelectedStudent(info)}
                       className="hover:bg-blue-50/30 transition-colors group cursor-pointer"
                     >
+                      <td className="p-4 text-sm text-slate-600">{index + 1}</td>
                       <td className="p-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
@@ -161,7 +160,6 @@ const TeacherClassStudentsPage = () => {
         )}
       </div>
 
-      {/* Modal chi tiết học viên */}
       {selectedStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">

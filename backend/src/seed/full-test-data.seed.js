@@ -22,6 +22,7 @@ const ClassStudent = require('../models/ClassStudent');
 const Schedule = require('../models/Schedule');
 const Session = require('../models/Session');
 const Attendance = require('../models/Attendance');
+const { ensureSessionsForClass } = require('../modules/teacher/session-generation.service');
 
 // Models mới
 let ParentProfile, ParentStudent, Invoice, Enrollment, Payroll, Receipt;
@@ -272,6 +273,7 @@ const run = async () => {
       teacherId: teacherProfileMap.get(c.teacherProfileKey),
       room: c.room || '',
       maxStudents: c.maxStudents || 20,
+      totalSessions: 30,
       startDate: new Date(c.startDate),
       endDate: new Date(c.endDate),
       status: c.status === 'ACTIVE' ? 'ongoing' : 'scheduled',
@@ -367,6 +369,13 @@ const run = async () => {
     data.sessions.forEach((s, i) => {
       sessionMap.set(s.key, createdSess[i]._id);
     });
+
+    // Complete every seeded class to 30 sessions and align endDate with the
+    // final generated session.
+    await Promise.all(data.classes.map((classData) => ensureSessionsForClass(
+      classMap.get(classData.key),
+      teacherProfileMap.get(classData.teacherProfileKey)
+    )));
     console.log(`✔ Sessions created: ${createdSess.length}`);
 
     // --- 5.11 ATTENDANCES ---

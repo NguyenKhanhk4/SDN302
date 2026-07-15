@@ -42,7 +42,10 @@ const TeacherSchedulesPage = () => {
       else if (data && Array.isArray(data.schedules)) scheduleList = data.schedules;
       else if (data && Array.isArray(data.data)) scheduleList = data.data;
       
-      const activeSchedules = scheduleList.filter(s => s.status === 'ACTIVE' || s.status === 'active' || !s.status);
+      const activeSchedules = scheduleList.filter((schedule) => (
+        (schedule.status === 'ACTIVE' || schedule.status === 'active' || !schedule.status)
+        && schedule.classId?.status === 'ongoing'
+      ));
       setSchedules(activeSchedules);
     } catch (err) {
       setError(err.message || err.error || 'Không thể tải lịch dạy của bạn. Vui lòng thử lại.');
@@ -91,10 +94,8 @@ const TeacherSchedulesPage = () => {
       } else {
         const [year, month, day] = dayDateStr.split('-');
         
-        // Ensure teacherId is an ID string if it's populated
         const teacherId = typeof schedule.teacherId === 'object' ? schedule.teacherId._id : schedule.teacherId;
         
-        // Parse startTime and endTime into proper ISO dates by combining with sessionDate
         const startDateTime = new Date(`${dayDateStr}T${schedule.startTime || '00:00'}:00`).toISOString();
         const endDateTime = new Date(`${dayDateStr}T${schedule.endTime || '00:00'}:00`).toISOString();
         
@@ -146,17 +147,33 @@ const TeacherSchedulesPage = () => {
     return h * 60 + m;
   };
 
+  const getDateOnly = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string') return value.slice(0, 10);
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
+
+  const isWithinClassPeriod = (schedule, isoDate) => {
+    const classroom = schedule?.classId || schedule?.class;
+    const startDate = getDateOnly(classroom?.startDate);
+    const endDate = getDateOnly(classroom?.endDate);
+
+    return (!startDate || isoDate >= startDate) && (!endDate || isoDate <= endDate);
+  };
+
   const renderScheduleCell = (slot, day) => {
     const cellSchedules = schedules.filter(s => {
       const sDay = normalizeDayOfWeek(s.dayOfWeek);
       if (sDay !== day.dayOfWeek) return false;
+      if (!isWithinClassPeriod(s, day.isoDate)) return false;
       
       if (!s.startTime) return false;
       const sStart = parseTime(s.startTime);
       const slotStart = parseTime(slot.startTime);
       const slotEnd = parseTime(slot.endTime);
       
-      // Map schedule to the slot where its start time falls in.
       return sStart >= slotStart && sStart < slotEnd;
     });
 
@@ -229,7 +246,6 @@ const TeacherSchedulesPage = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        {/* Bộ lọc Week/Year */}
         <div className="flex flex-wrap items-center gap-4 p-5 bg-slate-50/50 border-b border-slate-100">
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm">
             <label className="text-sm font-medium text-slate-600">Năm:</label>
@@ -274,7 +290,6 @@ const TeacherSchedulesPage = () => {
           </div>
         </div>
 
-        {/* Bảng Timetable */}
         {schedules.length === 0 ? (
           <EmptyState 
             title="Không tìm thấy lịch dạy" 
