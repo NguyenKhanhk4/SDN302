@@ -26,7 +26,6 @@ const ProtectedRoute = ({ requiredRole, children }) => {
       teacher: '/teacher/dashboard',
       student: '/student/dashboard',
       parent: '/parent/dashboard',
-      accountant: '/accountant/dashboard',
     };
     const role = user.role ? String(user.role).trim().toLowerCase() : '';
     const target = roleDashboards[role] || '/login';

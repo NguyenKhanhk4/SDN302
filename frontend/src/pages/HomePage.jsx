@@ -37,7 +37,6 @@ const HomePage = () => {
         teacher: '/teacher/schedules',
         student: '/student/dashboard',
         parent: '/parent/dashboard',
-        accountant: '/accountant/dashboard',
       };
       const role = String(user.role).toLowerCase();
       const target = roleDashboards[role] || '/';
