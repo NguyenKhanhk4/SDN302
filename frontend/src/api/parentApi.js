@@ -22,4 +22,7 @@ export const parentApi = {
   getClassStudents: (classId) => {
     return axiosClient.get(`/parent/classes/${classId}/students`);
   },
+  linkChild: (data) => {
+    return axiosClient.post('/parent/children/link', data);
+  },
 };

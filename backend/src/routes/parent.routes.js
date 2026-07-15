@@ -9,6 +9,7 @@ const {
   getChildClasses,
   getStudentsInClassForParent,
   getParentProfile,
+  linkChild,
 } = require('../controllers/parent.controller');
 
 const { protect } = require('../middlewares/auth.middleware');
@@ -19,6 +20,9 @@ router.use(protect, authorize('parent'));
 
 // GET /api/parent/children - Xem thông tin các con
 router.get('/children', getChildren);
+
+// POST /api/parent/children/link - Tự liên kết thêm con em bằng email
+router.post('/children/link', linkChild);
 
 // GET /api/parent/profile - Xem thông tin hồ sơ phụ huynh
 router.get('/profile', getParentProfile);
