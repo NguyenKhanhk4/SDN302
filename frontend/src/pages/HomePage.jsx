@@ -687,7 +687,7 @@ const HomePage = () => {
       
       <footer className="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
 
             
             <div className="lg:pr-8">
@@ -735,16 +735,7 @@ const HomePage = () => {
               </ul>
             </div>
 
-            
-            <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Hệ Thống (Nội Bộ)</h4>
-              <ul className="space-y-3">
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Đăng Nhập Quản Lý</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Giảng Viên</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Học Viên</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Phụ Huynh</Link></li>
-              </ul>
-            </div>
+
 
           </div>
 
@@ -764,7 +755,7 @@ const HomePage = () => {
             >
               <X size={24} />
             </button>
-            <LoginPage />
+            <LoginPage onSwitchToRegister={() => { setShowLogin(false); setShowRegisterForm(true); }} />
           </div>
         </div>
       )}
@@ -818,6 +809,21 @@ const HomePage = () => {
                   </svg>
                   Đăng ký bằng Google
                 </button>
+
+                <div className="text-center mt-6">
+                  <span className="text-slate-600 text-sm">Bạn đã có tài khoản? </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowRegisterForm(false);
+                      setShowLogin(true);
+                    }}
+                    className="text-blue-600 font-bold hover:underline text-sm"
+                  >
+                    Đăng nhập
+                  </button>
+                </div>
               </form>
             </div>
           </div>
