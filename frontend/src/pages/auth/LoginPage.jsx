@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { authApi } from '../../api/authApi';
 import { saveAuth, getUser } from '../../utils/auth';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../../config/firebase';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
@@ -12,6 +14,74 @@ const LoginPage = ({ onSwitchToRegister }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState('');
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [googleTempToken, setGoogleTempToken] = useState(null);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setGlobalError('');
+      const result = await signInWithPopup(auth, googleProvider);
+      const idToken = await result.user.getIdToken();
+      
+      const response = await authApi.googleLogin(idToken);
+      if (response.success) {
+        if (response.isNewUser) {
+          setGoogleTempToken(response.idToken);
+          setShowRoleModal(true);
+        } else {
+          const { token, user } = response;
+          saveAuth(token, user);
+          
+          const roleDashboards = {
+            admin: '/admin/dashboard',
+            manager: '/manager/dashboard',
+            teacher: '/teacher/schedules',
+            student: '/student/dashboard',
+            parent: '/parent/dashboard',
+          };
+
+          const role = String(user.role).toLowerCase();
+          const target = roleDashboards[role] || '/';
+          window.location.href = target;
+        }
+      }
+    } catch (err) {
+      console.error('Google login error', err);
+      setGlobalError(err.message || err.error || 'Đăng nhập Google thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRoleSelect = async (role) => {
+    try {
+      setLoading(true);
+      setGlobalError('');
+      const response = await authApi.googleRegister({ idToken: googleTempToken, role });
+      if (response.success) {
+        const { token, user } = response;
+        saveAuth(token, user);
+        
+        const roleDashboards = {
+          admin: '/admin/dashboard',
+          manager: '/manager/dashboard',
+          teacher: '/teacher/schedules',
+          student: '/student/dashboard',
+          parent: '/parent/dashboard',
+        };
+
+        const target = roleDashboards[role] || '/';
+        window.location.href = target;
+      }
+    } catch (err) {
+      console.error('Google register error', err);
+      setGlobalError(err.message || err.error || 'Đăng ký lỗi');
+      setShowRoleModal(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Nếu đã đăng nhập, redirect về dashboard đúng role
   const existingUser = getUser();
@@ -151,7 +221,7 @@ const LoginPage = ({ onSwitchToRegister }) => {
             <div className="relative px-4 bg-white text-sm text-slate-500">hoặc</div>
           </div>
 
-          <button type="button" className="w-full py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all flex justify-center items-center gap-3">
+          <button type="button" onClick={handleGoogleLogin} disabled={loading} className="w-full py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all flex justify-center items-center gap-3 disabled:opacity-50">
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -177,6 +247,40 @@ const LoginPage = ({ onSwitchToRegister }) => {
           </div>
         </form>
       </div>
+
+      {showRoleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl relative">
+            <h3 className="text-xl font-bold text-center text-slate-800 mb-2">Bạn là ai?</h3>
+            <p className="text-center text-sm text-slate-500 mb-6">
+              Vui lòng chọn vai trò để hoàn tất đăng ký tài khoản.
+            </p>
+            <div className="space-y-3">
+              <button
+                disabled={loading}
+                onClick={() => handleRoleSelect('student')}
+                className="w-full p-3 rounded-xl border-2 border-indigo-100 hover:border-indigo-500 hover:bg-indigo-50 text-indigo-700 font-bold transition-all disabled:opacity-50"
+              >
+                🎓 Tôi là Học sinh
+              </button>
+              <button
+                disabled={loading}
+                onClick={() => handleRoleSelect('parent')}
+                className="w-full p-3 rounded-xl border-2 border-emerald-100 hover:border-emerald-500 hover:bg-emerald-50 text-emerald-700 font-bold transition-all disabled:opacity-50"
+              >
+                👨‍👩‍👧 Tôi là Phụ huynh
+              </button>
+            </div>
+            <button
+              disabled={loading}
+              onClick={() => setShowRoleModal(false)}
+              className="w-full mt-4 p-2 text-sm text-slate-400 hover:text-slate-600 font-medium disabled:opacity-50"
+            >
+              Hủy bỏ
+            </button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
