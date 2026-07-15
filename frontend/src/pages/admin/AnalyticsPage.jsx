@@ -162,7 +162,6 @@ const AnalyticsPage = () => {
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto bg-slate-50 min-h-screen">
-      {/* Spacer to prevent content from hiding behind the fixed header */}
       <div className="h-24 md:h-20 w-full"></div>
 
       {/* FIXED Header & Control Bar */}
