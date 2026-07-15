@@ -35,5 +35,22 @@ export const teacherApi = {
   
   takeAttendance: (classId, sessionId, data) => {
     return axiosClient.post(`/teacher/classes/${classId}/sessions/${sessionId}/attendance`, data);
-  }
+  },
+
+  uploadSessionMaterials: (classId, sessionId, formData) => {
+    return axiosClient.post(`/teacher/classes/${classId}/sessions/${sessionId}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  deleteSessionMaterial: (classId, sessionId, fileUrl) => {
+    return axiosClient.delete(`/teacher/classes/${classId}/sessions/${sessionId}/file`, { data: { fileUrl } });
+  },
+
+  getMySubjects: (params) => {
+    return axiosClient.get('/teacher/subjects', { params });
+  },
+
 };

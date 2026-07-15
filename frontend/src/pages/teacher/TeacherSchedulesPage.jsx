@@ -42,7 +42,10 @@ const TeacherSchedulesPage = () => {
       else if (data && Array.isArray(data.schedules)) scheduleList = data.schedules;
       else if (data && Array.isArray(data.data)) scheduleList = data.data;
       
-      const activeSchedules = scheduleList.filter(s => s.status === 'ACTIVE' || s.status === 'active' || !s.status);
+      const activeSchedules = scheduleList.filter((schedule) => (
+        (schedule.status === 'ACTIVE' || schedule.status === 'active' || !schedule.status)
+        && schedule.classId?.status === 'ongoing'
+      ));
       setSchedules(activeSchedules);
     } catch (err) {
       setError(err.message || err.error || 'Không thể tải lịch dạy của bạn. Vui lòng thử lại.');
@@ -90,10 +93,20 @@ const TeacherSchedulesPage = () => {
         navigate(`/teacher/classes/${classId}/sessions/${existingSession._id || existingSession.id}/attendance`);
       } else {
         const [year, month, day] = dayDateStr.split('-');
+        
+        const teacherId = typeof schedule.teacherId === 'object' ? schedule.teacherId._id : schedule.teacherId;
+        
+        const startDateTime = new Date(`${dayDateStr}T${schedule.startTime || '00:00'}:00`).toISOString();
+        const endDateTime = new Date(`${dayDateStr}T${schedule.endTime || '00:00'}:00`).toISOString();
+        
         const createRes = await teacherApi.createSession(classId, {
           scheduleId: scheduleId,
           sessionDate: dayDateStr,
-          topic: `Buổi học ngày ${day}/${month}/${year}`
+          topic: `Buổi học ngày ${day}/${month}/${year}`,
+          teacherId: teacherId,
+          room: schedule.room,
+          startTime: startDateTime,
+          endTime: endDateTime
         });
 
         const newSessionId = createRes?.data?._id || createRes?._id || createRes?.data?.session?._id;
@@ -120,6 +133,7 @@ const TeacherSchedulesPage = () => {
 
   const normalizeDayOfWeek = (day) => {
     if (typeof day === 'number') return day;
+    if (day && !isNaN(day)) return parseInt(day, 10);
     const map = {
       'monday': 1, 'tuesday': 2, 'wednesday': 3, 'thursday': 4,
       'friday': 5, 'saturday': 6, 'sunday': 0
@@ -127,11 +141,40 @@ const TeacherSchedulesPage = () => {
     return map[day.toLowerCase()] !== undefined ? map[day.toLowerCase()] : -1;
   };
 
+  const parseTime = (t) => {
+    if (!t) return 0;
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+
+  const getDateOnly = (value) => {
+    if (!value) return null;
+    if (typeof value === 'string') return value.slice(0, 10);
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
+
+  const isWithinClassPeriod = (schedule, isoDate) => {
+    const classroom = schedule?.classId || schedule?.class;
+    const startDate = getDateOnly(classroom?.startDate);
+    const endDate = getDateOnly(classroom?.endDate);
+
+    return (!startDate || isoDate >= startDate) && (!endDate || isoDate <= endDate);
+  };
+
   const renderScheduleCell = (slot, day) => {
     const cellSchedules = schedules.filter(s => {
       const sDay = normalizeDayOfWeek(s.dayOfWeek);
       if (sDay !== day.dayOfWeek) return false;
-      return s.startTime === slot.startTime || s.startTime?.startsWith(slot.startTime.substring(0, 2));
+      if (!isWithinClassPeriod(s, day.isoDate)) return false;
+      
+      if (!s.startTime) return false;
+      const sStart = parseTime(s.startTime);
+      const slotStart = parseTime(slot.startTime);
+      const slotEnd = parseTime(slot.endTime);
+      
+      return sStart >= slotStart && sStart < slotEnd;
     });
 
     if (cellSchedules.length === 0) {
@@ -203,7 +246,6 @@ const TeacherSchedulesPage = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        {/* Bộ lọc Week/Year */}
         <div className="flex flex-wrap items-center gap-4 p-5 bg-slate-50/50 border-b border-slate-100">
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm">
             <label className="text-sm font-medium text-slate-600">Năm:</label>
@@ -248,7 +290,6 @@ const TeacherSchedulesPage = () => {
           </div>
         </div>
 
-        {/* Bảng Timetable */}
         {schedules.length === 0 ? (
           <EmptyState 
             title="Không tìm thấy lịch dạy" 

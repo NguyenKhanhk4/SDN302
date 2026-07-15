@@ -2,13 +2,11 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Load env vars
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const Class = require('../../models/Class');
 const { ensureSessionsForClass } = require('../../modules/teacher/session-generation.service');
 
-// Pre-load mongoose models
 require('../../models/Schedule');
 require('../../models/Session');
 require('../../models/TeacherProfile');

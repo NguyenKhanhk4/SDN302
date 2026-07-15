@@ -36,9 +36,9 @@ axiosClient.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       
-      // Chỉ redirect nếu chưa ở trang login (tránh loop)
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      // Chỉ redirect nếu chưa ở trang gốc (tránh loop)
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
       }
     }
 

@@ -3,10 +3,10 @@ const Schedule = require('../../models/Schedule');
 const ClassStudent = require('../../models/ClassStudent');
 const Session = require('../../models/Session');
 const Attendance = require('../../models/Attendance');
+const fs = require('fs');
+const path = require('path');
 
-// Phai require cac model duoc dung trong populate()
-// de Mongoose dang ky schema truoc khi query
-require('../../models/Subject');
+const Subject = require('../../models/Subject');
 require('../../models/TeacherProfile');
 require('../../models/StudentProfile');
 
@@ -19,34 +19,25 @@ const {
 const { ensureSessionsForClass } = require('./session-generation.service');
 
 
-// ============================================================
-// @desc    Lay dashboard tong quan cua Teacher
-// @route   GET /api/teacher/dashboard
-// @access  Private (Teacher)
-// ============================================================
 const getTeacherDashboard = async (req, res) => {
   try {
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
-    // Tong so lop dang day
     const totalClasses = await Class.countDocuments({
       teacherId: teacherProfile._id,
     });
 
-    // Tong so lich day active
     const totalActiveSchedules = await Schedule.countDocuments({
       teacherId: teacherProfile._id,
       status: 'active',
     });
 
-    // Lay tat ca classId cua Teacher
     const myClasses = await Class.find(
       { teacherId: teacherProfile._id },
       '_id'
     );
     const classIds = myClasses.map((c) => c._id);
 
-    // Tong so hoc vien enrolled trong tat ca lop cua Teacher
     const totalStudents = await ClassStudent.countDocuments({
       classId: { $in: classIds },
       status: 'enrolled',
@@ -65,11 +56,6 @@ const getTeacherDashboard = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher xem danh sach lop duoc phan cong
-// @route   GET /api/teacher/classes
-// @access  Private (Teacher)
-// ============================================================
 const getMyClasses = async (req, res) => {
   try {
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
@@ -78,37 +64,64 @@ const getMyClasses = async (req, res) => {
       .populate('subjectId', 'name gradeLevel defaultTuitionFee')
       .sort({ createdAt: -1 });
 
+    const classIds = classes.map((classroom) => classroom._id);
+    const studentCounts = await ClassStudent.aggregate([
+      {
+        $match: {
+          classId: { $in: classIds },
+          status: 'enrolled',
+        },
+      },
+      {
+        $group: {
+          _id: '$classId',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const studentCountByClassId = new Map(
+      studentCounts.map(({ _id, count }) => [_id.toString(), count])
+    );
+    const classesWithStudentCount = classes.map((classroom) => ({
+      ...classroom.toObject(),
+      currentStudents: studentCountByClassId.get(classroom._id.toString()) || 0,
+    }));
+
     return res.status(200).json({
       success: true,
-      total: classes.length,
-      data: classes,
+      total: classesWithStudentCount.length,
+      data: classesWithStudentCount,
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ============================================================
-// @desc    Teacher xem chi tiet mot lop
-// @route   GET /api/teacher/classes/:classId
-// @access  Private (Teacher)
-// ============================================================
 const getMyClassDetail = async (req, res) => {
   try {
     const { classId } = req.params;
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
-    // Kiem tra Teacher co quyen xem lop nay khong
     await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    await ensureSessionsForClass(classId, teacherProfile._id);
 
     const classroom = await Class.findById(classId).populate(
       'subjectId',
       'name gradeLevel description defaultTuitionFee'
     );
+    const currentStudents = await ClassStudent.countDocuments({
+      classId,
+      status: 'enrolled',
+    });
 
     return res.status(200).json({
       success: true,
-      data: classroom,
+      data: {
+        ...classroom.toObject(),
+        currentStudents,
+      },
     });
   } catch (error) {
     if (error.message === 'You are not assigned to this class') {
@@ -121,17 +134,11 @@ const getMyClassDetail = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher xem danh sach hoc vien trong mot lop
-// @route   GET /api/teacher/classes/:classId/students
-// @access  Private (Teacher)
-// ============================================================
 const getStudentsInMyClass = async (req, res) => {
   try {
     const { classId } = req.params;
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
-    // Kiem tra Teacher co quyen xem lop nay khong
     await checkTeacherOwnsClass(teacherProfile._id, classId);
 
     const students = await getActiveStudentsInClass(classId);
@@ -152,17 +159,26 @@ const getStudentsInMyClass = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher xem lich day
-// @route   GET /api/teacher/schedules
-// @access  Private (Teacher)
-// ============================================================
 const getMySchedules = async (req, res) => {
   try {
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
-    const schedules = await Schedule.find({ teacherId: teacherProfile._id })
-      .populate('classId', 'name room status')
+    const activeClasses = await Class.find({
+      teacherId: teacherProfile._id,
+      status: 'ongoing',
+    }).select('_id');
+    const activeClassIds = activeClasses.map((classroom) => classroom._id);
+
+    await Promise.all(
+      activeClassIds.map((classId) => ensureSessionsForClass(classId, teacherProfile._id))
+    );
+
+    const schedules = await Schedule.find({
+      teacherId: teacherProfile._id,
+      classId: { $in: activeClassIds },
+      status: 'active',
+    })
+      .populate('classId', 'name room status startDate endDate')
       .sort({ dayOfWeek: 1, startTime: 1 });
 
     return res.status(200).json({
@@ -175,11 +191,6 @@ const getMySchedules = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher xem danh sach buoi hoc (sessions) cua mot lop
-// @route   GET /api/teacher/classes/:classId/sessions
-// @access  Private (Teacher)
-// ============================================================
 const getSessionsByClass = async (req, res) => {
   try {
     const { classId } = req.params;
@@ -187,16 +198,19 @@ const getSessionsByClass = async (req, res) => {
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
 
-    // Tu dong sinh session theo lich co dinh (neu chua co)
     await ensureSessionsForClass(classId, teacherProfile._id);
 
     const sessions = await Session.find({ classId })
       .populate('scheduleId')
       .populate('classId')
-      .sort({ sessionDate: 1 }); // Xep tang dan theo thoi gian
+      .sort({ sessionDate: 1 });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    const enrolledStudents = await ClassStudent.find({ classId, status: 'enrolled' }).select('studentId');
+    const enrolledStudentIds = enrolledStudents.map(cs => cs.studentId.toString());
+    const totalEnrolled = enrolledStudentIds.length;
 
     const dataWithStatus = await Promise.all(
       sessions.map(async (session) => {
@@ -215,10 +229,13 @@ const getSessionsByClass = async (req, res) => {
           attendanceStatus = 'NOT_YET';
         }
 
-        // Kiem tra du lieu diem danh thuc te
-        const attendances = await Attendance.find({ sessionId: session._id });
-        const total = attendances.length;
-        if (total > 0) {
+        const attendances = await Attendance.find({
+          sessionId: session._id,
+          studentId: { $in: enrolledStudents.map(cs => cs.studentId) }
+        });
+
+        const recorded = attendances.length;
+        if (recorded > 0) {
           attendanceStatus = 'COMPLETED';
         }
 
@@ -229,7 +246,8 @@ const getSessionsByClass = async (req, res) => {
           ...session.toObject(),
           attendanceStatus,
           attendanceSummary: {
-            total,
+            total: totalEnrolled,
+            recorded,
             present,
             absent,
           },
@@ -253,15 +271,10 @@ const getSessionsByClass = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher tao buoi hoc moi cho mot lop
-// @route   POST /api/teacher/classes/:classId/sessions
-// @access  Private (Teacher)
-// ============================================================
 const createSession = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { sessionDate, topic, scheduleId } = req.body;
+    const { sessionDate, topic, scheduleId, teacherId, room, startTime, endTime } = req.body;
     const teacherProfile = await getTeacherProfileByUserId(req.user._id);
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
@@ -273,7 +286,6 @@ const createSession = async (req, res) => {
       });
     }
 
-    // Kiem tra session da ton tai cho ngay nay chua
     const startOfDay = new Date(sessionDate);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(sessionDate);
@@ -285,7 +297,6 @@ const createSession = async (req, res) => {
     });
 
     if (existingSession) {
-      // Tra ve session da ton tai thay vi tao moi
       return res.status(200).json({
         success: true,
         message: 'Session da ton tai cho ngay nay',
@@ -299,6 +310,10 @@ const createSession = async (req, res) => {
       sessionDate: new Date(sessionDate),
       topic: topic || '',
       status: 'SCHEDULED',
+      teacherId: teacherId || teacherProfile._id,
+      room: room || 'Chưa xếp',
+      startTime: startTime || new Date(sessionDate),
+      endTime: endTime || new Date(sessionDate)
     });
 
     return res.status(201).json({
@@ -312,7 +327,6 @@ const createSession = async (req, res) => {
     if (error.message === 'Class not found') {
       return res.status(404).json({ success: false, message: error.message });
     }
-    // Handle duplicate key error from the unique index
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
@@ -323,11 +337,6 @@ const createSession = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher xem diem danh cua mot buoi hoc
-// @route   GET /api/teacher/classes/:classId/sessions/:sessionId/attendance
-// @access  Private (Teacher)
-// ============================================================
 const getAttendanceBySession = async (req, res) => {
   try {
     const { classId, sessionId } = req.params;
@@ -335,7 +344,6 @@ const getAttendanceBySession = async (req, res) => {
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
 
-    // Kiem tra session thuoc class nay
     const session = await Session.findOne({ _id: sessionId, classId });
     if (!session) {
       return res.status(404).json({
@@ -369,11 +377,6 @@ const getAttendanceBySession = async (req, res) => {
   }
 };
 
-// ============================================================
-// @desc    Teacher diem danh cho mot buoi hoc
-// @route   POST /api/teacher/classes/:classId/sessions/:sessionId/attendance
-// @access  Private (Teacher)
-// ============================================================
 const takeAttendance = async (req, res) => {
   try {
     const { classId, sessionId } = req.params;
@@ -382,7 +385,6 @@ const takeAttendance = async (req, res) => {
 
     await checkTeacherOwnsClass(teacherProfile._id, classId);
 
-    // Kiem tra session thuoc class nay
     const session = await Session.findOne({ _id: sessionId, classId });
     if (!session) {
       return res.status(404).json({
@@ -398,15 +400,19 @@ const takeAttendance = async (req, res) => {
       });
     }
 
-    // Upsert tung ban ghi attendance
     const results = [];
     for (const att of attendances) {
+      if (!att.status) {
+        await Attendance.findOneAndDelete({ sessionId, studentId: att.studentId });
+        continue;
+      }
+
       const result = await Attendance.findOneAndUpdate(
         { sessionId, studentId: att.studentId },
         {
           sessionId,
           studentId: att.studentId,
-          status: att.status || 'PRESENT',
+          status: att.status,
           note: att.note || '',
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -414,7 +420,6 @@ const takeAttendance = async (req, res) => {
       results.push(result);
     }
 
-    // Cap nhat trang thai session thanh COMPLETED sau khi diem danh
     session.status = 'COMPLETED';
     await session.save();
 
@@ -434,6 +439,109 @@ const takeAttendance = async (req, res) => {
   }
 };
 
+const getMySubjects = async (req, res) => {
+  try {
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    const myClasses = await Class.find({
+      teacherId: teacherProfile._id,
+      status: { $in: ['upcoming', 'in_progress'] },
+    });
+
+    const subjectIds = myClasses.map(c => c.subjectId);
+
+    const { search } = req.query;
+    let query = { _id: { $in: subjectIds } };
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+
+    const subjects = await Subject.find(query).sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      total: subjects.length,
+      data: subjects,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const uploadSessionMaterials = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found in this class' });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
+
+    const filePaths = req.files.map(file => file.path);
+    session.materials = [...(session.materials || []), ...filePaths];
+    await session.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Upload materials successfully',
+      data: session
+    });
+  } catch (error) {
+    if (req.files) {
+      req.files.forEach(file => {
+        fs.unlink(file.path, (err) => {
+          if (err) console.error("Error deleting file:", file.path, err);
+        });
+      });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const deleteSessionMaterial = async (req, res) => {
+  try {
+    const { classId, sessionId } = req.params;
+    const { fileUrl } = req.body;
+    
+    if (!fileUrl) {
+      return res.status(400).json({ success: false, message: 'fileUrl is required' });
+    }
+
+    const teacherProfile = await getTeacherProfileByUserId(req.user._id);
+    await checkTeacherOwnsClass(teacherProfile._id, classId);
+
+    const session = await Session.findOne({ _id: sessionId, classId });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Session not found in this class' });
+    }
+
+    session.materials = session.materials.filter(m => m !== fileUrl);
+    await session.save();
+
+    const filePath = path.resolve(process.cwd(), fileUrl);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Loi khi xoa file:", filePath, err);
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Deleted material successfully',
+      data: session
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getTeacherDashboard,
   getMyClasses,
@@ -444,4 +552,7 @@ module.exports = {
   createSession,
   getAttendanceBySession,
   takeAttendance,
+  getMySubjects,
+  uploadSessionMaterials,
+  deleteSessionMaterial,
 };

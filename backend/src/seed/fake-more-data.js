@@ -298,6 +298,7 @@ const run = async () => {
             teacherId: teacherProf._id,
             room: cls.room,
             maxStudents: 20,
+            totalSessions: 30,
             startDate: new Date('2024-09-01'),
             endDate: new Date('2025-05-31'),
             status: 'ongoing',

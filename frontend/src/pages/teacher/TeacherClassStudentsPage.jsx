@@ -13,6 +13,7 @@ const TeacherClassStudentsPage = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
     fetchStudents();
@@ -24,7 +25,6 @@ const TeacherClassStudentsPage = () => {
       setError(null);
       const data = await teacherApi.getStudentsInClass(classId);
       
-      // Handle array or object wrapper depending on backend standard
       let studentList = [];
       if (Array.isArray(data)) studentList = data;
       else if (data && Array.isArray(data.students)) studentList = data.students;
@@ -39,14 +39,18 @@ const TeacherClassStudentsPage = () => {
   };
 
   const getStudentInfo = (item) => {
-    // Navigate safely through nested structure: item.studentId.userId
-    // Also include fallbacks in case backend flattens the response
     const user = item?.studentId?.userId || item?.studentId || item?.userId || item?.student || item;
+    const profile = item?.studentId || item;
+    
     return {
       name: user?.fullName || user?.name || 'Không xác định',
       email: user?.email || 'Không có',
       phone: user?.phone || 'Không có',
-      status: item?.status || 'ACTIVE'
+      status: item?.status || 'ACTIVE',
+      parentName: profile?.parentName || 'Không có',
+      parentPhone: profile?.parentPhone || 'Không có',
+      grade: profile?.grade || 'Không rõ',
+      school: profile?.school || 'Không rõ'
     };
   };
 
@@ -117,6 +121,7 @@ const TeacherClassStudentsPage = () => {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-16">STT</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tên học viên</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số điện thoại</th>
@@ -124,16 +129,21 @@ const TeacherClassStudentsPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {students.map((item, index) => {
+                  {students.map((item, index) => {
                   const info = getStudentInfo(item);
                   return (
-                    <tr key={item._id || item.id || index} className="hover:bg-blue-50/30 transition-colors group">
+                    <tr 
+                      key={item._id || item.id || index} 
+                      onClick={() => setSelectedStudent(info)}
+                      className="hover:bg-blue-50/30 transition-colors group cursor-pointer"
+                    >
+                      <td className="p-4 text-sm text-slate-600">{index + 1}</td>
                       <td className="p-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
                             {info.name.charAt(0)}
                           </div>
-                          <span className="text-sm font-semibold text-slate-800">{info.name}</span>
+                          <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">{info.name}</span>
                         </div>
                       </td>
                       <td className="p-4 text-sm text-slate-600">{info.email}</td>
@@ -149,6 +159,60 @@ const TeacherClassStudentsPage = () => {
           </div>
         )}
       </div>
+
+      {selectedStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="font-bold text-lg text-slate-800">Thông tin chi tiết</h3>
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 p-2 rounded-xl transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold text-xl shadow-md">
+                  {selectedStudent.name.charAt(0)}
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold text-slate-800">{selectedStudent.name}</h4>
+                  <Badge status={selectedStudent.status} className="mt-1" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Học viên</h5>
+                  <div className="bg-slate-50 p-3 rounded-xl space-y-2 border border-slate-100">
+                    <p className="text-sm flex justify-between"><span className="text-slate-500">Email:</span> <span className="font-medium text-slate-700">{selectedStudent.email}</span></p>
+                    <p className="text-sm flex justify-between"><span className="text-slate-500">Điện thoại:</span> <span className="font-medium text-slate-700">{selectedStudent.phone}</span></p>
+                    <p className="text-sm flex justify-between"><span className="text-slate-500">Lớp/Trường:</span> <span className="font-medium text-slate-700">{selectedStudent.grade} - {selectedStudent.school}</span></p>
+                  </div>
+                </div>
+
+                <div>
+                  <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Phụ huynh</h5>
+                  <div className="bg-blue-50 p-3 rounded-xl space-y-2 border border-blue-100">
+                    <p className="text-sm flex justify-between"><span className="text-blue-600/70">Họ tên:</span> <span className="font-bold text-blue-900">{selectedStudent.parentName}</span></p>
+                    <p className="text-sm flex justify-between"><span className="text-blue-600/70">SĐT liên hệ:</span> <span className="font-bold text-blue-900">{selectedStudent.parentPhone}</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button 
+                onClick={() => setSelectedStudent(null)}
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-xl transition-colors"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

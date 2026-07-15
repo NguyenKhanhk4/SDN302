@@ -3,14 +3,18 @@ import { Link } from 'react-router-dom';
 import {
   BookOpen, Users, Calendar, CheckCircle, Star, Phone, Mail, MapPin,
   ChevronRight, ArrowRight, Book, Activity, Beaker, Globe, PenTool, Hash,
-  Award, TrendingUp, Clock, MonitorPlay, MessageCircle
+  Award, TrendingUp, Clock, MonitorPlay, MessageCircle, X
 } from 'lucide-react';
+import { getUser } from '../utils/auth';
+import LoginPage from './auth/LoginPage';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useState('Lớp 12');
   const [isScrolled, setIsScrolled] = useState(false);
-
-  // Handle scroll effect for navbar
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -23,18 +27,43 @@ const HomePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    const user = getUser();
+    if (user && localStorage.getItem('token')) {
+      const roleDashboards = {
+        admin: '/admin/dashboard',
+        manager: '/manager/dashboard',
+        teacher: '/teacher/schedules',
+        student: '/student/dashboard',
+        parent: '/parent/dashboard',
+      };
+      const role = String(user.role).toLowerCase();
+      const target = roleDashboards[role] || '/';
+      navigate(target);
+    } else {
+      setShowLogin(true);
+    }
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     alert('Đăng ký thành công! Trung tâm sẽ liên hệ với bạn trong thời gian sớm nhất.');
   };
 
+  const user = getUser();
+  const isLoggedIn = user && localStorage.getItem('token');
+
   return (
     <div className="min-h-screen bg-[#F8FAFF] font-sans text-slate-800">
-      {/* SECTION 1 - Navbar */}
+      
       <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div 
+              className="flex items-center gap-2 cursor-pointer" 
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
               <div className="bg-blue-600 text-white p-1.5 rounded-lg">
                 <BookOpen size={24} />
               </div>
@@ -50,15 +79,15 @@ const HomePage = () => {
             </div>
 
             <div className="hidden sm:flex items-center space-x-4">
-              <Link to="/login" className="px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
-                Đăng Nhập
-              </Link>
-              <a href="#dang-ky" className="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-900 font-bold hover:bg-amber-400 hover:scale-105 transition-all shadow-lg shadow-amber-500/30">
-                Đăng Ký Học
-              </a>
+              <button onClick={handleLoginClick} className="px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập'}
+              </button>
+              <button onClick={() => setShowRegisterForm(true)} className="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-900 font-bold hover:bg-amber-400 hover:scale-105 transition-all shadow-lg shadow-amber-500/30">
+                Đăng Ký Ngay
+              </button>
             </div>
 
-            {/* Mobile menu button placeholder */}
+            
             <div className="md:hidden">
               <button className="text-slate-600 p-2">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -68,16 +97,16 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* SECTION 2 - Hero */}
+      
       <section id="trang-chu" className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
-        {/* Decorative background blob */}
+        
         <div className="absolute top-0 right-0 -mr-40 -mt-40 w-96 h-96 rounded-full bg-blue-400/20 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-20 mb-20 w-72 h-72 rounded-full bg-amber-400/20 blur-3xl"></div>
 
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
-            {/* Hero Content */}
+            
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm mb-6">
                 <Award size={16} />
@@ -94,9 +123,9 @@ const HomePage = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                <a href="#dang-ky" className="inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl bg-amber-500 text-slate-900 font-bold text-lg hover:bg-amber-400 hover:-translate-y-1 transition-all shadow-xl shadow-amber-500/30">
-                  Đăng Ký Học Ngay <ArrowRight size={20} />
-                </a>
+                <button onClick={() => setShowRegisterForm(true)} className="inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl bg-amber-500 text-slate-900 font-bold text-lg hover:bg-amber-400 hover:-translate-y-1 transition-all shadow-xl shadow-amber-500/30">
+                  Đăng Ký Ngay <ArrowRight size={20} />
+                </button>
                 <a href="#lich-hoc" className="inline-flex justify-center items-center gap-2 px-8 py-4 rounded-2xl border-2 border-blue-600 text-blue-600 font-bold text-lg hover:bg-blue-50 transition-colors">
                   Xem Lịch Học
                 </a>
@@ -109,7 +138,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Hero Visual Card */}
+            
             <div className="relative mx-auto w-full max-w-md lg:ml-auto">
               <div className="absolute inset-0 bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-3xl transform rotate-3 scale-105 opacity-20 blur-lg animate-pulse"></div>
 
@@ -172,7 +201,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 3 - Subjects */}
+      
       <section id="mon-hoc" className="py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -185,7 +214,7 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Subject Cards */}
+            
             {[
               { id: 1, name: 'Toán', desc: 'Đại số, Hình học, Giải tích, luyện thi ĐH', icon: <Hash size={28} />, color: 'text-blue-600', bg: 'bg-blue-100', borderHover: 'hover:border-blue-500', shadowHover: 'hover:shadow-blue-500/20' },
               { id: 2, name: 'Vật Lý', desc: 'Cơ học, Điện học, Quang học, thực hành', icon: <Activity size={28} />, color: 'text-purple-600', bg: 'bg-purple-100', borderHover: 'hover:border-purple-500', shadowHover: 'hover:shadow-purple-500/20' },
@@ -212,7 +241,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 4 - Why Choose Us */}
+      
       <section id="ve-chung-toi" className="py-20 bg-blue-50/50">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -249,7 +278,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Achievement Card */}
+            
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-amber-200 rounded-3xl transform -rotate-3 scale-105 opacity-20 blur-lg"></div>
 
@@ -301,7 +330,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 5 - Grade Tabs */}
+      
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-12">
@@ -310,15 +339,15 @@ const HomePage = () => {
             </h2>
           </div>
 
-          {/* Tabs */}
+          
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             {['Lớp 6–7', 'Lớp 8–9', 'Lớp 10–11', 'Lớp 12'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-6 py-3 rounded-xl font-bold transition-all ${activeTab === tab
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
               >
                 {tab}
@@ -326,7 +355,7 @@ const HomePage = () => {
             ))}
           </div>
 
-          {/* Tab Content */}
+          
           <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-sm">
             {activeTab === 'Lớp 12' && (
               <div>
@@ -384,7 +413,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 6 - How it works */}
+      
       <section className="py-20 bg-slate-50 border-y border-slate-200">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -394,11 +423,11 @@ const HomePage = () => {
           </div>
 
           <div className="relative">
-            {/* Connecting line for desktop */}
+            
             <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-1 border-t-2 border-dashed border-slate-300"></div>
 
             <div className="grid md:grid-cols-3 gap-10">
-              {/* Step 1 */}
+              
               <div className="relative z-10 text-center">
                 <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-blue-100 flex items-center justify-center text-3xl shadow-lg mb-6 shadow-blue-500/10">
                   📝
@@ -408,7 +437,7 @@ const HomePage = () => {
                 <p className="text-slate-600">Điền form hoặc gọi hotline. Nhân viên sẽ tư vấn môn học và khối lớp phù hợp.</p>
               </div>
 
-              {/* Step 2 */}
+              
               <div className="relative z-10 text-center">
                 <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-amber-100 flex items-center justify-center text-3xl shadow-lg mb-6 shadow-amber-500/10">
                   📅
@@ -418,7 +447,7 @@ const HomePage = () => {
                 <p className="text-slate-600">Quản lý sắp xếp lớp học và khung giờ. Phụ huynh nhận lịch học chi tiết qua tài khoản.</p>
               </div>
 
-              {/* Step 3 */}
+              
               <div className="relative z-10 text-center">
                 <div className="w-24 h-24 mx-auto bg-white rounded-full border-4 border-emerald-100 flex items-center justify-center text-3xl shadow-lg mb-6 shadow-emerald-500/10">
                   🎓
@@ -432,7 +461,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 7 - Teachers */}
+      
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -469,7 +498,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 8 - Portals */}
+      
       <section className="py-20 bg-slate-900 text-white overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/30 blur-[100px] rounded-full"></div>
@@ -485,7 +514,7 @@ const HomePage = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Parent Portal */}
+            
             <div className="bg-slate-800 border border-slate-700 rounded-3xl p-8 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
 
@@ -501,12 +530,12 @@ const HomePage = () => {
                 <li className="flex items-start gap-3"><CheckCircle className="text-blue-400 shrink-0 mt-0.5" /> <span className="text-slate-300">Xem lịch học chi tiết của con trong tuần</span></li>
               </ul>
 
-              <Link to="/login" className="inline-block px-6 py-3 rounded-xl border border-blue-500 text-blue-400 font-bold hover:bg-blue-500 hover:text-white transition-colors">
-                Đăng Nhập Cho Phụ Huynh
-              </Link>
+              <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-blue-500 text-blue-400 font-bold hover:bg-blue-500 hover:text-white transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Phụ Huynh'}
+              </button>
             </div>
 
-            {/* Student Portal */}
+            
             <div className="bg-slate-800 border border-slate-700 rounded-3xl p-8 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
 
@@ -522,17 +551,17 @@ const HomePage = () => {
                 <li className="flex items-start gap-3"><CheckCircle className="text-amber-400 shrink-0 mt-0.5" /> <span className="text-slate-300">Theo dõi tiến độ và nhận thông báo từ GV</span></li>
               </ul>
 
-              <Link to="/login" className="inline-block px-6 py-3 rounded-xl border border-amber-500 text-amber-400 font-bold hover:bg-amber-500 hover:text-slate-900 transition-colors">
-                Đăng Nhập Cho Học Viên
-              </Link>
+              <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-amber-500 text-amber-400 font-bold hover:bg-amber-500 hover:text-slate-900 transition-colors">
+                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Học Viên'}
+              </button>
             </div>
           </div>
 
-          <p className="text-center text-slate-400 text-sm mt-10">Tài khoản được cấp bởi hệ thống khi đăng ký học. Liên hệ quản lý trung tâm nếu quên mật khẩu.</p>
+          <p className="text-center text-slate-400 text-sm mt-10">Tài khoản được cấp bởi hệ thống khi đăng ký. Liên hệ quản lý trung tâm nếu quên mật khẩu.</p>
         </div>
       </section>
 
-      {/* SECTION 9 - Testimonials */}
+      
       <section className="py-20 bg-amber-50/50">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -584,15 +613,15 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 10 - Form & Contact */}
+      
       <section id="dang-ky" className="py-20 bg-white relative overflow-hidden">
-        {/* Background elements */}
+        
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-full bg-blue-50 rounded-l-3xl -z-10 hidden lg:block"></div>
 
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-            {/* Contact Info */}
+            
             <div id="lien-he">
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
                 Liên Hệ <span className="text-blue-600">Với Chúng Tôi</span>
@@ -618,7 +647,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-lg">Hotline Tư Vấn</h4>
-                    <p className="text-slate-600 font-medium text-lg">0986 542 101</p>
+                    <p className="text-slate-600 font-medium text-lg">0987 654 321</p>
                     <p className="text-sm text-slate-500">8:00 - 21:00, Từ T2 - CN</p>
                   </div>
                 </div>
@@ -636,60 +665,17 @@ const HomePage = () => {
 
             </div>
 
-            {/* Form Card */}
+            
             <div>
               <div className="bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-100 relative">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">Đăng Ký Tư Vấn <span className="text-amber-500">Miễn Phí</span></h3>
+                <h3 className="text-2xl font-bold text-slate-800 mb-6">Đăng Ký <span className="text-amber-500">Ngay</span></h3>
 
-                <form onSubmit={handleFormSubmit} className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1.5">Họ và tên học sinh *</label>
-                    <input type="text" required placeholder="Nhập tên học sinh" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1.5">Số điện thoại phụ huynh *</label>
-                    <input type="tel" required placeholder="Nhập số điện thoại" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1.5">Khối lớp *</label>
-                      <select required className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all appearance-none bg-white">
-                        <option value="">Chọn khối lớp</option>
-                        <option value="6">Lớp 6</option>
-                        <option value="7">Lớp 7</option>
-                        <option value="8">Lớp 8</option>
-                        <option value="9">Lớp 9</option>
-                        <option value="10">Lớp 10</option>
-                        <option value="11">Lớp 11</option>
-                        <option value="12">Lớp 12</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-1.5">Môn quan tâm</label>
-                      <select className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all appearance-none bg-white">
-                        <option value="">Chọn môn học</option>
-                        <option value="Toán">Toán</option>
-                        <option value="Lý">Lý</option>
-                        <option value="Hóa">Hóa</option>
-                        <option value="Anh">Tiếng Anh</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1.5">Ghi chú thêm</label>
-                    <textarea rows="3" placeholder="Yêu cầu riêng, mong muốn..." className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none"></textarea>
-                  </div>
-
-                  <button type="submit" className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 transition-all flex justify-center items-center gap-2">
-                    Gửi Đăng Ký Tư Vấn <ArrowRight size={20} />
+                <div className="text-center py-6">
+                  <p className="text-slate-600 mb-8">Tạo tài khoản để nhận tư vấn và cập nhật thông tin học tập.</p>
+                  <button onClick={() => setShowRegisterForm(true)} className="w-full py-4 rounded-xl bg-amber-500 text-slate-900 font-bold text-lg hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/30 transition-all flex justify-center items-center gap-2">
+                    Đăng Ký Ngay <ArrowRight size={20} />
                   </button>
-                  <p className="text-center text-xs text-slate-500 flex items-center justify-center gap-1 mt-4">
-                    <CheckCircle size={14} /> Thông tin của bạn được bảo mật tuyệt đối
-                  </p>
-                </form>
+                </div>
               </div>
             </div>
 
@@ -697,12 +683,12 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* SECTION 11 - Footer */}
+      
       <footer className="bg-slate-900 text-slate-400 py-16 border-t border-slate-800">
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
 
-            {/* Col 1 */}
+            
             <div className="lg:pr-8">
               <div className="flex items-center gap-2 mb-6">
                 <div className="bg-blue-600 text-white p-1.5 rounded-lg">
@@ -712,7 +698,7 @@ const HomePage = () => {
               </div>
               <p className="mb-6 leading-relaxed">Đồng hành cùng học sinh Việt Nam trên con đường tri thức. Cam kết chất lượng giảng dạy hàng đầu.</p>
               <div className="flex gap-4">
-                {/* Social icons placeholders */}
+                
                 <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
                 </a>
@@ -725,7 +711,7 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Col 2 */}
+            
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Chương Trình Học</h4>
               <ul className="space-y-3">
@@ -737,7 +723,7 @@ const HomePage = () => {
               </ul>
             </div>
 
-            {/* Col 3 */}
+            
             <div>
               <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Thông Tin</h4>
               <ul className="space-y-3">
@@ -748,16 +734,7 @@ const HomePage = () => {
               </ul>
             </div>
 
-            {/* Col 4 */}
-            <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Hệ Thống (Nội Bộ)</h4>
-              <ul className="space-y-3">
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Đăng Nhập Quản Lý</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Giảng Viên</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Học Viên</Link></li>
-                <li><Link to="/login" className="hover:text-emerald-400 transition-colors">Cổng Phụ Huynh</Link></li>
-              </ul>
-            </div>
+
 
           </div>
 
@@ -766,6 +743,91 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
+
+      
+      {showLogin && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowLogin(false)}
+              className="absolute -top-12 right-0 text-white hover:text-amber-400 transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full"
+            >
+              <X size={24} />
+            </button>
+            <LoginPage onSwitchToRegister={() => { setShowLogin(false); setShowRegisterForm(true); }} />
+          </div>
+        </div>
+      )}
+
+      {showRegisterForm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowRegisterForm(false)}
+              className="absolute -top-12 right-0 text-white hover:text-amber-400 transition-colors bg-white/10 hover:bg-white/20 p-2 rounded-full"
+            >
+              <X size={24} />
+            </button>
+            <div className="bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 relative">
+              <h3 className="text-2xl font-bold text-slate-800 mb-6">Đăng Ký <span className="text-amber-500">Ngay</span></h3>
+              <form onSubmit={handleFormSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Email *</label>
+                  <input type="email" required placeholder="Nhập email của bạn" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Mật khẩu *</label>
+                  <input type="password" required placeholder="Nhập mật khẩu" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-1.5">Xác nhận mật khẩu *</label>
+                  <input type="password" required placeholder="Nhập lại mật khẩu" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all" />
+                </div>
+
+                <div className="pt-2">
+                  <button type="submit" className="w-full py-4 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 transition-all flex justify-center items-center gap-2">
+                    Đăng Ký <ArrowRight size={20} />
+                  </button>
+                </div>
+
+                <div className="relative flex items-center justify-center mt-6 mb-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                  <div className="relative px-4 bg-white text-sm text-slate-500">hoặc</div>
+                </div>
+
+                <button type="button" className="w-full py-3.5 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-base hover:bg-slate-50 transition-all flex justify-center items-center gap-3">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                  </svg>
+                  Đăng ký bằng Google
+                </button>
+
+                <div className="text-center mt-6">
+                  <span className="text-slate-600 text-sm">Bạn đã có tài khoản? </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowRegisterForm(false);
+                      setShowLogin(true);
+                    }}
+                    className="text-blue-600 font-bold hover:underline text-sm"
+                  >
+                    Đăng nhập
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
