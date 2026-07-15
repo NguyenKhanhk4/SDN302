@@ -49,7 +49,7 @@ const ParentProfilePage = () => {
   if (error) {
     return (
       <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
-        <p className="font-medium">Lỗi tải dữ liệu</p>
+        <p className="font-medium">Lỗi ti dữ liệu</p>
         <p className="text-sm">{error}</p>
         <button 
           onClick={fetchProfile}
