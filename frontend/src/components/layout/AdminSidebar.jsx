@@ -21,7 +21,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     { name: 'Lớp học', path: '/admin/classes', icon: <GraduationCap className="w-5 h-5" /> },
     { name: 'Lịch học', path: '/admin/schedules', icon: <Calendar className="w-5 h-5" /> },
     { name: 'Tài chính', path: '/admin/finance', icon: <Banknote className="w-5 h-5" /> },
-    { name: 'Thống kê', path: '/admin/reports', icon: <BarChart3 className="w-5 h-5" /> }
+    { name: 'Thống kê', path: '/admin/analytics', icon: <BarChart3 className="w-5 h-5" /> }
   ];
 
   return (

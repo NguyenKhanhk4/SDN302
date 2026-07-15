@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getDashboard,
+  getAnalytics,
   getUsers,
   getUserDetail,
   createUser,
@@ -24,8 +25,9 @@ const { authorize } = require('../middlewares/role.middleware');
 // Protect all routes below with protect + authorize('admin')
 router.use(protect, authorize('admin'));
 
-// Dashboard route
+// Dashboard & Analytics routes
 router.get('/dashboard', getDashboard);
+router.get('/analytics', getAnalytics);
 
 // User routes
 router.get('/users', getUsers);

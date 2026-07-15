@@ -5,6 +5,9 @@ export const adminApi = {
   getDashboard: () => {
     return axiosClient.get('/admin/dashboard');
   },
+  getAnalytics: (params) => {
+    return axiosClient.get('/admin/analytics', { params });
+  },
 
   // 2. User Management
   getUsers: (params) => {
@@ -128,5 +131,8 @@ export const adminApi = {
   },
   getAdvancedStatistics: (year) => {
     return axiosClient.get('/report/statistics', { params: { year } });
+  },
+  getAnalytics: (params) => {
+    return axiosClient.get('/admin/analytics', { params });
   }
 };
