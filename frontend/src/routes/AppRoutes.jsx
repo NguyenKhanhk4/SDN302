@@ -14,6 +14,7 @@ import LoginPage from '../pages/auth/LoginPage';
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
 
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AnalyticsPage from '../pages/admin/AnalyticsPage';
 import AdminEnrollmentsPage from '../pages/admin/AdminEnrollmentsPage';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
 import AdminCreateUserPage from '../pages/admin/AdminCreateUserPage';
@@ -26,7 +27,6 @@ import AdminClassStudentsPage from '../pages/admin/AdminClassStudentsPage';
 import AdminSchedulesPage from '../pages/admin/AdminSchedulesPage';
 import AdminCreateSchedulePage from '../pages/admin/AdminCreateSchedulePage';
 import AdminFinancePage from '../pages/admin/AdminFinancePage';
-import AdminReportsPage from '../pages/admin/AdminReportsPage';
 import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 
 import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
@@ -115,6 +115,7 @@ const AppRoutes = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
           <Route path="enrollments" element={<AdminEnrollmentsPage />} />
           <Route path="users" element={<AdminUsersPage />} />
           <Route path="users/create" element={<AdminCreateUserPage />} />
@@ -127,7 +128,6 @@ const AppRoutes = () => {
           <Route path="schedules" element={<AdminSchedulesPage />} />
           <Route path="schedules/create" element={<AdminCreateSchedulePage />} />
           <Route path="finance" element={<AdminFinancePage />} />
-          <Route path="reports" element={<AdminReportsPage />} />
           <Route path="subjects" element={<AdminSubjectsPage />} />
         </Route>
       </Route>

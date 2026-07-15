@@ -7,6 +7,8 @@ const ClassStudent = require('../models/ClassStudent');
 const Schedule = require('../models/Schedule');
 const ParentStudent = require('../models/ParentStudent');
 const ParentProfile = require('../models/ParentProfile');
+const Invoice = require('../models/Invoice');
+const Receipt = require('../models/Receipt');
 
 // Helper to map DB user to FE user format
 const mapUserToFE = async (user) => {
@@ -148,62 +150,127 @@ const getDashboard = async (req, res) => {
     const cancelledSchedules = await Schedule.countDocuments({ status: 'cancelled' });
 
     // 4. Real Finance Stats
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-    const startDate = new Date(currentYear, currentMonth, 1);
+    const totalInvoices = await Invoice.countDocuments();
+    const paidInvoices = await Invoice.countDocuments({ status: 'PAID' });
+    const unpaidInvoices = await Invoice.countDocuments({ status: { $in: ['UNPAID', 'PARTIAL', 'OVERDUE'] } });
     
-    // Require Invoice here if not at top level
-    const Invoice = require('../models/Invoice');
-    
-    const invoices = await Invoice.find();
-    const totalInvoices = invoices.length;
-    const paidInvoices = invoices.filter(i => i.status === 'PAID').length;
-    const unpaidInvoices = totalInvoices - paidInvoices;
-
-    const monthlyInvoices = await Invoice.find({
-      createdAt: { $gte: startDate },
-      status: 'PAID'
-    });
-    
-    const monthlyRevenue = monthlyInvoices.reduce((sum, inv) => sum + (inv.totalAmount || 0), 0);
-
-    const finance = {
-      totalInvoices,
-      monthlyRevenue,
-      paidInvoices,
-      unpaidInvoices
-    };
+    // Calculate total revenue from PAID and PARTIAL invoices
+    const allInvoices = await Invoice.find({ status: { $in: ['PAID', 'PARTIAL'] } });
+    let totalRevenue = 0;
+    for (const inv of allInvoices) {
+      if (inv.status === 'PAID') {
+        totalRevenue += (inv.amount || 0);
+      } else {
+        // Find receipts for partial invoices
+        const receipts = await Receipt.find({ invoiceId: inv._id });
+        const paidAmount = receipts.reduce((sum, r) => sum + r.amountPaid, 0);
+        totalRevenue += paidAmount;
+      }
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Get dashboard statistics successfully",
       data: {
-        users: {
-          totalUsers,
-          teachers,
-          students,
-          parents,
-          managers,
-          activeUsers,
-          inactiveUsers,
-          activeStudents,
-          inactiveStudents,
-          activeTeachers,
-          inactiveTeachers
-        },
-        classes: {
-          totalClasses,
-          activeClasses,
-          upcomingClasses,
-          finishedClasses,
-          cancelledClasses
-        },
-        schedules: {
-          totalSchedules,
-          activeSchedules,
-          cancelledSchedules
-        },
-        finance
+        users: { total: totalUsers, teachers, students, parents, managers, active: activeUsers, inactive: inactiveUsers, detailed: { activeStudents, inactiveStudents, activeTeachers, inactiveTeachers } },
+        classes: { total: totalClasses, active: activeClasses, upcoming: upcomingClasses, finished: finishedClasses, cancelled: cancelledClasses },
+        schedules: { total: totalSchedules, active: activeSchedules, cancelled: cancelledSchedules },
+        finance: { totalInvoices, paidInvoices, unpaidInvoices, totalRevenue }
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ============================================================
+// @desc    Lấy dữ liệu Analytics chi tiết cho Admin
+// @route   GET /api/admin/analytics
+// @access  Private (Admin)
+// ============================================================
+const getAnalytics = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    // Filter by date if provided
+    let dateFilter = {};
+    if (startDate && endDate) {
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate)
+        }
+      };
+    }
+
+    // 1. Revenue over time (Monthly)
+    // To keep it simple, we group PAID invoices by month
+    const paidInvoices = await Invoice.find({ status: 'PAID', ...dateFilter });
+    const revenueByMonth = {};
+    
+    paidInvoices.forEach(inv => {
+      // Group by YYYY-MM
+      const date = inv.paidAt || inv.updatedAt || inv.createdAt;
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!revenueByMonth[monthKey]) {
+        revenueByMonth[monthKey] = 0;
+      }
+      revenueByMonth[monthKey] += inv.amount || 0;
+    });
+
+    const revenueChartData = Object.keys(revenueByMonth).sort().map(month => ({
+      month,
+      revenue: revenueByMonth[month]
+    }));
+
+    // 2. Class Distribution by Subject
+    const classes = await Class.find({ ...dateFilter }).populate('subjectId');
+    const classBySubject = {};
+    classes.forEach(c => {
+      const subjectName = c.subjectId ? c.subjectId.name : 'Unknown';
+      if (!classBySubject[subjectName]) classBySubject[subjectName] = 0;
+      classBySubject[subjectName]++;
+    });
+    
+    const subjectChartData = Object.keys(classBySubject).map(subject => ({
+      name: subject,
+      value: classBySubject[subject]
+    }));
+
+    // 3. User distribution
+    const students = await User.countDocuments({ role: 'student', ...dateFilter });
+    const teachers = await User.countDocuments({ role: 'teacher', ...dateFilter });
+    const parents = await User.countDocuments({ role: 'parent', ...dateFilter });
+
+    const roleDistribution = [
+      { name: 'Học viên', value: students },
+      { name: 'Giáo viên', value: teachers },
+      { name: 'Phụ huynh', value: parents },
+    ];
+
+    // 4. Recent transactions (Invoices)
+    const recentTransactions = await Invoice.find(dateFilter)
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('studentId', 'name email');
+
+    // 5. Total Metrics
+    const totalRevenue = revenueChartData.reduce((sum, item) => sum + item.revenue, 0);
+    const unpaidInvoices = await Invoice.find({ status: { $in: ['UNPAID', 'PARTIAL', 'OVERDUE'] }, ...dateFilter });
+    const totalUnpaid = unpaidInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        revenueChart: revenueChartData,
+        subjectDistribution: subjectChartData,
+        roleDistribution,
+        recentTransactions,
+        metrics: {
+          totalRevenue,
+          totalUnpaid,
+          newStudents: students,
+          newClasses: classes.length
+        }
       }
     });
   } catch (error) {
@@ -849,6 +916,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getDashboard,
+  getAnalytics,
   getUsers,
   getUserDetail,
   createUser,
