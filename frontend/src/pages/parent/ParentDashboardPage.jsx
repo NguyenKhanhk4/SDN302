@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { parentApi } from '../../api/parentApi';
 import Card from '../../components/common/Card';
 import Loading from '../../components/common/Loading';
+import { toast } from 'react-hot-toast';
 import { 
   User, 
   BookOpen, 
@@ -35,6 +36,12 @@ const ParentDashboardPage = () => {
   
   // Tab control
   const [activeTab, setActiveTab] = useState('classes');
+
+  // Add child link states
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [childEmail, setChildEmail] = useState('');
+  const [relationship, setRelationship] = useState('other');
+  const [submitting, setSubmitting] = useState(false);
 
   const fetchChildren = async () => {
     try {
@@ -111,6 +118,29 @@ const ParentDashboardPage = () => {
     fetchClassmates(c.id || c.classId);
   };
 
+  const handleLinkSubmit = async (e) => {
+    e.preventDefault();
+    if (!childEmail) return;
+    try {
+      setSubmitting(true);
+      const res = await parentApi.linkChild({ email: childEmail, relationship });
+      if (res.success) {
+        toast.success(res.message || 'Liên kết con em thành công!');
+        setIsLinkModalOpen(false);
+        setChildEmail('');
+        setRelationship('other');
+        await fetchChildren();
+      } else {
+        toast.error(res.message || 'Không thể liên kết con em.');
+      }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || err.message || 'Có lỗi xảy ra khi liên kết con em.';
+      toast.error(errMsg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
@@ -183,14 +213,29 @@ const ParentDashboardPage = () => {
           <GraduationCap className="h-16 w-16 mx-auto stroke-1 text-gray-400 mb-4 animate-bounce" />
           <h2 className="text-xl font-bold">Chưa liên kết học sinh</h2>
           <p className="text-sm text-gray-400 mt-2 max-w-md mx-auto">
-            Hồ sơ phụ huynh của quý vị hiện tại chưa được liên kết với bất kỳ học sinh nào tại trung tâm. Vui lòng liên hệ với quản lý để được bổ sung.
+            Hồ sơ phụ huynh của quý vị hiện tại chưa được liên kết với bất kỳ học sinh nào tại trung tâm.
           </p>
+          <button
+            onClick={() => setIsLinkModalOpen(true)}
+            className="mt-6 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all hover:-translate-y-0.5"
+          >
+            Liên kết con em ngay
+          </button>
         </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left panel: list of children */}
           <div className="space-y-4 lg:col-span-1">
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider pl-1">Danh sách con em</h3>
+            <div className="flex justify-between items-center pl-1">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Danh sách con em</h3>
+              <button
+                onClick={() => setIsLinkModalOpen(true)}
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+                title="Liên kết thêm con"
+              >
+                + Thêm con
+              </button>
+            </div>
             <div className="space-y-2">
               {children.map((child) => {
                 const childUser = child.userId || {};
@@ -534,6 +579,76 @@ const ParentDashboardPage = () => {
                 )}
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Liên kết con em */}
+      {isLinkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm animate-fade-in p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all scale-100">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-slate-800">Liên kết tài khoản con em</h3>
+              <button
+                onClick={() => {
+                  setIsLinkModalOpen(false);
+                  setChildEmail('');
+                  setRelationship('other');
+                }}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1"
+              >
+                Đóng
+              </button>
+            </div>
+            
+            <form onSubmit={handleLinkSubmit} className="p-6 space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase">Email của học sinh</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="vi_du@gmail.com"
+                  value={childEmail}
+                  onChange={(e) => setChildEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-800"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase">Mối quan hệ</label>
+                <select
+                  value={relationship}
+                  onChange={(e) => setRelationship(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-800 bg-white"
+                >
+                  <option value="father">Cha</option>
+                  <option value="mother">Mẹ</option>
+                  <option value="guardian">Người giám hộ</option>
+                  <option value="other">Khác</option>
+                </select>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLinkModalOpen(false);
+                    setChildEmail('');
+                    setRelationship('other');
+                  }}
+                  className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-xl text-sm transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold rounded-xl text-sm transition-colors shadow-md shadow-indigo-500/10 flex items-center justify-center gap-2"
+                >
+                  {submitting ? 'Đang liên kết...' : 'Xác nhận'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

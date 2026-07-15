@@ -4,9 +4,10 @@ const ClassStudent = require('../models/ClassStudent');
 const Schedule = require('../models/Schedule');
 const Grade = require('../models/Grade');
 const Class = require('../models/Class');
+const User = require('../models/User');
+const ParentStudent = require('../models/ParentStudent');
 
 // Phải require các model liên quan để Mongoose đăng ký schema trước khi query
-require('../models/User');
 require('../models/TeacherProfile');
 require('../models/Subject');
 
@@ -430,6 +431,96 @@ const getParentProfile = async (req, res) => {
   }
 };
 
+// ============================================================
+// @desc    Liên kết một học sinh (con) bằng email
+// @route   POST /api/parent/children/link
+// @access  Private (Parent)
+// ============================================================
+const linkChild = async (req, res) => {
+  try {
+    const { email, relationship } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp email của học sinh',
+      });
+    }
+
+    // 1. Tìm tài khoản học sinh bằng email và vai trò 'student'
+    const studentUser = await User.findOne({ email: email.toLowerCase().trim(), role: 'student' });
+    if (!studentUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy tài khoản học sinh với email này',
+      });
+    }
+
+    // 2. Tìm StudentProfile tương ứng
+    const studentProfile = await StudentProfile.findOne({ userId: studentUser._id });
+    if (!studentProfile) {
+      return res.status(404).json({
+        success: false,
+        message: 'Học sinh này chưa có hồ sơ học sinh (StudentProfile) đầy đủ',
+      });
+    }
+
+    // 3. Tìm hồ sơ Phụ huynh hiện tại
+    const parentProfile = await ParentProfile.findOne({ userId: req.user._id });
+    if (!parentProfile) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy thông tin hồ sơ Phụ huynh của bạn',
+      });
+    }
+
+    // 4. Kiểm tra xem con đã được liên kết chưa (trong ParentProfile.children)
+    const isAlreadyLinked = parentProfile.children.some(
+      (id) => id.toString() === studentUser._id.toString()
+    );
+
+    if (isAlreadyLinked) {
+      return res.status(400).json({
+        success: false,
+        message: 'Học sinh này đã có trong danh sách liên kết của bạn',
+      });
+    }
+
+    // 5. Thêm con vào danh sách children của ParentProfile
+    parentProfile.children.push(studentUser._id);
+    await parentProfile.save();
+
+    // 6. Cập nhật hoặc tạo mới bản ghi liên kết ParentStudent
+    const existingLink = await ParentStudent.findOne({
+      parentId: parentProfile._id,
+      studentId: studentProfile._id,
+    });
+
+    if (existingLink) {
+      if (existingLink.status !== 'active') {
+        existingLink.status = 'active';
+        existingLink.relationship = relationship || existingLink.relationship;
+        await existingLink.save();
+      }
+    } else {
+      await ParentStudent.create({
+        parentId: parentProfile._id,
+        studentId: studentProfile._id,
+        relationship: relationship || 'other',
+        status: 'active',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Liên kết học sinh thành công',
+      data: studentProfile,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getChildren,
   getChildSchedules,
@@ -438,6 +529,7 @@ module.exports = {
   getChildClasses,
   getStudentsInClassForParent,
   getParentProfile,
+  linkChild,
 };
 
 
