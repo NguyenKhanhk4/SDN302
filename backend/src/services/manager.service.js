@@ -64,6 +64,30 @@ const createParentUserAndProfile = async (data) => {
   return profile;
 };
 
+const createTeacherUserAndProfile = async (data) => {
+  const { fullName, email, phone, experienceYears, specialization } = data;
+  
+  const user = new User({
+    name: fullName,
+    email,
+    phone,
+    role: 'teacher',
+    password: 'password123',
+    isActive: true
+  });
+  await user.save();
+
+  const profile = new TeacherProfile({
+    userId: user._id,
+    experienceYears: experienceYears || 0,
+    specialization: specialization || [],
+    status: 'active'
+  });
+  await profile.save();
+
+  return profile;
+};
+
 const checkTeacherExists = async (teacherId) => {
   const teacher = await TeacherProfile.findById(teacherId);
   if (!teacher) throw new Error('Teacher not found');
@@ -141,6 +165,7 @@ module.exports = {
   buildSearchFilter,
   createStudentUserAndProfile,
   createParentUserAndProfile,
+  createTeacherUserAndProfile,
   checkTeacherExists,
   checkStudentExists,
   checkClassExists,

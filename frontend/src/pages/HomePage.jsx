@@ -33,7 +33,7 @@ const HomePage = () => {
     if (user && localStorage.getItem('token')) {
       const roleDashboards = {
         admin: '/admin/dashboard',
-        manager: '/manager/dashboard',
+        manager: '/manager/students',
         teacher: '/teacher/schedules',
         student: '/student/dashboard',
         parent: '/parent/dashboard',
@@ -80,7 +80,7 @@ const HomePage = () => {
 
             <div className="hidden sm:flex items-center space-x-4">
               <button onClick={handleLoginClick} className="px-5 py-2.5 rounded-xl border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-50 transition-colors">
-                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập'}
+                Đăng Nhập
               </button>
               <button onClick={() => setShowRegisterForm(true)} className="px-5 py-2.5 rounded-xl bg-amber-500 text-slate-900 font-bold hover:bg-amber-400 hover:scale-105 transition-all shadow-lg shadow-amber-500/30">
                 Đăng Ký Ngay
@@ -531,7 +531,7 @@ const HomePage = () => {
               </ul>
 
               <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-blue-500 text-blue-400 font-bold hover:bg-blue-500 hover:text-white transition-colors">
-                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Phụ Huynh'}
+                Đăng Nhập Cho Phụ Huynh
               </button>
             </div>
 
@@ -552,7 +552,7 @@ const HomePage = () => {
               </ul>
 
               <button onClick={handleLoginClick} className="inline-block px-6 py-3 rounded-xl border border-amber-500 text-amber-400 font-bold hover:bg-amber-500 hover:text-slate-900 transition-colors">
-                {isLoggedIn ? 'Vào Trang Quản Lý' : 'Đăng Nhập Cho Học Viên'}
+                Đăng Nhập Cho Học Viên
               </button>
             </div>
           </div>

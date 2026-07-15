@@ -22,8 +22,8 @@ const ProtectedRoute = ({ requiredRole, children }) => {
     // Redirect về dashboard đúng role của user
     const roleDashboards = {
       admin: '/admin/dashboard',
-      manager: '/manager/dashboard',
-      teacher: '/teacher/dashboard',
+      manager: '/manager/students',
+      teacher: '/teacher/schedules',
       student: '/student/dashboard',
       parent: '/parent/dashboard',
     };

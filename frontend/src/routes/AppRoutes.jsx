@@ -29,26 +29,31 @@ import AdminFinancePage from '../pages/admin/AdminFinancePage';
 import AdminReportsPage from '../pages/admin/AdminReportsPage';
 import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 
-import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
 import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
-import ManagerParentsPage from '../pages/manager/ManagerParentsPage';
+import ManagerStudentDetailPage from '../pages/manager/ManagerStudentDetailPage';
+import ManagerCreateStudentPage from '../pages/manager/ManagerCreateStudentPage';
+import ManagerEditStudentPage from '../pages/manager/ManagerEditStudentPage';
 
 import ManagerTeachersPage from '../pages/manager/ManagerTeachersPage';
+import ManagerTeacherDetailPage from '../pages/manager/ManagerTeacherDetailPage';
 import ManagerCreateTeacherPage from '../pages/manager/ManagerCreateTeacherPage';
 import ManagerEditTeacherPage from '../pages/manager/ManagerEditTeacherPage';
 
 import ManagerSubjectsPage from '../pages/manager/ManagerSubjectsPage';
+import ManagerSubjectDetailPage from '../pages/manager/ManagerSubjectDetailPage';
+import ManagerCreateSubjectPage from '../pages/manager/ManagerCreateSubjectPage';
 import ManagerEditSubjectPage from '../pages/manager/ManagerEditSubjectPage';
 
 import ManagerClassesPage from '../pages/manager/ManagerClassesPage';
+import ManagerClassDetailPage from '../pages/manager/ManagerClassDetailPage';
+import ManagerClassStudentsPage from '../pages/manager/ManagerClassStudentsPage';
+import ManagerCreateClassPage from '../pages/manager/ManagerCreateClassPage';
 import ManagerEditClassPage from '../pages/manager/ManagerEditClassPage';
 
 import ManagerSchedulesPage from '../pages/manager/ManagerSchedulesPage';
+import ManagerScheduleDetailPage from '../pages/manager/ManagerScheduleDetailPage';
+import ManagerCreateSchedulePage from '../pages/manager/ManagerCreateSchedulePage';
 import ManagerEditSchedulePage from '../pages/manager/ManagerEditSchedulePage';
-
-import ManagerInvoicesPage from '../pages/manager/ManagerInvoicesPage';
-import ManagerCreateInvoicePage from '../pages/manager/ManagerCreateInvoicePage';
-import ManagerEditInvoicePage from '../pages/manager/ManagerEditInvoicePage';
 
 import TeacherSubjectsPage from '../pages/teacher/TeacherSubjectsPage';
 import TeacherClassesPage from '../pages/teacher/TeacherClassesPage';
@@ -85,7 +90,7 @@ const RootRedirect = () => {
 
   const roleDashboards = {
     admin: '/admin/dashboard',
-    manager: '/manager/dashboard',
+    manager: '/manager/students',
     teacher: '/teacher/schedules',
     student: '/student/dashboard',
     parent: '/parent/dashboard',
@@ -135,28 +140,34 @@ const AppRoutes = () => {
       {/* Manager routes — Protected */}
       <Route element={<ProtectedRoute requiredRole="manager" />}>
         <Route path="/manager" element={<ManagerLayout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<ManagerDashboardPage />} />
+          <Route index element={<Navigate to="students" replace />} />
 
           <Route path="students" element={<ManagerStudentsPage />} />
-          <Route path="parents" element={<ManagerParentsPage />} />
+          <Route path="students/create" element={<ManagerCreateStudentPage />} />
+          <Route path="students/:studentId" element={<ManagerStudentDetailPage />} />
+          <Route path="students/edit/:studentId" element={<ManagerEditStudentPage />} />
 
           <Route path="teachers" element={<ManagerTeachersPage />} />
           <Route path="teachers/create" element={<ManagerCreateTeacherPage />} />
+          <Route path="teachers/:teacherId" element={<ManagerTeacherDetailPage />} />
           <Route path="teachers/edit/:teacherId" element={<ManagerEditTeacherPage />} />
 
           <Route path="subjects" element={<ManagerSubjectsPage />} />
+          <Route path="subjects/create" element={<ManagerCreateSubjectPage />} />
+          <Route path="subjects/:subjectId" element={<ManagerSubjectDetailPage />} />
           <Route path="subjects/edit/:subjectId" element={<ManagerEditSubjectPage />} />
 
           <Route path="classes" element={<ManagerClassesPage />} />
+          <Route path="classes/create" element={<ManagerCreateClassPage />} />
+          <Route path="classes/:classId" element={<ManagerClassDetailPage />} />
+          <Route path="classes/:classId/students" element={<ManagerClassStudentsPage />} />
           <Route path="classes/edit/:classId" element={<ManagerEditClassPage />} />
 
           <Route path="schedules" element={<ManagerSchedulesPage />} />
+          <Route path="schedules/create" element={<ManagerCreateSchedulePage />} />
+          <Route path="schedules/:scheduleId" element={<ManagerScheduleDetailPage />} />
           <Route path="schedules/edit/:scheduleId" element={<ManagerEditSchedulePage />} />
 
-          <Route path="invoices" element={<ManagerInvoicesPage />} />
-          <Route path="invoices/create" element={<ManagerCreateInvoicePage />} />
-          <Route path="invoices/edit/:invoiceId" element={<ManagerEditInvoicePage />} />
         </Route>
       </Route>
 

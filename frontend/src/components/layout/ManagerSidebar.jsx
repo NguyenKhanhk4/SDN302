@@ -4,13 +4,11 @@ import { LayoutDashboard, Users, BookOpen, GraduationCap, Contact, BookText, Cal
 
 const ManagerSidebar = () => {
   const menuItems = [
-    { path: '/manager/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
     { path: '/manager/students', label: 'Học viên', icon: Users },
     { path: '/manager/teachers', label: 'Giáo viên', icon: GraduationCap },
     { path: '/manager/subjects', label: 'Môn học', icon: BookText },
     { path: '/manager/classes', label: 'Lớp học', icon: BookOpen },
     { path: '/manager/schedules', label: 'Lịch học', icon: Calendar },
-    { path: '/manager/invoices', label: 'Hóa đơn', icon: Receipt },
   ];
 
   return (
@@ -19,7 +17,7 @@ const ManagerSidebar = () => {
       <div className="absolute top-0 left-0 right-0 h-40 bg-blue-600/10 blur-[50px] pointer-events-none"></div>
 
       {/* Logo Header */}
-      <div onClick={() => window.location.href = '/manager/dashboard'} className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10 cursor-pointer">
+      <div onClick={() => window.location.href = '/manager/students'} className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/80 relative z-10 cursor-pointer">
         <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
           <GraduationCap className="h-4 w-4" />
         </div>
@@ -65,7 +63,7 @@ const ManagerSidebar = () => {
             Mẹo nhỏ
           </h4>
           <p className="text-[11px] text-slate-300 leading-relaxed">
-            Theo dõi doanh thu và hóa đơn chưa đóng mỗi đầu tuần để giữ dòng tiền ổn định.
+            Theo dõi tiến độ học tập và thông tin học viên thường xuyên.
           </p>
         </div>
         <div className="text-[10px] text-slate-500 text-center font-medium tracking-wide">

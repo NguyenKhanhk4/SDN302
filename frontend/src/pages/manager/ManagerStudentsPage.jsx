@@ -4,7 +4,7 @@ import { managerApi } from '../../api/managerApi';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { Eye, Edit, Trash2, Users, UserCheck, UserX, UserMinus, GraduationCap } from 'lucide-react';
+import { Eye, Edit, Trash2, Users, UserCheck, UserX, UserMinus, GraduationCap, X, Plus } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -37,10 +37,16 @@ const ManagerStudentsPage = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [summary, setSummary] = useState({ totalStudents: 0, activeStudents: 0, inactiveStudents: 0, reservedStudents: 0, finishedStudents: 0 });
 
+  // Bulk actions
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isClassModalOpen, setIsClassModalOpen] = useState(false);
+  const [classes, setClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      // Chức năng của Manager: gọi API thật, đọc data.students từ backend
       const res = await managerApi.getStudents({ search, status: statusFilter });
       if (res.success) {
         setStudents(res.data.students || []);
@@ -56,13 +62,67 @@ const ManagerStudentsPage = () => {
   };
 
   useEffect(() => {
-    fetchStudents();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]); // trigger when status changes. Search needs button click or debounce
+    const timer = setTimeout(() => {
+      fetchStudents();
+      setSelectedIds([]);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchStudents();
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedIds(students.map(s => s._id));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectOne = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const openClassModal = async () => {
+    if (selectedIds.length === 0) {
+      alert('Vui lòng chọn ít nhất 1 học viên');
+      return;
+    }
+    setIsClassModalOpen(true);
+    try {
+      const res = await managerApi.getClasses({ status: 'active' });
+      if (res.success) {
+        setClasses(res.data.classes || res.data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddToClass = async () => {
+    if (!selectedClassId) {
+      alert('Vui lòng chọn lớp học');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await managerApi.addStudentToClass(selectedClassId, { studentIds: selectedIds });
+      if (res.success) {
+        alert(res.message || 'Đã thêm học viên vào lớp thành công');
+        setIsClassModalOpen(false);
+        setSelectedIds([]);
+      } else {
+        alert(res.message || 'Thêm thất bại');
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || err.message || 'Lỗi hệ thống');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const total = summary.totalStudents;
@@ -77,6 +137,11 @@ const ManagerStudentsPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Quản lý Học viên</h1>
           <p className="text-sm text-slate-500 mt-1">Quản lý thông tin hồ sơ và kết quả học tập của học viên trung tâm.</p>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={openClassModal} disabled={selectedIds.length === 0}>
+            <Plus className="w-4 h-4 mr-2" /> Thêm vào Lớp ({selectedIds.length})
+          </Button>
         </div>
       </div>
       
@@ -107,7 +172,7 @@ const ManagerStudentsPage = () => {
           <div className="text-3xl font-bold text-blue-700 relative z-10">{loading ? '-' : finished}</div>
         </div>
       </div>
-          <div className="text-3xl font-bold text-blue-700 relative z-10">{loading ? '-' : finished}</div>
+      
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
           <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
@@ -133,12 +198,6 @@ const ManagerStudentsPage = () => {
                 <option value="finished">Đã học xong</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
-            >
-              Tìm kiếm
-            </button>
           </form>
         </div>
         {loading ? (
@@ -152,6 +211,14 @@ const ManagerStudentsPage = () => {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 w-10">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      checked={students.length > 0 && selectedIds.length === students.length}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Học viên</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">SĐT Phụ huynh</th>
@@ -164,6 +231,14 @@ const ManagerStudentsPage = () => {
               <tbody className="divide-y divide-slate-100">
                 {students.map((student) => (
                   <tr key={student._id} className="hover:bg-blue-50/30 transition-colors group">
+                    <td className="p-4">
+                      <input 
+                        type="checkbox"
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        checked={selectedIds.includes(student._id)}
+                        onChange={() => handleSelectOne(student._id)}
+                      />
+                    </td>
                     <td className="p-4 text-sm font-semibold text-slate-800">{student.userId?.name || 'N/A'}</td>
                     <td className="p-4 text-sm text-slate-600">{student.userId?.email || ''}</td>
                     <td className="p-4 text-sm text-slate-600">{student.parentPhone || ''}</td>
@@ -213,6 +288,46 @@ const ManagerStudentsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Class Selection Modal */}
+      {isClassModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-gray-900">Thêm vào Lớp học</h3>
+              <button 
+                onClick={() => setIsClassModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600">
+                Bạn đã chọn <strong>{selectedIds.length}</strong> học viên. Vui lòng chọn lớp học để thêm vào:
+              </p>
+              <div>
+                <select 
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={selectedClassId}
+                  onChange={e => setSelectedClassId(e.target.value)}
+                >
+                  <option value="">-- Chọn lớp học --</option>
+                  {classes.map(c => (
+                    <option key={c._id} value={c._id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-gray-50 flex justify-end gap-3 rounded-b-2xl">
+              <Button variant="outline" onClick={() => setIsClassModalOpen(false)}>Hủy</Button>
+              <Button variant="primary" onClick={handleAddToClass} disabled={submitting || !selectedClassId}>
+                {submitting ? 'Đang thêm...' : 'Xác nhận Thêm'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
 
   );

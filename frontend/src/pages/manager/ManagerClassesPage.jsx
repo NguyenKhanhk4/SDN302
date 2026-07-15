@@ -50,13 +50,14 @@ const ManagerClassesPage = () => {
   };
 
   useEffect(() => {
-    fetchClasses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    const timer = setTimeout(() => {
+      fetchClasses();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchClasses();
   };
 
   const handleDelete = async (id) => {
@@ -112,15 +113,9 @@ const ManagerClassesPage = () => {
                 <option value="UPCOMING">Sắp khai giảng</option>
                 <option value="ACTIVE">Đang học</option>
                 <option value="FINISHED">Đã hoàn thành</option>
-                <option value="CANCELLED">Đã hủy</option>
+                <option value="cancelled">Đã hủy</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
-            >
-              Tìm kiếm
-            </button>
           </form>
         </div>
 

@@ -19,18 +19,17 @@ const Badge = ({ status }) => {
   );
 };
 const getDayName = (dayOfWeek) => {
-  if (!dayOfWeek) return 'Không xác định';
-  const formatted = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase();
+  if (dayOfWeek === undefined || dayOfWeek === null) return 'Không xác định';
   const days = {
-    'Monday': 'Thứ Hai',
-    'Tuesday': 'Thứ Ba',
-    'Wednesday': 'Thứ Tư',
-    'Thursday': 'Thứ Năm',
-    'Friday': 'Thứ Sáu',
-    'Saturday': 'Thứ Bảy',
-    'Sunday': 'Chủ Nhật'
+    '0': 'Chủ Nhật',
+    '1': 'Thứ Hai',
+    '2': 'Thứ Ba',
+    '3': 'Thứ Tư',
+    '4': 'Thứ Năm',
+    '5': 'Thứ Sáu',
+    '6': 'Thứ Bảy'
   };
-  return days[formatted] || 'Không xác định';
+  return days[dayOfWeek.toString()] || 'Không xác định';
 };
 
 const ManagerSchedulesPage = () => {
@@ -66,7 +65,6 @@ const ManagerSchedulesPage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchSchedules();
   };
 
   const handleDelete = async (id) => {
@@ -85,9 +83,11 @@ const ManagerSchedulesPage = () => {
   };
 
   useEffect(() => {
-    fetchSchedules();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    const timer = setTimeout(() => {
+      fetchSchedules();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   return (
     <div className="space-y-6">
@@ -128,12 +128,6 @@ const ManagerSchedulesPage = () => {
                 <option value="CANCELLED">Đã hủy</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
-            >
-              Tìm kiếm
-            </button>
           </form>
         </div>
 

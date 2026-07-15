@@ -14,6 +14,7 @@ const {
   buildSearchFilter,
   createStudentUserAndProfile,
   createParentUserAndProfile,
+  createTeacherUserAndProfile,
   checkTeacherExists,
   checkStudentExists,
   checkClassExists,
@@ -582,6 +583,35 @@ const getManagerTeachers = async (req, res) => {
 };
 
 /**
+ * @desc    Tạo giáo viên mới
+ * @route   POST /api/manager/teachers
+ * @access  Private (MANAGER)
+ */
+const createManagerTeacher = async (req, res) => {
+  try {
+    const { fullName, email } = req.body;
+
+    if (!fullName || !fullName.trim()) {
+      return res.status(400).json({ success: false, message: 'Full Name is required' });
+    }
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const result = await createTeacherUserAndProfile(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Teacher created successfully',
+      data: result,
+    });
+  } catch (error) {
+    const statusCode = error.message.includes('đã tồn tại') ? 409 : 500;
+    return res.status(statusCode).json({ success: false, message: error.message });
+  }
+};
+
+/**
  * @desc    Lấy chi tiết giáo viên
  * @route   GET /api/manager/teachers/:teacherId
  * @access  Private (MANAGER)
@@ -905,14 +935,20 @@ const getManagerClassStudents = async (req, res) => {
 const addManagerStudentToClass = async (req, res) => {
   try {
     const { classId } = req.params;
-    const { studentId } = req.body;
+    const { studentId, studentIds } = req.body;
 
-    if (!studentId) {
-      return res.status(400).json({ success: false, message: 'studentId is required' });
+    let targetIds = [];
+    if (studentIds && Array.isArray(studentIds)) {
+      targetIds = studentIds;
+    } else if (studentId) {
+      targetIds = [studentId];
+    }
+
+    if (targetIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'studentId or studentIds array is required' });
     }
 
     const classInfo = await checkClassExists(classId);
-    await checkStudentExists(studentId);
 
     // Không thêm nếu lớp đã kết thúc hoặc hủy
     if (['completed', 'cancelled'].includes(classInfo.status)) {
@@ -924,35 +960,33 @@ const addManagerStudentToClass = async (req, res) => {
 
     // Check maxStudents
     const currentCount = await ClassStudent.countDocuments({ classId, status: 'enrolled' });
-    if (currentCount >= classInfo.maxStudents) {
-      return res.status(400).json({ success: false, message: 'Class is full' });
+    if (currentCount + targetIds.length > classInfo.maxStudents) {
+      return res.status(400).json({ success: false, message: 'Class does not have enough capacity' });
     }
 
-    // Check trùng
-    const existing = await ClassStudent.findOne({ classId, studentId });
-    if (existing) {
-      if (existing.status === 'enrolled') {
-        return res.status(409).json({ success: false, message: 'Student already enrolled in this class' });
+    let addedCount = 0;
+    for (const sId of targetIds) {
+      await checkStudentExists(sId);
+      const existing = await ClassStudent.findOne({ classId, studentId: sId });
+      if (existing) {
+        if (existing.status !== 'enrolled') {
+          existing.status = 'enrolled';
+          await existing.save();
+          addedCount++;
+        }
+      } else {
+        await ClassStudent.create({
+          classId,
+          studentId: sId,
+          status: 'enrolled',
+        });
+        addedCount++;
       }
-      existing.status = 'enrolled';
-      await existing.save();
-      return res.status(200).json({
-        success: true,
-        message: 'Student re-enrolled successfully',
-        data: existing,
-      });
     }
-
-    const classStudent = await ClassStudent.create({
-      classId,
-      studentId,
-      status: 'enrolled',
-    });
 
     return res.status(201).json({
       success: true,
-      message: 'Student added to class successfully',
-      data: classStudent,
+      message: `Successfully added ${addedCount} student(s) to class`,
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -1562,6 +1596,7 @@ module.exports = {
   getManagerParentStudents,
   linkManagerParentStudent,
   getManagerTeachers,
+  createManagerTeacher,
   getManagerTeacherDetail,
   getManagerSubjects,
   createManagerSubject,

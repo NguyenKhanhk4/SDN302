@@ -6,18 +6,13 @@ const { protect } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/role.middleware');
 
 const {
-  getManagerDashboard,
   getManagerStudents,
   getManagerStudentDetail,
   createManagerStudent,
   updateManagerStudent,
   deleteManagerStudent,
-  getManagerParents,
-  getManagerParentDetail,
-  createManagerParent,
-  getManagerParentStudents,
-  linkManagerParentStudent,
   getManagerTeachers,
+  createManagerTeacher,
   getManagerTeacherDetail,
   updateManagerTeacher,
   deleteManagerTeacher,
@@ -38,19 +33,11 @@ const {
   getManagerScheduleDetail,
   updateManagerSchedule,
   deleteManagerSchedule,
-  getManagerInvoices,
-  createManagerInvoice,
-  getManagerInvoiceDetail,
-  updateManagerInvoice,
-  deleteManagerInvoice,
-  markManagerInvoicePaid,
 } = require('../controllers/manager.controller');
 
 // Tất cả routes đều yêu cầu JWT + role MANAGER
 router.use(protect, authorize('manager'));
 
-// Dashboard
-router.get('/dashboard', getManagerDashboard);
 
 // Students
 router.get('/students', getManagerStudents);
@@ -59,15 +46,9 @@ router.post('/students', createManagerStudent);
 router.put('/students/:studentId', updateManagerStudent);
 router.delete('/students/:studentId', deleteManagerStudent);
 
-// Parents
-router.get('/parents', getManagerParents);
-router.get('/parents/:parentId', getManagerParentDetail);
-router.post('/parents', createManagerParent);
-router.get('/parents/:parentId/students', getManagerParentStudents);
-router.post('/parents/:parentId/students', linkManagerParentStudent);
-
 // Teachers
 router.get('/teachers', getManagerTeachers);
+router.post('/teachers', createManagerTeacher);
 router.get('/teachers/:teacherId', getManagerTeacherDetail);
 router.put('/teachers/:teacherId', updateManagerTeacher);
 router.delete('/teachers/:teacherId', deleteManagerTeacher);
@@ -94,13 +75,4 @@ router.get('/schedules/:scheduleId', getManagerScheduleDetail);
 router.post('/schedules', createManagerSchedule);
 router.put('/schedules/:scheduleId', updateManagerSchedule);
 router.delete('/schedules/:scheduleId', deleteManagerSchedule);
-
-// Invoices
-router.get('/invoices', getManagerInvoices);
-router.get('/invoices/:invoiceId', getManagerInvoiceDetail);
-router.post('/invoices', createManagerInvoice);
-router.put('/invoices/:invoiceId', updateManagerInvoice);
-router.delete('/invoices/:invoiceId', deleteManagerInvoice);
-router.patch('/invoices/:invoiceId/pay', markManagerInvoicePaid);
-
 module.exports = router;

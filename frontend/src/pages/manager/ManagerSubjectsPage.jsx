@@ -49,13 +49,14 @@ const ManagerSubjectsPage = () => {
   };
 
   useEffect(() => {
-    fetchSubjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    const timer = setTimeout(() => {
+      fetchSubjects();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchSubjects();
   };
 
   const handleDelete = async (id) => {
@@ -109,15 +110,9 @@ const ManagerSubjectsPage = () => {
               >
                 <option value="ALL">Tất cả trạng thái</option>
                 <option value="ACTIVE">Hoạt động</option>
-                <option value="INACTIVE">Không hoạt động</option>
+                <option value="INACTIVE">Ngừng giảng dạy</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
-            >
-              Tìm kiếm
-            </button>
           </form>
         </div>
 

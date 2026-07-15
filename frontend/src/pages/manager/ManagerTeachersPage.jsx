@@ -54,13 +54,14 @@ const ManagerTeachersPage = () => {
   };
 
   useEffect(() => {
-    fetchTeachers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    const timer = setTimeout(() => {
+      fetchTeachers();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, statusFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchTeachers();
   };
 
   const handleDelete = async (id) => {
@@ -114,15 +115,9 @@ const ManagerTeachersPage = () => {
               >
                 <option value="ALL">Tất cả trạng thái</option>
                 <option value="ACTIVE">Hoạt động</option>
-                <option value="INACTIVE">Không hoạt động</option>
+                <option value="INACTIVE">Nghỉ việc</option>
               </select>
             </div>
-            <button 
-              type="submit" 
-              className="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium rounded-xl transition-colors shadow-sm"
-            >
-              Tìm kiếm
-            </button>
           </form>
         </div>
 

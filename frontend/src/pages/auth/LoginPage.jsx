@@ -18,7 +18,7 @@ const LoginPage = ({ onSwitchToRegister }) => {
   if (existingUser && localStorage.getItem('token')) {
     const roleDashboards = {
       admin: '/admin/dashboard',
-      manager: '/manager/dashboard',
+      manager: '/manager/students',
       teacher: '/teacher/schedules',
       student: '/student/dashboard',
       parent: '/parent/dashboard',
@@ -76,7 +76,7 @@ const LoginPage = ({ onSwitchToRegister }) => {
       // Chuyển hướng tới Dashboard thích hợp theo role
       const roleDashboards = {
         admin: '/admin/dashboard',
-        manager: '/manager/dashboard',
+        manager: '/manager/students',
         teacher: '/teacher/schedules',
         student: '/student/dashboard',
         parent: '/parent/dashboard',

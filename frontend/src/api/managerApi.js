@@ -3,8 +3,6 @@
 import axiosClient from './axiosClient';
 
 export const managerApi = {
-  // Dashboard
-  getDashboard: () => axiosClient.get('/manager/dashboard'),
 
   // Students
   getStudents: (params = {}) => axiosClient.get('/manager/students', { params }),
@@ -12,13 +10,6 @@ export const managerApi = {
   createStudent: (data) => axiosClient.post('/manager/students', data),
   updateStudent: (studentId, data) => axiosClient.put(`/manager/students/${studentId}`, data),
   deleteStudent: (studentId) => axiosClient.delete(`/manager/students/${studentId}`),
-
-  // Parents
-  getParents: (params = {}) => axiosClient.get('/manager/parents', { params }),
-  getParentDetail: (parentId) => axiosClient.get(`/manager/parents/${parentId}`),
-  createParent: (data) => axiosClient.post('/manager/parents', data),
-  getParentStudents: (parentId) => axiosClient.get(`/manager/parents/${parentId}/students`),
-  linkParentStudent: (parentId, data) => axiosClient.post(`/manager/parents/${parentId}/students`, data),
 
   // Teachers
   getTeachers: (params = {}) => axiosClient.get('/manager/teachers', { params }),
@@ -49,12 +40,4 @@ export const managerApi = {
   createSchedule: (data) => axiosClient.post('/manager/schedules', data),
   updateSchedule: (scheduleId, data) => axiosClient.put(`/manager/schedules/${scheduleId}`, data),
   deleteSchedule: (scheduleId) => axiosClient.delete(`/manager/schedules/${scheduleId}`),
-  
-  // Invoices
-  getInvoices: (params = {}) => axiosClient.get('/manager/invoices', { params }),
-  getInvoiceDetail: (invoiceId) => axiosClient.get(`/manager/invoices/${invoiceId}`),
-  createInvoice: (data) => axiosClient.post('/manager/invoices', data),
-  updateInvoice: (invoiceId, data) => axiosClient.put(`/manager/invoices/${invoiceId}`, data),
-  deleteInvoice: (invoiceId) => axiosClient.delete(`/manager/invoices/${invoiceId}`),
-  markInvoicePaid: (invoiceId, data) => axiosClient.patch(`/manager/invoices/${invoiceId}/pay`, data),
 };

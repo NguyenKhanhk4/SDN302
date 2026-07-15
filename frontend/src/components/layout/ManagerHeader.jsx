@@ -46,7 +46,7 @@ const ManagerHeader = () => {
             <input
               type="text"
               className="w-full pl-10 pr-4 py-2 border border-slate-200/60 rounded-full bg-slate-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all placeholder:text-slate-400 shadow-inner"
-              placeholder="Tìm học viên, lớp học, hóa đơn..."
+              placeholder="Tìm kiếm"
             />
           </div>
         </div>
@@ -60,7 +60,7 @@ const ManagerHeader = () => {
           </button>
 
           {/* User Profile */}
-          <div 
+          <div
             onClick={() => setShowUserInfo(true)}
             className="flex items-center gap-3 pl-3 border-l border-slate-200/60 cursor-pointer hover:opacity-80 transition-opacity"
           >
@@ -74,7 +74,7 @@ const ManagerHeader = () => {
           </div>
 
           {/* Logout Button */}
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50/80 border border-rose-100 hover:bg-rose-500 hover:border-rose-500 hover:text-white text-rose-600 rounded-xl text-xs font-bold transition-all duration-200 shadow-sm"
           >
@@ -90,7 +90,7 @@ const ManagerHeader = () => {
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowUserInfo(false)} />
           <div className="bg-white rounded-3xl shadow-2xl relative z-10 w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="h-24 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
-              <button 
+              <button
                 onClick={() => setShowUserInfo(false)}
                 className="absolute top-4 right-4 h-8 w-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white backdrop-blur-md transition-colors"
               >
@@ -109,7 +109,7 @@ const ManagerHeader = () => {
                   <BadgeCheck className="h-5 w-5 text-blue-500" />
                 </h3>
                 <p className="text-sm font-bold text-blue-600 uppercase tracking-wider mb-6">{roleDisplay}</p>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                     <div className="h-8 w-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
