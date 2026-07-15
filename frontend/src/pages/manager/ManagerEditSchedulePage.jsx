@@ -172,8 +172,8 @@ const ManagerEditSchedulePage = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Input label="Giờ bắt đầu (24h)" name="startTime" type="text" placeholder="08:30" value={formData.startTime} onChange={handleChange} error={errors.startTime} />
-            <Input label="Giờ kết thúc (24h)" name="endTime" type="text" placeholder="10:00" value={formData.endTime} onChange={handleChange} error={errors.endTime} />
+            <Input label="Giờ bắt đầu" name="startTime" type="time" placeholder="" value={formData.startTime} onChange={handleChange} error={errors.startTime} />
+            <Input label="Giờ kết thúc" name="endTime" type="time" placeholder="" value={formData.endTime} onChange={handleChange} error={errors.endTime} />
           </div>
 
           <div className="space-y-1">

@@ -180,20 +180,20 @@ const ManagerCreateSchedulePage = () => {
             />
 
             <Input 
-              label="Giờ bắt đầu (HH:MM)" 
+              label="Giờ bắt đầu" 
               name="startTime" 
-              type="text" 
-              placeholder="VD: 08:30" 
+              type="time" 
+              placeholder="" 
               value={formData.startTime} 
               onChange={handleChange} 
               error={errors.startTime} 
             />
 
             <Input 
-              label="Giờ kết thúc (HH:MM)" 
+              label="Giờ kết thúc" 
               name="endTime" 
-              type="text" 
-              placeholder="VD: 10:00" 
+              type="time" 
+              placeholder="" 
               value={formData.endTime} 
               onChange={handleChange} 
               error={errors.endTime} 
