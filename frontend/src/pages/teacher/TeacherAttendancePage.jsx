@@ -7,7 +7,6 @@ import EmptyState from '../../components/common/EmptyState';
 import { ArrowLeft, CheckSquare, Save, UserCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { downloadFile, getFileUrl } from '../../utils/fileUtils';
 
-// Toast nổi góc phải màn hình
 const SuccessToast = ({ message, onDone }) => {
   useEffect(() => {
     const t = setTimeout(onDone, 3000);
@@ -37,14 +36,12 @@ const TeacherAttendancePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-  const [toast, setToast] = useState(null); // { message: string }
+  const [toast, setToast] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   
-  // Thông tin lớp & buổi học để hiển thị Header
   const [classInfo, setClassInfo] = useState(null);
   const [sessionInfo, setSessionInfo] = useState(null);
 
-  // Materials state
   const [materialFiles, setMaterialFiles] = useState([]);
   const [uploadingMaterials, setUploadingMaterials] = useState(false);
   const materialInputRef = React.useRef(null);
@@ -59,7 +56,6 @@ const TeacherAttendancePage = () => {
       setError(null);
       setSuccessMessage('');
 
-      // Fetch students, existing attendance, class info, and sessions in parallel
       const [studentsData, attendanceData, classRes, sessionsRes] = await Promise.all([
         teacherApi.getStudentsInClass(classId),
         teacherApi.getAttendanceBySession(classId, sessionId).catch(err => {
@@ -81,7 +77,6 @@ const TeacherAttendancePage = () => {
         if (currentSession) setSessionInfo(currentSession);
       }
 
-      // Normalize students array
       let studentList = [];
       if (Array.isArray(studentsData)) studentList = studentsData;
       else if (studentsData?.students) studentList = studentsData.students;
@@ -89,16 +84,13 @@ const TeacherAttendancePage = () => {
 
       setStudents(studentList);
 
-      // Normalize attendance array
       let existingAttList = [];
       if (Array.isArray(attendanceData)) existingAttList = attendanceData;
       else if (attendanceData?.attendances) existingAttList = attendanceData.attendances;
       else if (attendanceData?.data) existingAttList = attendanceData.data;
 
-      // Build dictionary of existing attendance for quick lookup
       const attMap = {};
       existingAttList.forEach(att => {
-        // Handle different structures of studentId from backend
         const sId = att.studentId?._id || att.studentId || att.student;
         if (sId) {
           attMap[sId] = {
@@ -108,14 +100,13 @@ const TeacherAttendancePage = () => {
         }
       });
 
-      // Initialize form state using student list as the source of truth
       const initialForm = {};
       studentList.forEach(item => {
         const sId = item?.studentId?._id || item?.studentId || item?._id || item?.id;
         if (sId) {
           const existing = attMap[sId];
           initialForm[sId] = {
-            status: existing ? existing.status : null, // Mặc định là null (chưa chọn)
+            status: existing ? existing.status : null,
             note: existing ? existing.note : ''
           };
         }
@@ -142,7 +133,7 @@ const TeacherAttendancePage = () => {
   const handleStatusChange = (studentId, status) => {
     setAttendanceForm(prev => {
       const currentStatus = prev[studentId]?.status;
-      const newStatus = currentStatus === status ? null : status; // Click 2 lần sẽ hủy chọn (null)
+      const newStatus = currentStatus === status ? null : status;
       return {
         ...prev,
         [studentId]: { ...prev[studentId], status: newStatus }
@@ -166,7 +157,6 @@ const TeacherAttendancePage = () => {
       setSuccessMessage('');
       setToast(null);
 
-      // Build array of attendance objects for the API
       const attendances = Object.keys(attendanceForm).map(sId => ({
         studentId: sId,
         status: attendanceForm[sId].status,
@@ -179,7 +169,6 @@ const TeacherAttendancePage = () => {
       setToast({ message: `Đã lưu điểm danh: ${presentCount}/${attendances.length} học sinh có mặt` });
       setSuccessMessage('Lưu thông tin điểm danh thành công!');
       
-      // Reload data then navigate back after a short delay
       await fetchData();
       setTimeout(() => {
         navigate(`/teacher/classes/${classId}/sessions`);
@@ -207,7 +196,7 @@ const TeacherAttendancePage = () => {
         setToast({ message: 'Đã tải lên tài liệu buổi học' });
         setMaterialFiles([]);
         if (materialInputRef.current) materialInputRef.current.value = '';
-        fetchData(); // Reload session info
+        fetchData();
       }
     } catch (err) {
       setError('Lỗi khi tải lên tài liệu: ' + (err.response?.data?.message || err.message));
@@ -245,7 +234,6 @@ const TeacherAttendancePage = () => {
 
   return (
     <div>
-      {/* Toast thông báo nổi */}
       {toast && (
         <SuccessToast
           message={toast.message}
@@ -253,7 +241,6 @@ const TeacherAttendancePage = () => {
         />
       )}
       <div className="flex flex-col gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
-        {/* Breadcrumb nhỏ và nút quay lại */}
         <div className="flex items-center justify-between">
           <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
             <span className="cursor-pointer hover:text-blue-500 transition-colors" onClick={() => navigate('/teacher/classes')}>Lớp học</span>
@@ -274,7 +261,6 @@ const TeacherAttendancePage = () => {
           </button>
         </div>
 
-        {/* Tiêu đề chính */}
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             Điểm danh <span className="text-slate-300">|</span> 
@@ -292,7 +278,6 @@ const TeacherAttendancePage = () => {
         </div>
       </div>
 
-      {/* Materials Section */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
         <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
           <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
@@ -330,7 +315,6 @@ const TeacherAttendancePage = () => {
           <p className="text-sm text-slate-500 italic mb-4">Chưa có tài liệu nào cho buổi học này.</p>
         )}
 
-        {/* Upload Form */}
         <form onSubmit={handleUploadMaterials} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
           <input 
             type="file" 
@@ -385,6 +369,7 @@ const TeacherAttendancePage = () => {
               <table className="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
                   <tr className="border-b border-slate-200 bg-white">
+                    <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider w-16">STT</th>
                     <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Học viên</th>
                     <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Email</th>
                     <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
@@ -400,6 +385,7 @@ const TeacherAttendancePage = () => {
 
                     return (
                       <tr key={info.id || index} className="hover:bg-blue-50/30 transition-colors group">
+                        <td className="p-4 text-sm text-slate-600">{index + 1}</td>
                         <td className="p-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shadow-inner">

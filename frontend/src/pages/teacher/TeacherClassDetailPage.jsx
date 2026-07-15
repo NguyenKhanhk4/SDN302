@@ -24,7 +24,6 @@ const TeacherClassDetailPage = () => {
       setError(null);
       const data = await teacherApi.getClassDetail(classId);
 
-      // Data might be wrapped depending on backend convention
       const detail = data?.class || data?.data || data;
       setClassDetail(detail);
     } catch (err) {
@@ -103,7 +102,7 @@ const TeacherClassDetailPage = () => {
             </div>
             <div>
               <p className="text-sm text-gray-500 font-medium mb-1">Học viên</p>
-              <p className="text-base text-gray-900">{classDetail.maxStudents || classDetail.capacity || 'Không có'}</p>
+              <p className="text-base text-gray-900">{classDetail.currentStudents ?? 0}</p>
             </div>
           </div>
 

@@ -7,13 +7,12 @@ import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
 import { ArrowLeft, LayoutList, CheckSquare, CalendarDays, X, Users, BookOpen, Clock, MapPin, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
-// Modal hiện thông tin chi tiết buổi học
 const SessionDetailModal = ({ session, onClose, onAttendance }) => {
   if (!session) return null;
 
   const { attendanceSummary = {}, topic, sessionDate, room, startTime, endTime, status, attendanceStatus } = session;
   const { total = 0, recorded = 0, present = 0, absent = 0 } = attendanceSummary;
-  const notRecorded = recorded === 0; // Chưa có bản ghi điểm danh nào
+  const notRecorded = recorded === 0;
 
   const formatTime = (dateStr) => {
     if (!dateStr) return '--:--';
@@ -38,7 +37,6 @@ const SessionDetailModal = ({ session, onClose, onAttendance }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white rounded-3xl shadow-2xl relative z-10 w-full max-w-lg overflow-hidden">
-        {/* Header gradient */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-5 flex items-center justify-between">
           <div>
             <p className="text-blue-200 text-xs font-medium uppercase tracking-wider mb-1">Chi tiết buổi học</p>
@@ -50,7 +48,6 @@ const SessionDetailModal = ({ session, onClose, onAttendance }) => {
         </div>
 
         <div className="p-6 space-y-5">
-          {/* Info grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
               <div className="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
@@ -95,7 +92,6 @@ const SessionDetailModal = ({ session, onClose, onAttendance }) => {
             </div>
           </div>
 
-          {/* Attendance summary */}
           <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-4">
               <Users className="h-4 w-4 text-slate-500" />
@@ -138,7 +134,6 @@ const SessionDetailModal = ({ session, onClose, onAttendance }) => {
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3">
             <button onClick={onClose} className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition-colors">
               Đóng
@@ -176,17 +171,14 @@ const TeacherSessionsPage = () => {
       setLoading(true);
       setError(null);
       
-      // Fetch cả thông tin lớp và danh sách buổi học song song
       const [classRes, sessionsRes] = await Promise.all([
         teacherApi.getClassDetail(classId),
         teacherApi.getSessionsByClass(classId),
       ]);
 
-      // Xử lý thông tin lớp
       const cls = classRes?.data || classRes;
       setClassInfo(cls);
 
-      // Xử lý danh sách buổi học
       let sessionList = [];
       if (Array.isArray(sessionsRes)) sessionList = sessionsRes;
       else if (sessionsRes && Array.isArray(sessionsRes.sessions)) sessionList = sessionsRes.sessions;
@@ -212,7 +204,6 @@ const TeacherSessionsPage = () => {
     <div>
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
         <div>
-          {/* Breadcrumb nhỏ */}
           <p className="text-xs text-slate-400 font-medium mb-1 flex items-center gap-1.5">
             <span className="cursor-pointer hover:text-blue-500 transition-colors" onClick={() => navigate('/teacher/classes')}>Lớp học của tôi</span>
             <span>›</span>
@@ -260,7 +251,6 @@ const TeacherSessionsPage = () => {
         </div>
       </div>
 
-      {/* Sessions List Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
           <CalendarDays className="text-slate-400" size={20} />
@@ -282,6 +272,7 @@ const TeacherSessionsPage = () => {
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-slate-200 bg-white">
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-center w-16">STT</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Ngày học</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Chủ đề</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -310,6 +301,9 @@ const TeacherSessionsPage = () => {
                       className="hover:bg-blue-50/30 transition-colors group cursor-pointer"
                       onClick={() => setSelectedSession(item)}
                     >
+                      <td className="p-4 text-sm font-bold text-slate-500 text-center">
+                        {index + 1}
+                      </td>
                       <td className="p-4 text-sm font-semibold text-slate-800">
                         {formatDate(item.sessionDate || item.date)}
                       </td>
@@ -361,7 +355,6 @@ const TeacherSessionsPage = () => {
         )}
       </div>
 
-      {/* Session Detail Modal */}
       {selectedSession && (
         <SessionDetailModal
           session={selectedSession}

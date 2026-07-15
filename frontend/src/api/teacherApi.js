@@ -49,7 +49,6 @@ export const teacherApi = {
     return axiosClient.delete(`/teacher/classes/${classId}/sessions/${sessionId}/file`, { data: { fileUrl } });
   },
 
-  // Subjects Management
   getMySubjects: (params) => {
     return axiosClient.get('/teacher/subjects', { params });
   },

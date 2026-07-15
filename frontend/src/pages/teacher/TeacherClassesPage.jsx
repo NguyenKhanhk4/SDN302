@@ -23,7 +23,6 @@ const TeacherClassesPage = () => {
       setError(null);
       const data = await teacherApi.getMyClasses();
       
-      // Handle array or object wrapper
       let classList = [];
       if (Array.isArray(data)) classList = data;
       else if (data && Array.isArray(data.classes)) classList = data.classes;
@@ -92,7 +91,7 @@ const TeacherClassesPage = () => {
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Tên lớp học</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Môn học</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Phòng học</th>
-                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số học viên tối đa</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Số học viên</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Hành động</th>
                 </tr>
@@ -105,7 +104,7 @@ const TeacherClassesPage = () => {
                       <td className="p-4 text-sm font-semibold text-slate-800">{cls.name || cls.className || 'Không xác định'}</td>
                       <td className="p-4 text-sm text-slate-600">{getSubjectName(cls)}</td>
                       <td className="p-4 text-sm text-slate-600">{cls.room || 'Không có'}</td>
-                      <td className="p-4 text-sm text-slate-600">{cls.maxStudents || cls.capacity || 'Không có'}</td>
+                      <td className="p-4 text-sm text-slate-600">{cls.currentStudents ?? 0}</td>
                       <td className="p-4 text-sm">
                         <Badge status={cls.status || 'ACTIVE'} />
                       </td>

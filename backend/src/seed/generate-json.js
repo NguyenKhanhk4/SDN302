@@ -96,6 +96,7 @@ for (let i = 0; i < 5; i++) {
     teacherId: i < 3 ? tProf1Id : tProf2Id,
     room: `Room ${i + 1}`,
     maxStudents: 20,
+    totalSessions: 30,
     startDate: new Date('2024-01-01').toISOString(),
     endDate: new Date('2024-12-31').toISOString(),
     status: 'ongoing'

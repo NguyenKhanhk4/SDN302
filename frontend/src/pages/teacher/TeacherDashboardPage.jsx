@@ -49,13 +49,11 @@ const TeacherDashboardPage = () => {
     );
   }
 
-  // Fallbacks for data to ensure 0 is displayed instead of blank
   const data = dashboardData || {};
   const totalClasses = data.totalClasses || 0;
   const totalSchedules = data.totalSchedules || 0;
   const totalStudents = data.totalStudents || 0;
   
-  // Optional extra stats if backend provides them
   const totalSessions = data.totalSessions;
   const totalAttendance = data.totalAttendance;
 

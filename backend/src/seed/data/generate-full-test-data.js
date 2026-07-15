@@ -206,11 +206,11 @@ data.subjects.push(
 // ============ CLASSES ============
 
 data.classes.push(
-  { key: "class_toan_10a", name: "Lớp Toán 10A", subjectKey: "subject_math_10", teacherProfileKey: "teacher_profile_main", room: "Phòng B201", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
-  { key: "class_ly_11a", name: "Lớp Lý 11A", subjectKey: "subject_physics_11", teacherProfileKey: "teacher_profile_main", room: "Phòng B202", maxStudents: 20, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-15" },
-  { key: "class_anh_9a", name: "Lớp Anh 9A", subjectKey: "subject_english_9", teacherProfileKey: "teacher_profile_second", room: "Phòng B203", maxStudents: 20, status: "UPCOMING", startDate: "2026-10-01", endDate: "2026-12-30" },
-  { key: "class_hoa_12a", name: "Lớp Hóa 12A", subjectKey: "subject_chemistry_12", teacherProfileKey: "teacher_profile_second", room: "Phòng B204", maxStudents: 20, status: "FINISHED", startDate: "2025-09-01", endDate: "2025-12-30" },
-  { key: "class_toan_9a", name: "Lớp Toán 9A", subjectKey: "subject_math_9", teacherProfileKey: "teacher_profile_main", room: "Phòng B205", maxStudents: 20, status: "CANCELLED", startDate: "2026-06-15", endDate: "2026-09-15" }
+  { key: "class_toan_10a", name: "Lớp Toán 10A", subjectKey: "subject_math_10", teacherProfileKey: "teacher_profile_main", room: "Phòng B201", maxStudents: 20, totalSessions: 30, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-23" },
+  { key: "class_ly_11a", name: "Lớp Lý 11A", subjectKey: "subject_physics_11", teacherProfileKey: "teacher_profile_main", room: "Phòng B202", maxStudents: 20, totalSessions: 30, status: "ACTIVE", startDate: "2026-06-15", endDate: "2026-09-24" },
+  { key: "class_anh_9a", name: "Lớp Anh 9A", subjectKey: "subject_english_9", teacherProfileKey: "teacher_profile_second", room: "Phòng B203", maxStudents: 20, totalSessions: 30, status: "UPCOMING", startDate: "2026-10-01", endDate: "2027-01-11" },
+  { key: "class_hoa_12a", name: "Lớp Hóa 12A", subjectKey: "subject_chemistry_12", teacherProfileKey: "teacher_profile_second", room: "Phòng B204", maxStudents: 20, totalSessions: 30, status: "FINISHED", startDate: "2025-09-01", endDate: "2025-12-11" },
+  { key: "class_toan_9a", name: "Lớp Toán 9A", subjectKey: "subject_math_9", teacherProfileKey: "teacher_profile_main", room: "Phòng B205", maxStudents: 20, totalSessions: 30, status: "CANCELLED", startDate: "2026-06-15", endDate: "2026-09-27" }
 );
 
 // ============ CLASS STUDENTS ============
@@ -303,12 +303,19 @@ scheduleEntries.forEach((e, idx) => {
 
 // ============ SESSIONS ============
 
-// Let's generate 15 sessions for the first 3 schedules to have more data
+// Seed five valid sessions for the first three classes; the runtime generator
+// fills each class to the standard 30 sessions when the schedule is requested.
+const seededSessionDates = {
+  class_toan_10a: ['2026-06-15', '2026-06-22', '2026-06-29', '2026-07-06', '2026-07-13'],
+  class_ly_11a: ['2026-06-16', '2026-06-23', '2026-06-30', '2026-07-07', '2026-07-14'],
+  class_anh_9a: ['2026-10-05', '2026-10-12', '2026-10-19', '2026-10-26', '2026-11-02']
+};
+
 for (let i = 1; i <= 5; i++) {
   data.sessions.push(
-    { key: `session_${pad(i * 3 - 2)}`, classKey: "class_toan_10a", scheduleKey: "schedule_001", sessionDate: `2026-06-${pad(10+i)}`, topic: `Toán Đại Số phần ${i}`, status: "COMPLETED" },
-    { key: `session_${pad(i * 3 - 1)}`, classKey: "class_ly_11a",   scheduleKey: "schedule_003", sessionDate: `2026-06-${pad(11+i)}`, topic: `Động Lực Học phần ${i}`, status: i <= 3 ? "COMPLETED" : "SCHEDULED" },
-    { key: `session_${pad(i * 3)}`, classKey: "class_anh_9a",   scheduleKey: "schedule_005", sessionDate: `2026-06-${pad(12+i)}`, topic: `Reading Practice ${i}`, status: i <= 2 ? "COMPLETED" : "SCHEDULED" }
+    { key: `session_${pad(i * 3 - 2)}`, classKey: "class_toan_10a", scheduleKey: "schedule_001", sessionDate: seededSessionDates.class_toan_10a[i - 1], topic: `Toán Đại Số phần ${i}`, status: "COMPLETED" },
+    { key: `session_${pad(i * 3 - 1)}`, classKey: "class_ly_11a",   scheduleKey: "schedule_003", sessionDate: seededSessionDates.class_ly_11a[i - 1], topic: `Động Lực Học phần ${i}`, status: i <= 3 ? "COMPLETED" : "SCHEDULED" },
+    { key: `session_${pad(i * 3)}`, classKey: "class_anh_9a",   scheduleKey: "schedule_005", sessionDate: seededSessionDates.class_anh_9a[i - 1], topic: `Reading Practice ${i}`, status: i <= 2 ? "COMPLETED" : "SCHEDULED" }
   );
 }
 
