@@ -22,6 +22,7 @@ import StudentSchedulesPage from '../pages/student/StudentSchedulesPage';
 import StudentSessionsPage from '../pages/student/StudentSessionsPage';
 import StudentInvoicesPage from '../pages/student/StudentInvoicesPage';
 import StudentSupportPage from '../pages/student/StudentSupportPage';
+import StudentGradesPage from '../pages/student/StudentGradesPage';
 
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import AdminUsersPage from '../pages/admin/AdminUsersPage';
@@ -116,6 +117,7 @@ const AppRoutes = () => {
         <Route path="sessions" element={<StudentSessionsPage />} />
         <Route path="invoices" element={<StudentInvoicesPage />} />
         <Route path="support" element={<StudentSupportPage />} />
+        <Route path="grades" element={<StudentGradesPage />} />
       </Route>
 
       {/* Admin Routes */}

@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getStudentDashboard, getMyClasses, getStudentSessions, getStudentInvoices, getSupportRequests, createSupportRequest } = require('../controllers/student.controller');
+const { 
+  getStudentDashboard, 
+  getMyClasses, 
+  getStudentSessions, 
+  getStudentInvoices, 
+  getSupportRequests, 
+  createSupportRequest,
+  getStudentGrades
+} = require('../controllers/student.controller');
 const { protect } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/role.middleware');
 
@@ -22,5 +30,8 @@ router.get('/invoices', getStudentInvoices);
 // GET & POST /api/student/support
 router.get('/support', getSupportRequests);
 router.post('/support', createSupportRequest);
+
+// GET /api/student/grades
+router.get('/grades', getStudentGrades);
 
 module.exports = router;

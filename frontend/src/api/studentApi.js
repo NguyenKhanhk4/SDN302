@@ -19,4 +19,7 @@ export const studentApi = {
   createSupportRequest: (data) => {
     return axiosClient.post('/student/support', data);
   },
+  getGrades: () => {
+    return axiosClient.get('/student/grades');
+  },
 };

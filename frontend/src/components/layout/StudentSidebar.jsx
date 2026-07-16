@@ -16,6 +16,7 @@ const StudentSidebar = () => {
     { name: 'Lớp học của tôi', path: '/student/classes' },
     { name: 'Lịch học của tôi', path: '/student/schedules' },
     { name: 'Danh sách buổi học', path: '/student/sessions' },
+    { name: 'Xem điểm số', path: '/student/grades' },
     { name: 'Học phí của tôi', path: '/student/invoices' },
     { name: 'Yêu cầu & Hỗ trợ', path: '/student/support' },
     { name: 'Hồ sơ cá nhân', path: '/student/profile' },

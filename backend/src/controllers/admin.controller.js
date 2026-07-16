@@ -8,7 +8,7 @@ const Schedule = require('../models/Schedule');
 const ParentStudent = require('../models/ParentStudent');
 const ParentProfile = require('../models/ParentProfile');
 
-// Helper to map DB user to FE user format
+
 const mapUserToFE = async (user) => {
   let phone = user.phone || '';
   if (user.role === 'teacher') {
