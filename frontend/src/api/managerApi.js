@@ -4,6 +4,9 @@ import axiosClient from './axiosClient';
 
 export const managerApi = {
 
+  // Dashboard
+  getDashboard: () => axiosClient.get('/manager/dashboard'),
+
   // Students
   getStudents: (params = {}) => axiosClient.get('/manager/students', { params }),
   getStudentDetail: (studentId) => axiosClient.get(`/manager/students/${studentId}`),

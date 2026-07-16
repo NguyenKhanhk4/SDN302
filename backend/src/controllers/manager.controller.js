@@ -55,6 +55,11 @@ const getManagerDashboard = async (req, res) => {
     const activeSchedules = await Schedule.countDocuments({ status: 'active' });
     const cancelledSchedules = await Schedule.countDocuments({ status: 'cancelled' });
 
+    // Subject stats
+    const totalSubjects = await Subject.countDocuments();
+    const activeSubjects = await Subject.countDocuments({ status: 'active' });
+    const inactiveSubjects = await Subject.countDocuments({ status: 'inactive' });
+
     // Finance stats
     const financeStats = await calculateInvoiceSummary();
 
@@ -82,6 +87,11 @@ const getManagerDashboard = async (req, res) => {
           total: totalSchedules,
           active: activeSchedules,
           cancelled: cancelledSchedules,
+        },
+        subjects: {
+          total: totalSubjects,
+          active: activeSubjects,
+          inactive: inactiveSubjects,
         },
         finance: financeStats,
       },

@@ -4,6 +4,7 @@ import { LayoutDashboard, Users, BookOpen, GraduationCap, Contact, BookText, Cal
 
 const ManagerSidebar = () => {
   const menuItems = [
+    { path: '/manager/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
     { path: '/manager/students', label: 'Học viên', icon: Users },
     { path: '/manager/teachers', label: 'Giáo viên', icon: GraduationCap },
     { path: '/manager/subjects', label: 'Môn học', icon: BookText },

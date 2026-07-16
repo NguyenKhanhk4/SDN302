@@ -6,6 +6,7 @@ const { protect } = require('../middlewares/auth.middleware');
 const { authorize } = require('../middlewares/role.middleware');
 
 const {
+  getManagerDashboard,
   getManagerStudents,
   getManagerStudentDetail,
   createManagerStudent,
@@ -38,6 +39,9 @@ const {
 // Tất cả routes đều yêu cầu JWT + role MANAGER
 router.use(protect, authorize('manager'));
 
+
+// Dashboard
+router.get('/dashboard', getManagerDashboard);
 
 // Students
 router.get('/students', getManagerStudents);

@@ -29,6 +29,7 @@ import AdminFinancePage from '../pages/admin/AdminFinancePage';
 import AdminReportsPage from '../pages/admin/AdminReportsPage';
 import AdminSubjectsPage from '../pages/admin/AdminSubjectsPage';
 
+import ManagerDashboardPage from '../pages/manager/ManagerDashboardPage';
 import ManagerStudentsPage from '../pages/manager/ManagerStudentsPage';
 import ManagerStudentDetailPage from '../pages/manager/ManagerStudentDetailPage';
 import ManagerCreateStudentPage from '../pages/manager/ManagerCreateStudentPage';
@@ -90,7 +91,7 @@ const RootRedirect = () => {
 
   const roleDashboards = {
     admin: '/admin/dashboard',
-    manager: '/manager/students',
+    manager: '/manager/dashboard',
     teacher: '/teacher/schedules',
     student: '/student/dashboard',
     parent: '/parent/dashboard',
@@ -140,7 +141,8 @@ const AppRoutes = () => {
       {/* Manager routes — Protected */}
       <Route element={<ProtectedRoute requiredRole="manager" />}>
         <Route path="/manager" element={<ManagerLayout />}>
-          <Route index element={<Navigate to="students" replace />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<ManagerDashboardPage />} />
 
           <Route path="students" element={<ManagerStudentsPage />} />
           <Route path="students/create" element={<ManagerCreateStudentPage />} />
