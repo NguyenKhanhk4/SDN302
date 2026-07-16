@@ -161,13 +161,13 @@ const ManagerEditSchedulePage = () => {
           <div className="space-y-1">
             <label className="block text-sm font-medium text-slate-700">Thứ trong tuần</label>
             <select name="dayOfWeek" value={formData.dayOfWeek} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer">
-              <option value="Monday">Thứ Hai</option>
-              <option value="Tuesday">Thứ Ba</option>
-              <option value="Wednesday">Thứ Tư</option>
-              <option value="Thursday">Thứ Năm</option>
-              <option value="Friday">Thứ Sáu</option>
-              <option value="Saturday">Thứ Bảy</option>
-              <option value="Sunday">Chủ Nhật</option>
+              <option value="1">Thứ Hai</option>
+              <option value="2">Thứ Ba</option>
+              <option value="3">Thứ Tư</option>
+              <option value="4">Thứ Năm</option>
+              <option value="5">Thứ Sáu</option>
+              <option value="6">Thứ Bảy</option>
+              <option value="0">Chủ Nhật</option>
             </select>
           </div>
 

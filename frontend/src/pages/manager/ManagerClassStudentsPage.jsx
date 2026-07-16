@@ -51,7 +51,7 @@ const ManagerClassStudentsPage = () => {
     setSelectedStudentIds([]);
     setSearchQuery('');
     try {
-      const res = await managerApi.getStudents({ status: 'active' });
+      const res = await managerApi.getStudents({ limit: 1000 });
       if (res.success) {
         setAllStudents(res.data.students || []);
       }
@@ -143,9 +143,11 @@ const ManagerClassStudentsPage = () => {
             </p>
           </div>
         </div>
-        <Button variant="primary" onClick={openAddModal}>
-          <Plus className="w-4 h-4 mr-2" /> Thêm Học viên
-        </Button>
+        {classroom.status !== 'cancelled' && classroom.status !== 'completed' && (
+          <Button variant="primary" onClick={openAddModal}>
+            <Plus className="w-4 h-4 mr-2" /> Thêm Học viên
+          </Button>
+        )}
       </div>
 
       {/* Students Table Card */}
@@ -171,11 +173,11 @@ const ManagerClassStudentsPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {students.map((student) => (
                   <tr key={student._id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{student.studentName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student.phone || 'Chưa cập nhật'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{student?.userId?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student?.userId?.email || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{student?.parentPhone || 'Chưa cập nhật'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Badge status={student.status === 'enrolled' ? 'ACTIVE' : student.status} />
+                      <Badge status={student?.status || 'active'} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                        <Button 

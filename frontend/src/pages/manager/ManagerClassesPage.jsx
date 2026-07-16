@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { managerApi } from '../../api/managerApi';
-import { Eye, Users, PlusCircle, Pencil, Trash2 } from 'lucide-react';
+import { Eye, Users, PlusCircle, Pencil, Ban } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -61,17 +61,17 @@ const ManagerClassesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa lớp học này không?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn hủy/dừng hoạt động lớp học này không?')) return;
     try {
-      const res = await managerApi.deleteClass(id);
+      const res = await managerApi.updateClass(id, { status: 'cancelled' });
       if (res.success) {
-        alert('Xóa lớp học thành công');
+        alert('Hủy lớp học thành công');
         fetchClasses();
       } else {
-        alert(res.message || 'Xóa thất bại');
+        alert(res.message || 'Hủy thất bại');
       }
     } catch (err) {
-      alert('Đã xảy ra lỗi khi xóa');
+      alert('Đã xảy ra lỗi khi hủy lớp');
     }
   };
 
@@ -147,7 +147,7 @@ const ManagerClassesPage = () => {
                     <td className="p-4 text-sm text-slate-600">{cls.room || 'N/A'}</td>
                     <td className="p-4 text-sm text-slate-600">{cls.startDate ? new Date(cls.startDate).toLocaleDateString('vi-VN') : 'N/A'}</td>
                     <td className="p-4 text-sm text-slate-600">
-                      <span className="font-medium text-slate-800">{cls.enrolledCount || 0}</span>
+                      <span className="font-medium text-slate-800">{cls.currentStudents || 0}</span>
                       <span className="text-slate-400">/{cls.maxStudents}</span>
                     </td>
                     <td className="p-4 text-sm"><Badge status={cls.status} /></td>
@@ -166,20 +166,24 @@ const ManagerClassesPage = () => {
                       >
                         <Users size={16} />
                       </button>
-                      <button 
-                        onClick={() => navigate(`/manager/classes/edit/${cls._id}`)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                        title="Sửa"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(cls._id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                        title="Xóa"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {cls.status !== 'cancelled' && cls.status !== 'CANCELLED' && (
+                        <>
+                          <button 
+                            onClick={() => navigate(`/manager/classes/edit/${cls._id}`)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                            title="Sửa"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(cls._id)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                            title="Hủy lớp"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

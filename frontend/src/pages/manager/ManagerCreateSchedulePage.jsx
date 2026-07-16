@@ -12,7 +12,7 @@ const ManagerCreateSchedulePage = () => {
   const [formData, setFormData] = useState({
     classId: '',
     teacherId: '',
-    dayOfWeek: 'Monday',
+    dayOfWeek: '1',
     startTime: '',
     endTime: '',
     room: '',
@@ -53,6 +53,20 @@ const ManagerCreateSchedulePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    if (name === 'classId') {
+      const selectedClass = classes.find(c => c._id === value);
+      if (selectedClass) {
+        setFormData(prev => ({ 
+          ...prev, 
+          classId: value,
+          teacherId: selectedClass.teacherId?._id || selectedClass.teacherId || '',
+          room: selectedClass.room || ''
+        }));
+        return;
+      }
+    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -160,13 +174,13 @@ const ManagerCreateSchedulePage = () => {
                 onChange={handleChange} 
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
               >
-                <option value="Monday">Thứ Hai</option>
-                <option value="Tuesday">Thứ Ba</option>
-                <option value="Wednesday">Thứ Tư</option>
-                <option value="Thursday">Thứ Năm</option>
-                <option value="Friday">Thứ Sáu</option>
-                <option value="Saturday">Thứ Bảy</option>
-                <option value="Sunday">Chủ Nhật</option>
+                <option value="1">Thứ Hai</option>
+                <option value="2">Thứ Ba</option>
+                <option value="3">Thứ Tư</option>
+                <option value="4">Thứ Năm</option>
+                <option value="5">Thứ Sáu</option>
+                <option value="6">Thứ Bảy</option>
+                <option value="0">Chủ Nhật</option>
               </select>
             </div>
 

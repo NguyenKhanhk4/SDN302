@@ -479,7 +479,7 @@ const AdminSubjectsPage = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-1">Học phí mặc định (VNĐ) <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-bold text-slate-700 mb-1">Học phí (VNĐ) <span className="text-red-500">*</span></label>
                     <input 
                       type="text" 
                       name="displayTuition"

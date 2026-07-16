@@ -117,10 +117,32 @@ const ManagerEditSubjectPage = () => {
             ></textarea>
           </div>
 
-          <Input label="Khối lớp" name="gradeLevel" value={formData.gradeLevel} onChange={handleChange} error={errors.gradeLevel} />
+          <div className="flex flex-col">
+            <label htmlFor="gradeLevel" className="mb-1 text-sm font-medium text-gray-700">Khối lớp <span className="text-red-500">*</span></label>
+            <select
+              id="gradeLevel"
+              name="gradeLevel"
+              value={formData.gradeLevel}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-gray-50/50 text-gray-700 ${
+                errors.gradeLevel ? 'border-red-500 focus:ring-red-500' : 'border-gray-200'
+              }`}
+            >
+              <option value="" disabled>-- Chọn khối lớp --</option>
+              <option value="Tất cả khối lớp">Tất cả khối lớp</option>
+              <option value="Khối 10">Khối 10</option>
+              <option value="Khối 11">Khối 11</option>
+              <option value="Khối 12">Khối 12</option>
+              <option value="Luyện thi Đại học">Luyện thi Đại học</option>
+              <option value="IELTS">IELTS</option>
+              <option value="Khác">Khác</option>
+            </select>
+            {errors.gradeLevel && <p className="mt-1 text-xs text-red-500">{errors.gradeLevel}</p>}
+          </div>
           
           <Input 
-            label="Học phí mặc định (VND)" 
+            label="Học phí (VND)" 
             name="defaultTuitionFee" 
             type="number" 
             value={formData.defaultTuitionFee} 

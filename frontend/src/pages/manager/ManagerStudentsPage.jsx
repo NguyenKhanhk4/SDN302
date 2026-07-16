@@ -4,7 +4,7 @@ import { managerApi } from '../../api/managerApi';
 import Card from '../../components/common/Card';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import { Eye, Edit, Trash2, Users, UserCheck, UserX, UserMinus, GraduationCap, X, Plus } from 'lucide-react';
+import { Eye, Edit, Ban, Users, UserCheck, UserX, UserMinus, GraduationCap, X, Plus } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -94,9 +94,11 @@ const ManagerStudentsPage = () => {
     }
     setIsClassModalOpen(true);
     try {
-      const res = await managerApi.getClasses({ status: 'active' });
+      const res = await managerApi.getClasses({ limit: 1000 });
       if (res.success) {
-        setClasses(res.data.classes || res.data || []);
+        const allClasses = res.data.classes || res.data || [];
+        const activeClasses = allClasses.filter(c => c.status !== 'cancelled' && c.status !== 'completed');
+        setClasses(activeClasses);
       }
     } catch (err) {
       console.error(err);
@@ -253,33 +255,37 @@ const ManagerStudentsPage = () => {
                       >
                         <Eye size={16} />
                       </button>
-                      <button
-                        onClick={() => navigate(`/manager/students/edit/${student._id}`)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                        title="Chỉnh sửa"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (window.confirm('Bạn có chắc chắn muốn xóa học viên này? Thao tác không thể phục hồi!')) {
-                            try {
-                              const res = await managerApi.deleteStudent(student._id);
-                              if (res.success) {
-                                fetchStudents();
-                              } else {
-                                alert(res.message || 'Xóa thất bại');
+                      {student.status !== 'inactive' && student.status !== 'INACTIVE' && (
+                        <>
+                          <button
+                            onClick={() => navigate(`/manager/students/edit/${student._id}`)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white transition-all shadow-sm"
+                            title="Chỉnh sửa thông tin"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (window.confirm('Bạn có chắc chắn muốn dừng hoạt động học viên này?')) {
+                                try {
+                                  const res = await managerApi.updateStudent(student._id, { status: 'inactive' });
+                                  if (res.success) {
+                                    fetchStudents();
+                                  } else {
+                                    alert(res.message || 'Dừng hoạt động thất bại');
+                                  }
+                                } catch (err) {
+                                  alert('Lỗi khi dừng hoạt động');
+                                }
                               }
-                            } catch (err) {
-                              alert('Lỗi khi xóa');
-                            }
-                          }
-                        }}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
-                        title="Xóa học viên"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                            }}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+                            title="Dừng hoạt động"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

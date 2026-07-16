@@ -105,7 +105,7 @@ const ManagerTeacherDetailPage = () => {
               <div className="space-y-3 text-sm text-gray-600">
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-gray-400" />
-                  <span>{user.phone || 'Chưa cập nhật SĐT'}</span>
+                  <span>{teacher.phoneNumber || user.phone || 'Chưa cập nhật SĐT'}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-gray-400" />

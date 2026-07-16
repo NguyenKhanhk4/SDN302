@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { managerApi } from '../../api/managerApi';
-import { BookOpen, Pencil, Trash2 } from 'lucide-react';
+import { BookOpen, Pencil, Ban } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -60,17 +60,17 @@ const ManagerSubjectsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa môn học này không?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn dừng hoạt động môn học này không?')) return;
     try {
-      const res = await managerApi.deleteSubject(id);
+      const res = await managerApi.updateSubject(id, { status: 'inactive' });
       if (res.success) {
-        alert('Xóa môn học thành công');
+        alert('Dừng hoạt động môn học thành công');
         fetchSubjects();
       } else {
-        alert(res.message || 'Xóa thất bại');
+        alert(res.message || 'Dừng hoạt động thất bại');
       }
     } catch (err) {
-      alert('Đã xảy ra lỗi khi xóa');
+      alert('Đã xảy ra lỗi khi dừng hoạt động');
     }
   };
 
@@ -129,7 +129,7 @@ const ManagerSubjectsPage = () => {
                 <tr className="border-b border-slate-200 bg-white">
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Môn học</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Khối lớp</th>
-                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Học phí mặc định</th>
+                  <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Học phí</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Trạng thái</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Mô tả chi tiết</th>
                   <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Thao tác</th>
@@ -144,20 +144,24 @@ const ManagerSubjectsPage = () => {
                     <td className="p-4 text-sm"><Badge status={sub.status} /></td>
                     <td className="p-4 text-sm text-slate-600 truncate max-w-xs">{sub.description}</td>
                     <td className="p-4 text-sm text-right space-x-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => navigate(`/manager/subjects/edit/${sub._id}`)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                        title="Sửa"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(sub._id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                        title="Xóa"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {sub.status !== 'inactive' && sub.status !== 'INACTIVE' && (
+                        <>
+                          <button 
+                            onClick={() => navigate(`/manager/subjects/edit/${sub._id}`)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                            title="Sửa"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(sub._id)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                            title="Dừng hoạt động"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

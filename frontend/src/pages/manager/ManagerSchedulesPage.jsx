@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { managerApi } from '../../api/managerApi';
-import { CalendarPlus, Pencil, Trash2 } from 'lucide-react';
+import { CalendarPlus, Pencil, Ban } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -68,17 +68,17 @@ const ManagerSchedulesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa lịch học này không?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn hủy lịch học này không?')) return;
     try {
-      const res = await managerApi.deleteSchedule(id);
+      const res = await managerApi.updateSchedule(id, { status: 'cancelled' });
       if (res.success) {
-        alert('Xóa lịch học thành công');
+        alert('Hủy lịch học thành công');
         fetchSchedules();
       } else {
-        alert(res.message || 'Xóa thất bại');
+        alert(res.message || 'Hủy thất bại');
       }
     } catch (err) {
-      alert('Đã xảy ra lỗi khi xóa');
+      alert('Đã xảy ra lỗi khi hủy lịch');
     }
   };
 
@@ -163,20 +163,24 @@ const ManagerSchedulesPage = () => {
                     <td className="p-4 text-sm text-slate-600">{sch.room}</td>
                     <td className="p-4 text-sm"><Badge status={sch.status} /></td>
                     <td className="p-4 text-sm text-right space-x-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => navigate(`/manager/schedules/edit/${sch._id}`)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                        title="Sửa"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(sch._id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                        title="Xóa"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {sch.status !== 'cancelled' && sch.status !== 'CANCELLED' && (
+                        <>
+                          <button 
+                            onClick={() => navigate(`/manager/schedules/edit/${sch._id}`)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                            title="Sửa"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(sch._id)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                            title="Hủy lịch"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

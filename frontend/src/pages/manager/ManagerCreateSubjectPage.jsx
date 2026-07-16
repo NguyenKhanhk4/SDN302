@@ -79,17 +79,29 @@ const ManagerCreateSubjectPage = () => {
               onChange={handleChange}
               required
             />
-            <Input
-              label="Khối lớp"
-              name="gradeLevel"
-              placeholder="VD: 10, 11, 12"
-              value={formData.gradeLevel}
-              onChange={handleChange}
-              required
-            />
+            <div className="flex flex-col">
+              <label htmlFor="gradeLevel" className="mb-1 text-sm font-medium text-gray-700">Khối lớp <span className="text-red-500">*</span></label>
+              <select
+                id="gradeLevel"
+                name="gradeLevel"
+                value={formData.gradeLevel}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-gray-50/50 border-gray-200 text-gray-700"
+              >
+                <option value="" disabled>-- Chọn khối lớp --</option>
+                <option value="Tất cả khối lớp">Tất cả khối lớp</option>
+                <option value="Khối 10">Khối 10</option>
+                <option value="Khối 11">Khối 11</option>
+                <option value="Khối 12">Khối 12</option>
+                <option value="Luyện thi Đại học">Luyện thi Đại học</option>
+                <option value="IELTS">IELTS</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
             <div className="md:col-span-2">
               <Input
-                label="Học phí mặc định (VNĐ/tháng)"
+                label="Học phí (VNĐ/tháng)"
                 name="defaultTuitionFee"
                 type="number"
                 placeholder="Nhập số tiền..."

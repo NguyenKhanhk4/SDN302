@@ -32,7 +32,7 @@ const ManagerEditTeacherPage = () => {
           setFormData({
             name: t.userId?.name || '',
             email: t.userId?.email || '',
-            phone: t.phoneNumber || '',
+            phone: t.phoneNumber || t.userId?.phone || '',
             specialization: t.specialization ? t.specialization.join(', ') : '',
             experienceYears: t.experienceYears || 0,
             status: t.userId?.isActive === false ? 'INACTIVE' : 'ACTIVE'
@@ -76,14 +76,11 @@ const ManagerEditTeacherPage = () => {
         : [];
         
       const res = await managerApi.updateTeacher(teacherId, {
-        userId: {
-          name: formData.name,
-          email: formData.email,
-          isActive: formData.status === 'ACTIVE'
-        },
+        fullName: formData.name,
         phoneNumber: formData.phone,
         specialization: specs,
-        experienceYears: Number(formData.experienceYears)
+        experienceYears: Number(formData.experienceYears),
+        status: formData.status === 'ACTIVE' ? 'active' : 'inactive'
       });
       
       if (res.success) {
@@ -93,7 +90,7 @@ const ManagerEditTeacherPage = () => {
         setGlobalError(res.message || 'Cập nhật giáo viên thất bại');
       }
     } catch (err) {
-      setGlobalError('Đã xảy ra lỗi hệ thống');
+      setGlobalError(err.response?.data?.message || err.message || 'Đã xảy ra lỗi hệ thống');
     } finally {
       setSaving(false);
     }

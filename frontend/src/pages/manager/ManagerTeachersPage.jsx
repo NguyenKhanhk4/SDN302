@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { managerApi } from '../../api/managerApi';
-import { Eye, Pencil, Trash2, Plus } from 'lucide-react';
+import { Eye, Pencil, Ban, Plus } from 'lucide-react';
 
 const Badge = ({ status }) => {
   const styles = {
@@ -38,7 +38,7 @@ const ManagerTeachersPage = () => {
           ...t,
           fullName: t.userId?.name || '',
           email: t.userId?.email || '',
-          phone: t.phoneNumber || '',
+          phone: t.phoneNumber || t.userId?.phone || '',
           subjects: t.specialization || [],
           experienceYears: t.experienceYears || 0,
           status: t.userId?.isActive === false ? 'INACTIVE' : 'ACTIVE',
@@ -65,17 +65,17 @@ const ManagerTeachersPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa giáo viên này không?')) return;
+    if (!window.confirm('Bạn có chắc chắn muốn dừng hoạt động giáo viên này không?')) return;
     try {
-      const res = await managerApi.deleteTeacher(id);
+      const res = await managerApi.updateTeacher(id, { status: 'inactive' });
       if (res.success) {
-        alert('Xóa giáo viên thành công');
+        alert('Dừng hoạt động giáo viên thành công');
         fetchTeachers();
       } else {
-        alert(res.message || 'Xóa thất bại');
+        alert(res.message || 'Dừng hoạt động thất bại');
       }
     } catch (err) {
-      alert('Đã xảy ra lỗi khi xóa');
+      alert('Đã xảy ra lỗi khi dừng hoạt động');
     }
   };
 
@@ -158,20 +158,24 @@ const ManagerTeachersPage = () => {
                       >
                         <Eye size={16} />
                       </button>
-                      <button 
-                        onClick={() => navigate(`/manager/teachers/edit/${teacher._id}`)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                        title="Sửa"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(teacher._id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                        title="Xóa"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {teacher.status !== 'inactive' && teacher.status !== 'INACTIVE' && (
+                        <>
+                          <button 
+                            onClick={() => navigate(`/manager/teachers/edit/${teacher._id}`)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                            title="Sửa"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(teacher._id)}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                            title="Dừng hoạt động"
+                          >
+                            <Ban size={16} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

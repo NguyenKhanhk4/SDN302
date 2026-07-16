@@ -7,7 +7,7 @@ const ManagerLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="h-screen overflow-hidden bg-slate-50 flex">
       <ManagerSidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 

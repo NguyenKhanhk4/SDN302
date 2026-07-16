@@ -29,7 +29,7 @@ const ManagerSidebar = () => {
       </div>
 
       {/* Menu items */}
-      <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+      <div className="flex-1 py-6 px-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (

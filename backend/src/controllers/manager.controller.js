@@ -130,7 +130,12 @@ const getManagerStudents = async (req, res) => {
 
     let profileFilter = { userId: { $in: userIds } };
     if (status && status !== 'ALL') {
-      profileFilter.status = status.toLowerCase();
+      const s = status.toLowerCase();
+      if (s === 'active') {
+        profileFilter.$or = [{ status: 'active' }, { status: null }, { status: { $exists: false } }];
+      } else {
+        profileFilter.status = s;
+      }
     }
 
     const total = await StudentProfile.countDocuments(profileFilter);
@@ -142,7 +147,9 @@ const getManagerStudents = async (req, res) => {
 
     // Summary using StudentProfile statuses
     const allStudentUsers = await StudentProfile.countDocuments();
-    const activeStudents = await StudentProfile.countDocuments({ status: 'active' });
+    const activeStudents = await StudentProfile.countDocuments({
+      $or: [{ status: 'active' }, { status: null }, { status: { $exists: false } }]
+    });
     const inactiveStudents = await StudentProfile.countDocuments({ status: 'inactive' });
     const reservedStudents = await StudentProfile.countDocuments({ status: 'reserved' });
     const finishedStudents = await StudentProfile.countDocuments({ status: 'finished' });
@@ -569,7 +576,7 @@ const getManagerTeachers = async (req, res) => {
 
     const total = await TeacherProfile.countDocuments({ userId: { $in: userIds } });
     const teachers = await TeacherProfile.find({ userId: { $in: userIds } })
-      .populate('userId', 'name email role isActive createdAt')
+      .populate('userId', 'name email phone role isActive createdAt')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
@@ -631,7 +638,7 @@ const getManagerTeacherDetail = async (req, res) => {
     const { teacherId } = req.params;
 
     const teacher = await TeacherProfile.findById(teacherId)
-      .populate('userId', 'name email role isActive createdAt');
+      .populate('userId', 'name email phone role isActive createdAt');
 
     if (!teacher) {
       return res.status(404).json({ success: false, message: 'Teacher not found' });
@@ -1085,7 +1092,7 @@ const createManagerSchedule = async (req, res) => {
     await checkTeacherExists(teacherId);
 
     // Conflict check
-    await checkScheduleConflict({ teacherId, dayOfWeek, startTime, endTime, room });
+    await checkScheduleConflict(teacherId, dayOfWeek, startTime, endTime);
 
     const schedule = await Schedule.create({
       classId,

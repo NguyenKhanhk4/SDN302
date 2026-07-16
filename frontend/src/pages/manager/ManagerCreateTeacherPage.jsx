@@ -42,20 +42,15 @@ const ManagerCreateTeacherPage = () => {
     setGlobalError('');
     try {
       // Split specialization by comma if it's a string
-      const specs = formData.specialization
-        ? formData.specialization.split(',').map(s => s.trim()).filter(s => s)
-        : [];
-        
+      const specs = formData.specialization.split(',').map(s => s.trim()).filter(Boolean);
+      
       const res = await managerApi.createTeacher({
-        userId: {
-          name: formData.name,
-          email: formData.email,
-          role: 'TEACHER',
-          isActive: formData.status === 'ACTIVE'
-        },
-        phoneNumber: formData.phone,
+        fullName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
         specialization: specs,
-        experienceYears: Number(formData.experienceYears)
+        experienceYears: Number(formData.experienceYears),
+        status: formData.status === 'ACTIVE' ? 'active' : 'inactive'
       });
       
       if (res.success) {
@@ -65,7 +60,7 @@ const ManagerCreateTeacherPage = () => {
         setGlobalError(res.message || 'Thêm giáo viên thất bại');
       }
     } catch (err) {
-      setGlobalError('Đã xảy ra lỗi hệ thống');
+      setGlobalError(err.response?.data?.message || err.message || 'Đã xảy ra lỗi hệ thống');
     } finally {
       setLoading(false);
     }

@@ -85,7 +85,7 @@ const ManagerSubjectDetailPage = () => {
             <p className="text-sm text-gray-900 font-mono bg-gray-50 px-2 py-1 rounded inline-block">{subject._id}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500 mb-1">Học phí mặc định</p>
+            <p className="text-sm font-medium text-gray-500 mb-1">Học phí</p>
             <p className="text-base text-gray-900 font-bold">{subject.defaultTuitionFee?.toLocaleString('vi-VN')} đ / tháng</p>
           </div>
           <div className="md:col-span-2">

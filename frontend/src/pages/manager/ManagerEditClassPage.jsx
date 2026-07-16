@@ -149,7 +149,7 @@ const ManagerEditClassPage = () => {
             <Input label="Sĩ số tối đa" name="maxStudents" type="number" value={formData.maxStudents} onChange={handleChange} error={errors.maxStudents} />
             
             <Input label="Ngày bắt đầu" name="startDate" type="date" value={formData.startDate} onChange={handleChange} />
-            <Input label="Ngày kết thúc" name="endDate" type="date" value={formData.endDate} onChange={handleChange} />
+            <Input label="Ngày kết thúc" name="endDate" type="date" value={formData.endDate} onChange={handleChange} min={formData.startDate} />
           </div>
 
           <div className="space-y-1">

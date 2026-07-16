@@ -12,6 +12,11 @@ const StudentProfileSchema = new mongoose.Schema(
     parentPhone: String,
     grade: String,
     school: String,
+    status: {
+      type: String,
+      enum: ['active', 'inactive', 'reserved', 'finished'],
+      default: 'active',
+    },
   },
   {
     timestamps: true,

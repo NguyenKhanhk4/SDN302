@@ -79,7 +79,7 @@ const ManagerClassDetailPage = () => {
               <h3 className="text-xl font-bold text-gray-900">{classroom.name}</h3>
               <p className="text-sm text-gray-500 mt-1">Môn học: <span className="font-semibold text-gray-700">{subject.name || 'N/A'}</span></p>
             </div>
-            <Badge status={classroom.status === 'active' ? 'ACTIVE' : classroom.status === 'upcoming' ? 'UPCOMING' : 'INACTIVE'} />
+            <Badge status={classroom.status} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">

@@ -19,6 +19,8 @@ const ManagerCreateClassPage = () => {
   
   const [subjects, setSubjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
+
+  const today = new Date().toISOString().split('T')[0];
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [globalError, setGlobalError] = useState('');
@@ -125,8 +127,8 @@ const ManagerCreateClassPage = () => {
             <Input label="Phòng học" name="room" value={formData.room} onChange={handleChange} />
             <Input label="Sĩ số tối đa" name="maxStudents" type="number" value={formData.maxStudents} onChange={handleChange} error={errors.maxStudents} />
             
-            <Input label="Ngày bắt đầu" name="startDate" type="date" value={formData.startDate} onChange={handleChange} />
-            <Input label="Ngày kết thúc" name="endDate" type="date" value={formData.endDate} onChange={handleChange} />
+            <Input label="Ngày bắt đầu" name="startDate" type="date" value={formData.startDate} onChange={handleChange} min={today} />
+            <Input label="Ngày kết thúc" name="endDate" type="date" value={formData.endDate} onChange={handleChange} min={formData.startDate || today} />
           </div>
 
           <div className="space-y-1">
